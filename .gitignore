@@ -1,0 +1,17 @@
+# Local IDE and OS files
+.idea/
+.DS_Store
+
+# Build outputs and dependency caches
+.gradle/
+build/
+node_modules/
+dist/
+
+# Local environment files (keep shareable examples)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log

@@ -1,0 +1,5 @@
+rootProject.name = 'backend'
+
+include 'routing-api'
+include 'routing-core'
+include 'data-builder'
