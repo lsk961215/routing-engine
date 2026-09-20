@@ -16,6 +16,8 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = uri('https://mvn.topobyte.de') }
+    maven { url = uri('https://mvn.slimjars.com') }
 }
 
 dependencies {

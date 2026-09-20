@@ -13,4 +13,23 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = uri('https://mvn.topobyte.de') }
+    maven { url = uri('https://mvn.slimjars.com') }
+}
+
+dependencies {
+    // OSM 데이터 모델
+    implementation 'de.topobyte:osm4j-core:1.4.1'
+
+    // OSM PBF Reader
+    implementation 'de.topobyte:osm4j-pbf:1.4.1'
+
+    // Test
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }
