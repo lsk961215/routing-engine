@@ -33,3 +33,14 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+// Paths supplied with -Ppbf are resolved relative to the backend directory.
+tasks.register('analyzeOsm', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.osm.OsmAnalysis'
+    maxHeapSize = '512m'
+    doFirst {
+        args = [rootProject.file(providers.gradleProperty('pbf')
+                .getOrElse('data/processed/seoul-routing.osm.pbf')).absolutePath]
+    }
+}
