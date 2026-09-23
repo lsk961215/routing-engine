@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version="0.6" generator="routing-engine-test">
+  <node id="5000000001" lat="37.0" lon="126.0" />
+  <node id="5000000002" lat="37.1" lon="126.1" />
+  <node id="5000000003" lat="37.2" lon="126.2" />
+  <node id="5000000004" lat="37.3" lon="126.3" />
+  <way id="10"><nd ref="5000000001" /><nd ref="5000000002" />
+    <tag k="highway" v="residential" /><tag k="oneway" v="yes" /></way>
+  <way id="11"><nd ref="5000000003" /><nd ref="5000000002" />
+    <tag k="highway" v="service" /><tag k="oneway" v="-1" /></way>
+  <way id="12"><nd ref="5000000003" /><nd ref="5000000004" /><nd ref="5000000003" /><nd ref="5000000003" />
+    <tag k="highway" v="residential" /></way>
+  <relation id="20">
+    <member type="way" ref="10" role="from" /><member type="node" ref="5000000002" role="via" />
+    <member type="way" ref="11" role="to" /><tag k="type" v="restriction" /><tag k="restriction" v="no_left_turn" />
+  </relation>
+  </osm>

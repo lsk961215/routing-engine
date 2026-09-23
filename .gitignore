@@ -19,3 +19,6 @@ backend/data/processed/*.pbf
 
 # Logs
 *.log
+
+# Generated routing graphs
+backend/data/processed/*.rgraph

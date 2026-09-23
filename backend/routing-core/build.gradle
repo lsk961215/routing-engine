@@ -44,3 +44,24 @@ tasks.register('analyzeOsm', JavaExec) {
                 .getOrElse('data/processed/seoul-routing.osm.pbf')).absolutePath]
     }
 }
+
+// Small-area prototype; all paths are resolved relative to backend.
+tasks.register('buildGraph', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.GraphBuilder'
+    maxHeapSize = '512m'
+    doFirst {
+        args = [rootProject.file(providers.gradleProperty('pbf').get()).absolutePath,
+                rootProject.file(providers.gradleProperty('graph').get()).absolutePath]
+    }
+}
+
+tasks.register('routeGraph', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.DijkstraRouter'
+    maxHeapSize = '512m'
+    doFirst {
+        args = [rootProject.file(providers.gradleProperty('graph').get()).absolutePath,
+                providers.gradleProperty('start').get(), providers.gradleProperty('end').get()]
+    }
+}
