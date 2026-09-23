@@ -65,3 +65,15 @@ tasks.register('routeGraph', JavaExec) {
                 providers.gradleProperty('start').get(), providers.gradleProperty('end').get()]
     }
 }
+
+// Diagnostic only. The old implementation is kept in test sources, not production artifacts.
+tasks.register('benchmarkRouting', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.RoutingBenchmark'
+    maxHeapSize = '512m'
+    doFirst {
+        args = providers.gradleProperty('graph').isPresent()
+                ? [rootProject.file(providers.gradleProperty('graph').get()).absolutePath] : []
+    }
+}

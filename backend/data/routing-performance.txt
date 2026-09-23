@@ -1,0 +1,13 @@
+java=21.0.12.1 maxHeap=536870912
+real-small-area nodes=79 edges=103 turns=0 payloadBytes=4276 legacyInitMs=9.291 optimizedInitMs=2.940
+  optimized queries=200 p50Ms=0.0106 p95Ms=0.0198 allocatedBytesPerQuery=5038 checksum=10228.519581
+  legacy queries=200 p50Ms=0.0605 p95Ms=0.1358 allocatedBytesPerQuery=47852 checksum=10228.519581
+grid-10 nodes=100 edges=275 turns=186 payloadBytes=9792 legacyInitMs=0.862 optimizedInitMs=1.194
+  legacy queries=150 p50Ms=0.1168 p95Ms=0.2715 allocatedBytesPerQuery=111824 checksum=109666.453174
+  optimized queries=150 p50Ms=0.0258 p95Ms=0.0539 allocatedBytesPerQuery=9056 checksum=109666.453174
+grid-50 nodes=2500 edges=7375 turns=5374 payloadBytes=260496 legacyInitMs=8.654 optimizedInitMs=12.254
+  optimized queries=80 p50Ms=0.9057 p95Ms=1.1380 allocatedBytesPerQuery=208258 checksum=446230.149728
+  legacy queries=80 p50Ms=1.9630 p95Ms=2.3981 allocatedBytesPerQuery=2771999 checksum=446230.149728
+grid-100 nodes=10000 edges=29625 turns=21967 payloadBytes=1048240 legacyInitMs=25.476 optimizedInitMs=33.473
+  legacy queries=40 p50Ms=7.3216 p95Ms=9.9263 allocatedBytesPerQuery=10955494 checksum=335862.161378
+  optimized queries=40 p50Ms=2.6472 p95Ms=5.1453 allocatedBytesPerQuery=708773 checksum=335862.161378
