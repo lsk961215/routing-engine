@@ -1,0 +1,52 @@
+Nodes: 4559899
+Ways: 695025
+Relations: 18221
+Highway ways: 266856
+Bounds: Bounds[minLon=126.58290620000001, minLat=37.167720800000005, maxLon=127.51086600000001, maxLat=37.8849226]
+Highway node references: 1792558
+Unique highway node IDs: 1359438
+Highway adjacent pairs: 1525702
+Highway ways with <2 nodes: 0
+Restriction relations: 6393
+road.access: {bus=1, customers=35, designated=11, destination=32, discouraged=1, forestry=1, military=3, no=1198, permissive=302, permit=139, private=638, residents=1, unknown=10, yes=504}
+road.access:conditional: {no @ (2020 Jul 06 - 2020 Aug 30)=1, no @ (Mo-Fr 08:00-09:00; PH off)=1, no@(06:00-23:00)=1, yes @ 6:00-24:00=1}
+road.access:lanes: {no|no|yes|yes|yes=1, no|yes=1, no|yes|yes=29, no|yes|yes|yes=19, no|yes|yes|yes|yes=8, no|yes|yes|yes|yes|yes=2}
+road.access:note: {access only with guided tour=21, no public access - even with guided tour=7}
+road.area: {no=2, yes=1219}
+road.area:highway: {pedestrian=3, traffic_island=9}
+road.highway: {abandoned=2, bridleway=4, bus_guideway=2, bus_stop=4, busway=579, construction=832, corridor=473, crossing=3, cycleway=7056, disused=1, elevator=30, footway=64700, living_street=4085, motorway=1815, motorway_link=1589, path=10305, pedestrian=2763, platform=77, primary=6766, primary_link=2800, proposed=34, raceway=7, residential=57699, rest_area=12, road=55, secondary=6744, secondary_link=1655, service=70555, services=14, steps=5315, tertiary=8091, tertiary_link=1150, track=2932, trunk=2032, trunk_link=2192, unclassified=4483}
+road.junction: {circular=16, jughandle=4, roundabout=201, yes=3}
+road.junction:radius:lanes: {1|1|1|1=1}
+road.junction:ref: {1=1, 10A=1, 10B=1, 12=1, 13A=1, 13B=1, 18=3, 2=1, 20=12, 20A=2, 20B=4, 21=10, 22=7, 22A=1, 22B=5, 23=7, 23A=2, 23B=2, 24=6, 25=12, 26=2, 27=1, 28A=4, 29A=3, 2A=4, 2A;2B=7, 2B=4, 3=2, 32A=1, 32B=2, 33A=1, 33B=1, 36A=1, 36B=1, 4=8, 4-1A=4, 4-1B=1, 48-1=2, 48A=1, 48B=2, 49=2, 49B=1, 5=8, 5A=4, 5B=3, 6A=1, 6B=1, 7A=3, 7B=1, 8=1, 8B=2, 9=1}
+road.maxspeed: {1=1, 10=29, 100=1562, 110=136, 15 mph=1, 2=1, 20=312, 200=1, 25=4, 30=1702, 40=456, 5=1, 50=2333, 60=2064, 70=410, 80=910, 90=258}
+road.maxspeed:advisory: {10=4, 30=18, 5=2, 50=3, 60=2, 80=21}
+road.maxspeed:backward: {50=3}
+road.maxspeed:conditional: {10 @ snow; 10 @ wet=1}
+road.maxspeed:hgv: {60=22, 80=1040}
+road.maxspeed:practical: {40=2}
+road.maxspeed:type: {KR:rural=5, KR:urban=198, sign=1105}
+road.maxspeed:variable: {no=4, yes=4}
+road.motor_vehicle: {agricultural=10, delivery=2, designated=66, destination=9, no=1249, official=2, permissive=5, permit=32, private=90, unknown=5, yes=366}
+road.motor_vehicle:conditional: {no @ (Sa-Su,PH 10:00-17:00)=1, no @ (Su 09:00-22:00)=2}
+road.motorcar: {no=3, private=3}
+road.oneway: {-1=49, no=6559, yes=32027}
+road.oneway:bicycle: {no=128, yes=115}
+road.oneway:bus: {no=20}
+road.oneway:forward:conditional: {yes @ (Mo-Fr 07:00-10:00)=1}
+road.service: {alley=2146, building_passage=1, bus=3, drive-through=20, driveway=1766, driving_learning=81, emergency_access=106, fuel=2, living_street=1, parking=12, parking_aisle=17289, slipway=1, yard=1}
+road.vehicle: {delivery=2, no=14, permissive=21}
+road.vehicle:conditional: {no @ (12:00-24:00)=1}
+relation.except: {bus=1, hgv=2}
+relation.restriction: {no_left_turn=1916, no_right_turn=452, no_straight_on=224, no_u_turn=3047, only_left_turn=48, only_right_turn=284, only_straight_on=418}
+relation.restriction:conditional: {no_left_turn @ 06:00-23:00=1, no_left_turn @ 07:00-23:00=1, no_left_turn @ 23:00-07:00=1}
+relation.type: {restriction=6393}
+Restriction member roles/types: {:Node=5, :Way=7, from:Way=6041, to:Way=6034, via:Node=5993, via:Way=196, via@(8:00-9:00):Node=1}
+Car highway decisions: {ACCEPTED:accepted=170086, DEFERRED:access_customers=15, DEFERRED:access_destination=16, DEFERRED:access_modifier=65, DEFERRED:access_unknown=3, DEFERRED:oneway_modifier=1, EXCLUDED:access_denied=1468, EXCLUDED:area=2, EXCLUDED:highway_out_of_scope=95200}
+Car accepted ways: 170086
+Car unique referenced nodes: 799512
+Car directed segments: 1597408
+Car restriction candidates (node via): 4964
+Car connected via-way restrictions (application deferred): 147
+Car restriction issues (overlapping): {CONDITIONAL=3, DIRECTION_CONFLICT=343, DISCONNECTED_VIA=72, INVALID_MEMBERS=744, MISSING_FROM=415, MISSING_REFERENCE=3, MISSING_TO=417, MISSING_VIA=223, UNKNOWN_ROLE=12, UNSUPPORTED_VALUE=4, VIA_WAY_DEFERRED=177, WAY_NOT_ACCEPTED=146}
+Car restriction issue examples: {CONDITIONAL=[5580835, 14066391, 20252624], DIRECTION_CONFLICT=[4627278, 4674431, 4674433, 4674436, 5687534], DISCONNECTED_VIA=[4661485, 4674430, 6458624, 6498643, 6701773], INVALID_MEMBERS=[4207547, 4207548, 4207549, 4207550, 4627275], MISSING_FROM=[4207547, 4207548, 4207549, 4207550, 4627279], MISSING_REFERENCE=[11909875, 11909876, 20284545], MISSING_TO=[4207548, 4207549, 4627275, 4661473, 4661483], MISSING_VIA=[5523667, 5523668, 5704334, 6702981, 6702983], UNKNOWN_ROLE=[7193311, 7193312, 7193314, 7193315, 7244653], UNSUPPORTED_VALUE=[5580835, 6911816, 14066391, 20252624], VIA_WAY_DEFERRED=[8107280, 8234982, 8301285, 8301295, 8603389], WAY_NOT_ACCEPTED=[4678190, 4678193, 4678199, 4678213, 4678216]}
+Analysis seconds: 2.627

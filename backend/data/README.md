@@ -29,7 +29,7 @@ South Korea OSM PBF 데이터를 다운로드합니다.
 사용 데이터:
 
 ```text
-south-korea-260919.osm.pbf
+south-korea-260919.osm.pbf (https://download.geofabrik.de/asia/south-korea.html)
 ```
 
 다운로드한 파일을 다음 경로에 저장합니다.
@@ -61,6 +61,13 @@ Ubuntu 터미널에서 다음 명령을 실행합니다.
 ```bash
 sudo apt update
 sudo apt install osmium-tool
+```
+
+맥 기준
+
+```bash
+brew update
+brew install osmium-tool
 ```
 
 설치 여부를 확인합니다.
@@ -172,3 +179,38 @@ South Korea OSM PBF
 ```
 
 `seoul-routing.osm.pbf`는 이후 도로 데이터 파싱 및 경로탐색 그래프 구축을 위한 입력 데이터로 사용합니다.
+
+## Java 분석기
+
+`backend` 디렉터리에서 `./gradlew :routing-core:analyzeOsm`을 실행하면
+서울 추출본의 노드·도로 태그·회전 제한·고유 도로 노드 참조 통계를 출력합니다.
+일반 테스트는 `./gradlew test`로 실행하며 대용량 PBF 없이 동작합니다.
+
+분석 수치와 메모리 구조 검토 내용은 [ANALYSIS.md](ANALYSIS.md)를 참고하세요.
+
+자동차 후보 판정 및 회전 제한 검사 정책과 결과는 [CAR_PROFILE.md](CAR_PROFILE.md)에 정리했습니다.
+
+## 서울 회전 제한 참조 보충
+
+동일한 전국 원본에서 확인한 누락 Way 3개와 참조 Node를 별도로 추출해 병합했습니다.
+기존 `seoul-routing.osm.pbf`는 유지하고 `seoul-routing-complete.osm.pbf`를 생성합니다.
+이름의 complete는 이번 회전 제한 참조 보충을 뜻하며, 모든 데이터 오류가 해결됐다는 뜻은 아닙니다.
+
+재현 명령 (프로젝트 루트 기준, 생성 대상 파일이 없는 상태):
+
+```sh
+osmium getid backend/data/raw/south-korea-260919.osm.pbf \
+  w468202418 w468202416 w1460674135 --add-referenced \
+  -o backend/data/processed/seoul-restriction-supplement.osm.pbf
+osmium merge backend/data/processed/seoul-routing.osm.pbf \
+  backend/data/processed/seoul-restriction-supplement.osm.pbf \
+  -o backend/data/processed/seoul-routing-complete.osm.pbf
+osmium check-refs backend/data/processed/seoul-routing-complete.osm.pbf
+./backend/gradlew -p backend :routing-core:analyzeOsm \
+  -Ppbf=data/processed/seoul-routing-complete.osm.pbf
+```
+
+이 ID 목록은 현재 스냅샷에서 확인한 3건에만 해당합니다. 다른 데이터셋에는 다시 누락 검사를 해야 합니다.
+분석 명령의 기본 입력은 기존 파일이므로 보완본은 위처럼 `-Ppbf`로 지정합니다.
+검증 결과는 [seoul-complete-analysis.txt](seoul-complete-analysis.txt)에 보관합니다.
+바이너리 데이터는 `.gitignore`로 제외됩니다.
