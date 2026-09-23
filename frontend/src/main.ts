@@ -9,8 +9,7 @@ let endPoint: [number, number] | null = null;
 let startMarker: Marker | null = null;
 let endMarker: Marker | null = null;
 
-const osrmBaseUrl =
-  import.meta.env.VITE_OSRM_BASE_URL ?? "http://127.0.0.1:5005";
+let pendingRoute: AbortController | null = null;
 
 interface OsrmGeometry {
   type: "LineString";
@@ -20,7 +19,7 @@ interface OsrmGeometry {
 interface OsrmRoute {
   geometry: OsrmGeometry;
   distance: number;
-  duration: number;
+  duration: number | null;
 }
 
 interface OsrmWaypoint {
@@ -76,6 +75,7 @@ mapElement.innerHTML = `
     </div>
   </header>
 
+  <p id="routing-status" role="status" aria-live="polite">시험 영역에서 출발점과 도착점을 선택하세요. 도로에서 50m 이내를 지원합니다.</p>
   <main id="map" class="map"></main>
 `;
 
@@ -88,7 +88,7 @@ const map = new Map({
   // 경도, 위도 순서
   center: [126.978, 37.5665],
 
-  zoom: 11,
+  zoom: 16,
 
   // 한글·중국어·일본어 문자를 로컬 글꼴로 표현
   localIdeographFontFamily:
@@ -157,26 +157,37 @@ async function findRoute() {
     return;
   }
 
-  const url =
-    `${osrmBaseUrl}/route/v1/driving/` +
-    `${startPoint[0]},${startPoint[1]};` +
-    `${endPoint[0]},${endPoint[1]}` +
-    `?overview=full&geometries=geojson`;
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`OSRM 요청 실패: ${response.status}`);
+  pendingRoute?.abort();
+  const request = new AbortController();
+  pendingRoute = request;
+  const status = document.querySelector<HTMLElement>("#routing-status")!;
+  status.textContent = "경로를 찾고 있습니다…";
+  const params = new URLSearchParams({
+    startLon: String(startPoint[0]), startLat: String(startPoint[1]),
+    endLon: String(endPoint[0]), endLat: String(endPoint[1]),
+  });
+  try {
+    const response = await fetch(`/api/route?${params}`, { signal: request.signal });
+    if (!response.ok) {
+      const messages: Record<number, string> = {
+        400: "좌표를 확인해 주세요.", 404: "두 지점을 연결하는 경로가 없습니다.",
+        422: "지원 영역의 도로 가까이를 선택해 주세요.", 503: "경로 서비스가 준비되지 않았습니다.",
+      };
+      throw new Error(messages[response.status] ?? "경로 요청에 실패했습니다.");
+    }
+    const data: OsrmResponse = await response.json();
+    if (pendingRoute !== request) return;
+    drawRoute(data.routes[0].geometry);
+    showRouteInfo(data);
+    startMarker?.setLngLat(data.waypoints[0].location);
+    endMarker?.setLngLat(data.waypoints[1].location);
+    status.textContent = "선택 지점 근처 도로 사이의 경로입니다. 지도를 클릭하면 다시 선택합니다.";
+  } catch (error) {
+    if (request.signal.aborted || pendingRoute !== request) return;
+    status.textContent = error instanceof Error ? error.message : "경로 요청에 실패했습니다.";
+  } finally {
+    if (pendingRoute === request) pendingRoute = null;
   }
-
-  const data: OsrmResponse = await response.json();
-
-  if (data.code !== "Ok" || data.routes.length === 0) {
-    throw new Error("탐색된 경로가 없습니다.");
-  }
-
-  drawRoute(data.routes[0].geometry);
-  showRouteInfo(data);
 }
 
 function drawRoute(geometry: OsrmGeometry) {
@@ -205,6 +216,9 @@ function drawRoute(geometry: OsrmGeometry) {
 }
 
 function resetPoints() {
+  pendingRoute?.abort();
+  pendingRoute = null;
+  document.querySelector<HTMLElement>("#routing-status")!.textContent = "출발점과 도착점을 다시 선택하세요.";
   startMarker?.remove();
   endMarker?.remove();
 
@@ -242,11 +256,7 @@ function showRouteInfo(data: OsrmResponse) {
 
   const distanceKm = (route.distance / 1000).toFixed(1);
 
-  const totalMinutes = Math.round(route.duration / 60);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-
-  const durationText = hours > 0 ? `${hours}시간 ${minutes}분` : `${minutes}분`;
+  const durationText = "제공 예정";
 
   const routeInfo = document.querySelector<HTMLDivElement>("#route-info");
   const startRoad = document.querySelector<HTMLElement>("#start-road");
@@ -264,8 +274,8 @@ function showRouteInfo(data: OsrmResponse) {
     return;
   }
 
-  startRoad.textContent = startWaypoint.name || "이름 없는 도로";
-  endRoad.textContent = endWaypoint.name || "이름 없는 도로";
+  startRoad.textContent = startWaypoint.name || "선택 지점 근처 도로";
+  endRoad.textContent = endWaypoint.name || "선택 지점 근처 도로";
 
   routeDistance.textContent = `${distanceKm} km`;
   routeDuration.textContent = durationText;

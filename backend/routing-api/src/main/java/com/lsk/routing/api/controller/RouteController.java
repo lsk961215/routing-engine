@@ -14,8 +14,8 @@ public class RouteController {
         this.routingService = routingService;
     }
 
-    @GetMapping("/route")
-    public String route(
+    @GetMapping({"/route", "/api/route"})
+    public com.lsk.routing.api.dto.RouteResponse route(
             @RequestParam double startLon,
             @RequestParam double startLat,
             @RequestParam double endLon,
