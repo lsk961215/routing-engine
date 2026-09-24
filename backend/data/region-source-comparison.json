@@ -1,0 +1,87 @@
+[
+  {
+    "region": "region-8107280.osm.pbf",
+    "entitiesCompared": 2145,
+    "comparisons": {
+      "seoul": {
+        "missing": [],
+        "different": []
+      },
+      "korea": {
+        "missing": [],
+        "different": []
+      }
+    },
+    "diagnosticRows": 5,
+    "diagnosticsMatchSeoul": true,
+    "diagnosticsMatchKorea": true
+  },
+  {
+    "region": "region-8301285.osm.pbf",
+    "entitiesCompared": 491,
+    "comparisons": {
+      "seoul": {
+        "missing": [],
+        "different": []
+      },
+      "korea": {
+        "missing": [],
+        "different": []
+      }
+    },
+    "diagnosticRows": 3,
+    "diagnosticsMatchSeoul": true,
+    "diagnosticsMatchKorea": true
+  },
+  {
+    "region": "region-8871509.osm.pbf",
+    "entitiesCompared": 659,
+    "comparisons": {
+      "seoul": {
+        "missing": [],
+        "different": []
+      },
+      "korea": {
+        "missing": [],
+        "different": []
+      }
+    },
+    "diagnosticRows": 1,
+    "diagnosticsMatchSeoul": true,
+    "diagnosticsMatchKorea": true
+  },
+  {
+    "region": "region-9195815.osm.pbf",
+    "entitiesCompared": 686,
+    "comparisons": {
+      "seoul": {
+        "missing": [],
+        "different": []
+      },
+      "korea": {
+        "missing": [],
+        "different": []
+      }
+    },
+    "diagnosticRows": 4,
+    "diagnosticsMatchSeoul": true,
+    "diagnosticsMatchKorea": true
+  },
+  {
+    "region": "region-9424666.osm.pbf",
+    "entitiesCompared": 580,
+    "comparisons": {
+      "seoul": {
+        "missing": [],
+        "different": []
+      },
+      "korea": {
+        "missing": [],
+        "different": []
+      }
+    },
+    "diagnosticRows": 18,
+    "diagnosticsMatchSeoul": true,
+    "diagnosticsMatchKorea": true
+  }
+]

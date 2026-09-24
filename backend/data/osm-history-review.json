@@ -1,0 +1,5596 @@
+{
+  "queriedAtUtc": "2026-09-23T15:42:08.307251+00:00",
+  "relations": [
+    {
+      "type": "relation",
+      "id": "8065255",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/8065255/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-02T00:10:48Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "285240584",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5446790024",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "285240586",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2018-03-02T00:11:51Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565574610",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5446790024",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "285240586",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2026-02-07T19:50:00Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565574610",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5446790024",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "8107282",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/8107282/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-13T04:33:44Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "285240586",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "4061859389",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565574608",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2026-02-07T19:50:00Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "4061859389",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565574608",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "8301295",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/8301295/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-05-15T16:32:36Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "465545550",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "588443263",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "588443257",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2018-08-16T12:04:44Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "617401136",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "588443263",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "588443257",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "8871502",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/8871502/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-10-31T13:32:05Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "639701457",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "614607332",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "639701459",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2022-12-29T07:50:13Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "639701457",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "614607332",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9157729",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9157729/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-12-27T15:35:20Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "658494234",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6166378882",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494234",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6166378882",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9157730",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9157730/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-12-27T15:35:20Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "658494226",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6166378882",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494226",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-01-08T12:27:00Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "661420771",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6166378882",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "661420771",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9157731",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9157731/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-12-27T15:35:20Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5300249444",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "1452754543",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "to"
+            },
+            {
+              "type": "way",
+              "ref": "1452754543",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9157732",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9157732/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-12-27T15:35:20Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "658494234",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6166378882",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494229",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6166378882",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494229",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9195810",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9195810/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-01-08T12:24:57Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937916",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6031225817",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937914",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937916",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6031225817",
+              "role": "via"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937916",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5449147424",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9195811",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9195811/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-01-08T12:24:57Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6031225816",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "6031225816",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "6031225816",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "to"
+            },
+            {
+              "type": "way",
+              "ref": "1148888407",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "5449147420",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "to"
+            },
+            {
+              "type": "way",
+              "ref": "1148888407",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9195812",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9195812/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-01-08T12:24:57Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6031225816",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494247",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "6031225816",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494247",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "5449147420",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "658494247",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424647",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424647/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "678806052",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6355797434",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806055",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "6355797434",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806052",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1148888410",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424651",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424651/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6355797433",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": "6355797433",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424653",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424653/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "678806050",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6355797433",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "678806050",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6355797433",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424654",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424654/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362632",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1148888407",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424655",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424655/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362632",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937916",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937915",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1148888407",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "565937916",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424656",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424656/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362632",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937916",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937916",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424658",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424658/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937914",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "850678275",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "850678275",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1148888408",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424659",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424659/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937914",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806055",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "850678275",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806055",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "850678275",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1148888408",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424660",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424660/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:35Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "678806055",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": "9424662",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/9424662/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:36Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "576344905",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "6355797439",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806054",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "576344905",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "678806054",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": "1452565552",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1452565553",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "576344905",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1452565554",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1452565550",
+              "role": "to"
+            },
+            {
+              "type": "way",
+              "ref": "1452565551",
+              "role": "to"
+            },
+            {
+              "type": "way",
+              "ref": "678806054",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summaries": [
+    {
+      "relation": "8065255",
+      "localMemberMatchingVersions": [
+        3
+      ],
+      "latestVersion": 3,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "565574610",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5446790024",
+          "role": "via"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 2,
+        "timestamp": "2018-03-02T00:11:51Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_u_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "565574610",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5446790024",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "285240586",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2018-03-02T00:11:51Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "285240584",
+              "role": "from"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "565574610",
+              "role": "from"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2026-02-07T19:50:00Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "285240586",
+              "role": "to"
+            }
+          ],
+          "added": []
+        }
+      ]
+    },
+    {
+      "relation": "8107282",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "node",
+          "ref": "4061859389",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565574608",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2018-03-13T04:33:44Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "285240586",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "4061859389",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "565574608",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2026-02-07T19:50:00Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "285240586",
+              "role": "from"
+            }
+          ],
+          "added": []
+        }
+      ]
+    },
+    {
+      "relation": "8301295",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "617401136",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "588443263",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "588443257",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 2,
+        "timestamp": "2018-08-16T12:04:44Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_right_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "617401136",
+            "role": "from"
+          },
+          {
+            "type": "way",
+            "ref": "588443263",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "588443257",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2018-08-16T12:04:44Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "465545550",
+              "role": "from"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "617401136",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "8871502",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "639701457",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "614607332",
+          "role": "via"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2018-10-31T13:32:05Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_right_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "639701457",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "614607332",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "639701459",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2022-12-29T07:50:13Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "639701459",
+              "role": "to"
+            }
+          ],
+          "added": []
+        }
+      ]
+    },
+    {
+      "relation": "9157729",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 2,
+        "timestamp": "2025-11-22T00:54:49Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_u_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "658494231",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6166378882",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "658494231",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "658494234",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "658494234",
+              "role": "to"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9157730",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "661420771",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "661420771",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 2,
+        "timestamp": "2019-01-08T12:27:00Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_u_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "661420771",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6166378882",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "661420771",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2019-01-08T12:27:00Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "658494226",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "658494226",
+              "role": "to"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "661420771",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "661420771",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9157731",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "1452754543",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1452754543",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2018-12-27T15:35:20Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_u_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "658494231",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5300249444",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "658494231",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "5300249444",
+              "role": "via"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1452754543",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1452754543",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9157732",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494229",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 2,
+        "timestamp": "2025-11-22T00:54:49Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_right_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "658494231",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6166378882",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "658494229",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "658494234",
+              "role": "from"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "658494231",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9195810",
+      "localMemberMatchingVersions": [
+        3
+      ],
+      "latestVersion": 3,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5449147424",
+          "role": "via"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-01-08T12:24:57Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "565937916",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6031225817",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "565937914",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "565937914",
+              "role": "to"
+            }
+          ],
+          "added": []
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "6031225817",
+              "role": "via"
+            }
+          ],
+          "added": [
+            {
+              "type": "node",
+              "ref": "5449147424",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9195811",
+      "localMemberMatchingVersions": [
+        4
+      ],
+      "latestVersion": 4,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "node",
+          "ref": "5449147420",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-01-08T12:24:57Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "565937913",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6031225816",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "565937915",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "from"
+            }
+          ],
+          "added": []
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1148888407",
+              "role": "to"
+            }
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "6031225816",
+              "role": "via"
+            }
+          ],
+          "added": [
+            {
+              "type": "node",
+              "ref": "5449147420",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9195812",
+      "localMemberMatchingVersions": [
+        3
+      ],
+      "latestVersion": 3,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "node",
+          "ref": "5449147420",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494247",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-01-08T12:24:57Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "565937913",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6031225816",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "658494247",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "565937913",
+              "role": "from"
+            }
+          ],
+          "added": []
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "6031225816",
+              "role": "via"
+            }
+          ],
+          "added": [
+            {
+              "type": "node",
+              "ref": "5449147420",
+              "role": "via"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9424647",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "node",
+          "ref": "6355797434",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806052",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888410",
+          "role": "from"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:35Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_right_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "678806052",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6355797434",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "678806055",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "678806055",
+              "role": "to"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1148888410",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9424651",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:35Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_u_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "678806057",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6355797433",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "678806057",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "to"
+            }
+          ],
+          "added": []
+        }
+      ]
+    },
+    {
+      "relation": "9424653",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "678806050",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:35Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_right_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "678806050",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6355797433",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "678806057",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "to"
+            }
+          ],
+          "added": []
+        }
+      ]
+    },
+    {
+      "relation": "9424654",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "from"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:35Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "565937915",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5465362632",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "678806057",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "5465362632",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "to"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1148888407",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9424655",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:35Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "565937915",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5465362632",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "565937916",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "5465362632",
+              "role": "via"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1148888407",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9424656",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:35Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "678806057",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5465362632",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "565937916",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "678806057",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362632",
+              "role": "via"
+            }
+          ],
+          "added": []
+        }
+      ]
+    },
+    {
+      "relation": "9424658",
+      "localMemberMatchingVersions": [
+        3
+      ],
+      "latestVersion": 3,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888408",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 2,
+        "timestamp": "2020-09-24T00:35:19Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "850678275",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5465362633",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "565937913",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "565937914",
+              "role": "from"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "850678275",
+              "role": "from"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1148888408",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9424659",
+      "localMemberMatchingVersions": [
+        3
+      ],
+      "latestVersion": 3,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888408",
+          "role": "from"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 2,
+        "timestamp": "2020-09-24T00:35:19Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "850678275",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5465362633",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "678806055",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "565937914",
+              "role": "from"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "850678275",
+              "role": "from"
+            }
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": "678806055",
+              "role": "to"
+            }
+          ],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1148888408",
+              "role": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "relation": "9424660",
+      "localMemberMatchingVersions": [
+        2
+      ],
+      "latestVersion": 2,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:35Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "678806055",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "5465362633",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "565937913",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "way",
+              "ref": "678806055",
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": "5465362633",
+              "role": "via"
+            }
+          ],
+          "added": []
+        }
+      ]
+    },
+    {
+      "relation": "9424662",
+      "localMemberMatchingVersions": [
+        3
+      ],
+      "latestVersion": 3,
+      "latestVisible": true,
+      "latestMembers": [
+        {
+          "type": "way",
+          "ref": "1452565552",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565553",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "576344905",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565554",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565550",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1452565551",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "678806054",
+          "role": "to"
+        }
+      ],
+      "lastAllRolesPresent": {
+        "version": 1,
+        "timestamp": "2019-03-23T02:29:36Z",
+        "visible": true,
+        "tags": {
+          "restriction": "no_left_turn",
+          "type": "restriction"
+        },
+        "members": [
+          {
+            "type": "way",
+            "ref": "576344905",
+            "role": "from"
+          },
+          {
+            "type": "node",
+            "ref": "6355797439",
+            "role": "via"
+          },
+          {
+            "type": "way",
+            "ref": "678806054",
+            "role": "to"
+          }
+        ]
+      },
+      "memberTransitions": [
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "removed": [
+            {
+              "type": "node",
+              "ref": "6355797439",
+              "role": "via"
+            }
+          ],
+          "added": []
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "removed": [],
+          "added": [
+            {
+              "type": "way",
+              "ref": "1452565552",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1452565553",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1452565554",
+              "role": "from"
+            },
+            {
+              "type": "way",
+              "ref": "1452565550",
+              "role": "to"
+            },
+            {
+              "type": "way",
+              "ref": "1452565551",
+              "role": "to"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "ways": [
+    {
+      "type": "way",
+      "id": "285240586",
+      "url": "https://api.openstreetmap.org/api/0.6/way/285240586/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2014-05-30T14:24:43Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "2889236046",
+            "2889236045",
+            "2889236044",
+            "2889236043",
+            "2879784098"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2014-05-30T14:27:22Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "2889236046",
+            "2889236045",
+            "2889236044",
+            "2889236043",
+            "2889225266",
+            "2879784098"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2016-03-15T15:44:47Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "2889236046",
+            "2889236045",
+            "4061859389",
+            "2889236044",
+            "2889236043",
+            "2889225266",
+            "2879784098"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2016-03-15T21:02:35Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "2889236046",
+            "2889177980",
+            "2889236045",
+            "4061859389",
+            "2889236044",
+            "2889236043",
+            "2889225266",
+            "2879784098"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2018-03-01T23:39:48Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "2889177980",
+            "2889236045",
+            "4061859389",
+            "2889236044",
+            "2889236043",
+            "2889225266",
+            "2879784098"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2018-03-02T00:00:16Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5446790024",
+            "2889236045",
+            "4061859389",
+            "2889236044",
+            "2889236043",
+            "2889225266",
+            "2879784098"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2018-03-02T00:11:51Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5446790024",
+            "2889236045",
+            "4061859389"
+          ]
+        },
+        {
+          "version": 8,
+          "timestamp": "2023-09-18T10:47:21Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5446790024",
+            "2889236045",
+            "4061859389"
+          ]
+        },
+        {
+          "version": 9,
+          "timestamp": "2026-02-07T19:50:00Z",
+          "visible": false,
+          "tags": {},
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "565574608",
+      "url": "https://api.openstreetmap.org/api/0.6/way/565574608/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-02T00:11:50Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "4061859389",
+            "2889236622",
+            "4061859390"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-09-18T10:47:21Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "4061859389",
+            "2889236622",
+            "4061859390"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2026-02-07T19:50:00Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "4061859389",
+            "2889236622"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "565574610",
+      "url": "https://api.openstreetmap.org/api/0.6/way/565574610/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-02T00:11:50Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "name": "운중로",
+            "name:en": "Unjung-ro",
+            "name:ko": "운중로",
+            "name:ko_rm": "Unjungno",
+            "ncat": "지방도",
+            "oneway": "yes",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "4061859390",
+            "5446790024"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2018-08-11T08:42:10Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "name": "운중로",
+            "name:en": "Unjung-ro",
+            "name:ko": "운중로",
+            "name:ko-Latn": "Unjungno",
+            "ncat": "지방도",
+            "oneway": "yes",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "4061859390",
+            "5446790024"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2021-04-11T04:02:23Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "name": "운중로",
+            "name:en": "Unjung-ro",
+            "name:ko": "운중로",
+            "name:ko-Latn": "Unjungno",
+            "oneway": "yes",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "4061859390",
+            "5446790024"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2023-09-18T10:47:21Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary",
+            "name": "운중로",
+            "name:en": "Unjung-ro",
+            "name:ko": "운중로",
+            "name:ko-Latn": "Unjungno",
+            "oneway": "yes",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "4061859390",
+            "5446790024"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2025-11-25T13:43:07Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary",
+            "name": "운중로",
+            "name:en": "Unjung-ro",
+            "name:ko": "운중로",
+            "name:ko-Latn": "Unjungno",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "4061859390",
+            "5446790024"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2026-02-07T19:50:00Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary",
+            "name": "운중로",
+            "name:en": "Unjung-ro",
+            "name:ko": "운중로",
+            "name:ko-Latn": "Unjungno",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "2889236622",
+            "5446790024"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2026-07-01T14:41:26Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "name": "운중로",
+            "name:en": "Unjung-ro",
+            "name:ko": "운중로",
+            "name:ko-Latn": "Unjungno",
+            "oneway": "yes",
+            "source:highway": "성남시 내부도로망 현황, 2035년 성남 도시기본계획, 페이지 185"
+          },
+          "nodes": [
+            "2889236622",
+            "5446790024"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "565937913",
+      "url": "https://api.openstreetmap.org/api/0.6/way/565937913/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-02T21:32:23Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147416",
+            "5449147415",
+            "5449147414",
+            "5449147413"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2018-03-08T20:26:13Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362633",
+            "5449147415",
+            "5449147414",
+            "5449147413"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2018-12-26T05:18:30Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362633",
+            "5449147415",
+            "5449147414",
+            "5449147413"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2019-01-08T12:24:57Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362633",
+            "5449147415",
+            "5449147414",
+            "5449147413",
+            "6192237852",
+            "6031225816"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2019-03-23T02:29:36Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362633",
+            "5449147415",
+            "5449147413",
+            "6192237852",
+            "6031225816"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2020-05-22T12:23:53Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362633",
+            "7548571116",
+            "7548571117",
+            "5449147415",
+            "5449147413",
+            "6192237852",
+            "6031225816"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362633",
+            "7548571116",
+            "7548571117",
+            "5449147415",
+            "5449147413",
+            "6192237852",
+            "7935964027",
+            "7935964116",
+            "7935964117"
+          ]
+        },
+        {
+          "version": 8,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "10688742055",
+            "10688742054",
+            "7548571116",
+            "10688742051",
+            "7548571117",
+            "5449147415",
+            "5449147413",
+            "6192237852",
+            "7935964027",
+            "7935964116",
+            "7935964117"
+          ]
+        },
+        {
+          "version": 9,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "10688742055",
+            "10688742054",
+            "7548571116",
+            "10688742051",
+            "7548571117",
+            "5449147415",
+            "5449147413",
+            "6192237852",
+            "7935964027",
+            "7935964082"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "565937914",
+      "url": "https://api.openstreetmap.org/api/0.6/way/565937914/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-02T21:32:23Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147419",
+            "5449147418",
+            "5449147417",
+            "5449147416"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2018-12-26T05:18:30Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147419",
+            "5449147418",
+            "5449147417",
+            "5449147416"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2019-01-08T12:24:57Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225817",
+            "5449147419",
+            "5449147418",
+            "5449147417",
+            "5449147416"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2019-03-23T02:29:37Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225817",
+            "5449147419",
+            "5449147418",
+            "5449147417",
+            "5465362633"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2020-05-22T12:23:53Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225817",
+            "7548571120",
+            "5449147419",
+            "5449147417",
+            "7548571119",
+            "7548571118",
+            "5465362633"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": false,
+          "tags": {},
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "565937915",
+      "url": "https://api.openstreetmap.org/api/0.6/way/565937915/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-02T21:32:23Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147413",
+            "5449147420",
+            "5449147421",
+            "5449147422"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2018-03-08T20:26:13Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147413",
+            "5449147420",
+            "5449147421",
+            "5465362632"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2018-11-02T05:09:55Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225816",
+            "5449147420",
+            "5449147421",
+            "5465362632"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2018-12-26T05:18:30Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225816",
+            "5449147420",
+            "5449147421",
+            "5465362632"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2019-03-23T02:29:36Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225816",
+            "5449147420",
+            "6355797432",
+            "5449147421",
+            "5465362632"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2020-05-22T12:23:53Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225816",
+            "5449147420",
+            "7548571111",
+            "6355797432",
+            "5449147421",
+            "7548571115",
+            "7548571114",
+            "5465362632"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6031225816",
+            "5449147420",
+            "7548571111",
+            "6355797432",
+            "5449147421"
+          ]
+        },
+        {
+          "version": 8,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147420",
+            "7548571111",
+            "6355797432",
+            "5449147421"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "565937916",
+      "url": "https://api.openstreetmap.org/api/0.6/way/565937916/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-03-02T21:32:23Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147422",
+            "5449147423",
+            "5449147424",
+            "5449147419"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2018-11-02T05:09:55Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147422",
+            "5449147423",
+            "5449147424",
+            "6031225817"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2018-12-26T05:18:30Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147422",
+            "5449147423",
+            "5449147424",
+            "6031225817"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2019-03-23T02:29:36Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362632",
+            "5449147423",
+            "6355797431",
+            "5449147424",
+            "6031225817"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2020-05-22T12:23:53Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5465362632",
+            "7548571113",
+            "7548571112",
+            "5449147423",
+            "6355797431",
+            "5449147424",
+            "6031225817"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "10688742047",
+            "10688742046",
+            "7548571113",
+            "7548571112",
+            "5449147423",
+            "6355797431",
+            "5449147424",
+            "6031225817"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "10688742047",
+            "10688742046",
+            "7548571113",
+            "7548571112",
+            "5449147423",
+            "6355797431",
+            "5449147424"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "576344905",
+      "url": "https://api.openstreetmap.org/api/0.6/way/576344905/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-04-04T13:20:15Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362632",
+            "5465362643",
+            "5465362644",
+            "5465362645",
+            "5300249463"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-01-08T12:24:57Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "5465362633",
+            "6192237853",
+            "5465362632",
+            "5465362643",
+            "5465362644",
+            "5465362645",
+            "5300249463"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2019-03-23T02:29:36Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "6355797435",
+            "6355797439"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2019-07-17T04:04:29Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "6355797435",
+            "6355797439"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "10688742055",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "residential",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "10688742055",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2023-08-10T12:14:38Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "10688742055",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 8,
+          "timestamp": "2023-08-13T16:55:06Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "residential",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "10688742055",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 9,
+          "timestamp": "2023-08-21T08:29:39Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "5519211908",
+            "10688742055",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 10,
+          "timestamp": "2023-11-06T16:41:01Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "10688742055",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 11,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "lanes": "5",
+            "maxspeed": "50",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "13321476977",
+            "10688742055"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "588443257",
+      "url": "https://api.openstreetmap.org/api/0.6/way/588443257/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-05-15T16:32:34Z",
+          "visible": true,
+          "tags": {
+            "highway": "residential",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5620151503",
+            "5620151504",
+            "5620151501"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "588443263",
+      "url": "https://api.openstreetmap.org/api/0.6/way/588443263/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-05-15T16:32:34Z",
+          "visible": true,
+          "tags": {
+            "highway": "residential",
+            "name": "화곡로66길"
+          },
+          "nodes": [
+            "5620151500",
+            "5620151503"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-13T08:36:47Z",
+          "visible": true,
+          "tags": {
+            "highway": "residential",
+            "name": "화곡로66길",
+            "name:en": "Hwagok-ro 66-gil",
+            "name:ko": "화곡로66길"
+          },
+          "nodes": [
+            "5620151500",
+            "5620151503"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "617401136",
+      "url": "https://api.openstreetmap.org/api/0.6/way/617401136/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-08-16T12:04:38Z",
+          "visible": true,
+          "tags": {
+            "highway": "residential",
+            "maxspeed": "30",
+            "name": "화곡로66길",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5836270432",
+            "4605022147",
+            "5836270438",
+            "3042643889",
+            "2826071143",
+            "2825875097",
+            "4605022119"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-13T08:36:47Z",
+          "visible": true,
+          "tags": {
+            "highway": "residential",
+            "maxspeed": "30",
+            "name": "화곡로66길",
+            "name:en": "Hwagok-ro 66-gil",
+            "name:ko": "화곡로66길",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5836270432",
+            "4605022147",
+            "5836270438",
+            "3042643889",
+            "2826071143",
+            "2825875097",
+            "4605022119"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-04-15T11:40:57Z",
+          "visible": true,
+          "tags": {
+            "highway": "residential",
+            "maxspeed": "30",
+            "name": "화곡로66길",
+            "name:en": "Hwagok-ro 66-gil",
+            "name:ko": "화곡로66길",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5836270432",
+            "4605022147",
+            "5836270438",
+            "3042643889",
+            "2826071143",
+            "2825875097",
+            "10814323666"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "639701457",
+      "url": "https://api.openstreetmap.org/api/0.6/way/639701457/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-10-31T13:32:04Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "name": "연현로1번길",
+            "name:en": "Yeonhyeon-ro 1beon-gil",
+            "name:ko": "연현로1번길",
+            "oneway": "no"
+          },
+          "nodes": [
+            "614607371",
+            "5259332484",
+            "614607332"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2020-01-19T05:55:09Z",
+          "visible": true,
+          "tags": {
+            "highway": "secondary",
+            "name": "연현로",
+            "name:en": "Yeonhyeon-ro",
+            "name:ko": "연현로",
+            "oneway": "no"
+          },
+          "nodes": [
+            "614607371",
+            "614607332"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-25T11:31:16Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary",
+            "name": "연현로",
+            "name:en": "Yeonhyeon-ro",
+            "name:ko": "연현로",
+            "oneway": "no"
+          },
+          "nodes": [
+            "614607371",
+            "614607332"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "639701459",
+      "url": "https://api.openstreetmap.org/api/0.6/way/639701459/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-10-31T13:32:05Z",
+          "visible": true,
+          "tags": {
+            "highway": "motorway_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "614607332",
+            "6027346411",
+            "614607170"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2020-01-19T05:55:09Z",
+          "visible": true,
+          "tags": {
+            "highway": "motorway_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "614607332",
+            "6027346411",
+            "614607170",
+            "614607171",
+            "614607172",
+            "614607173",
+            "614607174",
+            "614607151"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2022-12-29T07:50:13Z",
+          "visible": true,
+          "tags": {
+            "highway": "motorway_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "614607332",
+            "10292709948",
+            "10292709947",
+            "10292709946",
+            "10292709945",
+            "10292709944",
+            "614607173",
+            "614607174",
+            "614607151"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2022-12-31T02:29:30Z",
+          "visible": false,
+          "tags": {},
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "658494229",
+      "url": "https://api.openstreetmap.org/api/0.6/way/658494229/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-12-27T15:35:17Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6166378882",
+            "6166378883",
+            "6166378884",
+            "5300249443"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6166378882",
+            "6166378884",
+            "5300249443"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "13323211544",
+            "13323211531",
+            "6166378884",
+            "5300249443"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "658494231",
+      "url": "https://api.openstreetmap.org/api/0.6/way/658494231/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-12-27T15:35:18Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5300249444",
+            "5449146655",
+            "5449146654",
+            "5300229580"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-17T04:04:29Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5300249444",
+            "5449146655",
+            "5449146654",
+            "5300229580"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "residential",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5300249444",
+            "5449146655",
+            "5449146654",
+            "5300229580"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2023-08-10T12:14:38Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5300249444",
+            "5449146655",
+            "5449146654",
+            "5300229580"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2023-08-13T08:09:54Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "residential",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5300249444",
+            "5449146655",
+            "5449146654",
+            "5300229580"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2023-08-21T08:29:39Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5300249444",
+            "5449146655",
+            "5449146654",
+            "5300229580"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "lanes": "2",
+            "maxspeed": "50",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "13323211544",
+            "5300249444",
+            "13323211541",
+            "5449146655",
+            "5449146654"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "658494247",
+      "url": "https://api.openstreetmap.org/api/0.6/way/658494247/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2018-12-27T15:35:18Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseonno",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "6031225816",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-18T09:03:39Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "6031225816",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2020-05-22T12:23:53Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "6031225816",
+            "7548571110",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "oneway": "yes",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "6031225816",
+            "7548571110",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2024-09-05T17:29:48Z",
+          "visible": true,
+          "tags": {
+            "expressway": "yes",
+            "highway": "trunk",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "oneway": "yes",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "6031225816",
+            "7548571110",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2025-04-10T17:35:03Z",
+          "visible": true,
+          "tags": {
+            "expressway": "yes",
+            "highway": "trunk",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "oneway": "yes",
+            "ref": "14",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "6031225816",
+            "7548571110",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "expressway": "yes",
+            "highway": "trunk",
+            "lanes": "3",
+            "maxspeed": "70",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "oneway": "yes",
+            "ref": "14",
+            "review": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "5449147420",
+            "7548571110",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 8,
+          "timestamp": "2025-08-09T10:57:43Z",
+          "visible": true,
+          "tags": {
+            "bicycle": "no",
+            "expressway": "yes",
+            "foot": "no",
+            "highway": "trunk",
+            "lanes": "3",
+            "maxspeed": "70",
+            "mofa": "no",
+            "moped": "no",
+            "motorroad": "no",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "ncat": "국도",
+            "oneway": "yes",
+            "ref": "14",
+            "review": "no",
+            "small_electric_vehicle": "no",
+            "source": "NTIC"
+          },
+          "nodes": [
+            "5449147420",
+            "7548571110",
+            "1000488926"
+          ]
+        },
+        {
+          "version": 9,
+          "timestamp": "2025-11-25T12:47:47Z",
+          "visible": true,
+          "tags": {
+            "bicycle": "no",
+            "expressway": "yes",
+            "foot": "no",
+            "highway": "trunk",
+            "lanes": "3",
+            "maxspeed": "70",
+            "mofa": "no",
+            "moped": "no",
+            "motorroad": "no",
+            "name": "북부간선로",
+            "name:en": "Bukbuganseon-ro",
+            "name:ko": "북부간선로",
+            "name:ko-Latn": "Bukbuganseonno",
+            "oneway": "yes",
+            "ref": "14",
+            "small_electric_vehicle": "no"
+          },
+          "nodes": [
+            "5449147420",
+            "7548571110",
+            "1000488926"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "661420771",
+      "url": "https://api.openstreetmap.org/api/0.6/way/661420771/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-01-08T12:27:00Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6192240673",
+            "6166378882"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-17T04:04:29Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6192240673",
+            "6166378882"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "residential",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6192240673",
+            "6166378882"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2023-08-10T12:14:38Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6192240673",
+            "6166378882"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2023-08-13T08:09:54Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "residential",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6192240673",
+            "6166378882"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2023-11-06T16:41:01Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6192240673",
+            "6166378882"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6192240672",
+            "6166378882"
+          ]
+        },
+        {
+          "version": 8,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "maxspeed": "50",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "13323211545",
+            "13323211540",
+            "13323211544"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "678806050",
+      "url": "https://api.openstreetmap.org/api/0.6/way/678806050/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:34Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147421",
+            "6355797433"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147421",
+            "6355797433"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147421",
+            "6355797433"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "678806052",
+      "url": "https://api.openstreetmap.org/api/0.6/way/678806052/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:34Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147417",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147417",
+            "6355797436"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147417",
+            "6355797436"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "678806054",
+      "url": "https://api.openstreetmap.org/api/0.6/way/678806054/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:34Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797439",
+            "6355797436",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-17T04:04:29Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797439",
+            "6355797436",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797436",
+            "10688742053",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "residential",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797436",
+            "10688742053",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 5,
+          "timestamp": "2023-08-10T12:14:38Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797436",
+            "10688742053",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 6,
+          "timestamp": "2023-08-13T16:55:06Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "residential",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797436",
+            "10688742053",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 7,
+          "timestamp": "2023-08-21T08:29:39Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797436",
+            "10688742053",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 8,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797436",
+            "10688742052",
+            "5519211903",
+            "5300229592"
+          ]
+        },
+        {
+          "version": 9,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "lanes": "5",
+            "maxspeed": "50",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "13321476975",
+            "5519211903",
+            "5300229592"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "678806055",
+      "url": "https://api.openstreetmap.org/api/0.6/way/678806055/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:34Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797434",
+            "5465362633"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-17T04:04:29Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797434",
+            "5465362633"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": false,
+          "tags": {},
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "678806057",
+      "url": "https://api.openstreetmap.org/api/0.6/way/678806057/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2019-03-23T02:29:34Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362632",
+            "6355797433"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2019-07-17T04:04:29Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "secondary",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362632",
+            "6355797433"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": false,
+          "tags": {},
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "850678275",
+      "url": "https://api.openstreetmap.org/api/0.6/way/850678275/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2020-09-24T00:35:19Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "7935964120",
+            "7548571120",
+            "5449147419",
+            "5449147417",
+            "7548571119",
+            "7548571118",
+            "5465362633"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "7935964120",
+            "7548571120",
+            "5449147419",
+            "5449147417"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "7935964078",
+            "7548571120",
+            "5449147419",
+            "5449147417"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1148888407",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1148888407/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147421",
+            "7548571115",
+            "7548571114",
+            "10688742048",
+            "10688742049",
+            "10688742050"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147421",
+            "7548571115",
+            "7548571114",
+            "10688742048",
+            "10688742049",
+            "10688742050"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147421",
+            "7548571115",
+            "7548571114",
+            "10688742048",
+            "10688742049"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1148888408",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1148888408/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147417",
+            "7548571119",
+            "7548571118",
+            "10688742052",
+            "10688742053"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147417",
+            "7548571119",
+            "7548571118",
+            "10688742052",
+            "10688742053"
+          ]
+        },
+        {
+          "version": 3,
+          "timestamp": "2025-07-09T16:01:20Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147417",
+            "7548571119",
+            "7548571118",
+            "10688742052"
+          ]
+        },
+        {
+          "version": 4,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "5449147417",
+            "13321476974",
+            "7548571119",
+            "7548571118",
+            "10688742052"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1148888410",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1148888410/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2023-02-23T16:23:06Z",
+          "visible": true,
+          "tags": {
+            "highway": "tertiary_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6355797436",
+            "6355797434"
+          ]
+        },
+        {
+          "version": 2,
+          "timestamp": "2023-08-06T15:59:59Z",
+          "visible": true,
+          "tags": {
+            "highway": "trunk_link",
+            "oneway": "yes"
+          },
+          "nodes": [
+            "6355797436",
+            "6355797434"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1452565550",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1452565550/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "lanes": "3",
+            "maxspeed": "50",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "6355797436",
+            "10688742052"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1452565551",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1452565551/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "lanes": "4",
+            "maxspeed": "50",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "10688742052",
+            "13321476975"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1452565552",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1452565552/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "lanes": "3",
+            "maxspeed": "50",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5465362642",
+            "13321476976"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1452565553",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1452565553/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "lanes": "4",
+            "maxspeed": "50",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "13321476976",
+            "13321476977"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1452565554",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1452565554/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2025-11-21T07:56:24Z",
+          "visible": true,
+          "tags": {
+            "cycleway:right": "track",
+            "highway": "tertiary",
+            "lanes": "4",
+            "maxspeed": "50",
+            "name": "다산중앙로",
+            "name:en": "Dasanjungang-ro",
+            "name:ko": "다산중앙로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "10688742055",
+            "6355797434"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "way",
+      "id": "1452754543",
+      "url": "https://api.openstreetmap.org/api/0.6/way/1452754543/history",
+      "versions": [
+        {
+          "version": 1,
+          "timestamp": "2025-11-22T00:54:49Z",
+          "visible": true,
+          "tags": {
+            "cycleway": "track",
+            "highway": "tertiary",
+            "lanes": "3",
+            "maxspeed": "30",
+            "name": "다산순환로",
+            "name:en": "Dasansunhwan-ro",
+            "name:ko": "다산순환로",
+            "oneway": "yes",
+            "surface": "asphalt"
+          },
+          "nodes": [
+            "5449146654",
+            "5300229580"
+          ]
+        }
+      ]
+    }
+  ]
+}

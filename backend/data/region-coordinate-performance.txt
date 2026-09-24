@@ -1,0 +1,4 @@
+region=8603390 java=21.0.12.1 maxHeap=536870912 nodes=161 edges=209 nodeTurns=4 viaRules=9 cases=60 found=49 noRoute=11 initMs=18.898 initAllocatedBytes=1445888 measured=600 p50Ms=0.0085 p95Ms=0.0346 allocatedBytesPerQuery=19379
+http region=8603390 cases=60 statuses={404: 11, 200: 49} extraErrors=3 p50Ms=1.1093 p95Ms=2.0230 (no HTTP warmup, serial loopback)
+region=9305993 java=21.0.12.1 maxHeap=536870912 nodes=180 edges=375 nodeTurns=19 viaRules=1 cases=60 found=60 noRoute=0 initMs=18.161 initAllocatedBytes=1459704 measured=600 p50Ms=0.0198 p95Ms=0.0588 allocatedBytesPerQuery=43099
+http region=9305993 cases=60 statuses={200: 60} extraErrors=3 p50Ms=0.9037 p95Ms=1.5734 (no HTTP warmup, serial loopback)

@@ -1,0 +1,346 @@
+[
+  {
+    "relation": 8065244,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "565574610",
+        "nodes": [
+          "2889236622",
+          "5446790024"
+        ],
+        "tags": {
+          "highway": "secondary",
+          "name": "운중로",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "node",
+        "ref": "5446790024"
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "565574622",
+        "nodes": [
+          "2889236620",
+          "437306782",
+          "13532770669",
+          "5446790024"
+        ],
+        "tags": {
+          "highway": "primary",
+          "name": "안양판교로",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=5 edges=4 forbiddenTurns=0 viaRules=0 arrayBytes=224"
+  },
+  {
+    "relation": 8065259,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "565574622",
+        "nodes": [
+          "2889236620",
+          "437306782",
+          "13532770669",
+          "5446790024"
+        ],
+        "tags": {
+          "highway": "primary",
+          "name": "안양판교로",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "node",
+        "ref": "2889236620"
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "285240589",
+        "nodes": [
+          "2889236620",
+          "4061859389"
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=5 edges=4 forbiddenTurns=0 viaRules=0 arrayBytes=224"
+  },
+  {
+    "relation": 8065260,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "565574623",
+        "nodes": [
+          "2889225258",
+          "2889177978",
+          "13532770673",
+          "13532770672",
+          "2889236620"
+        ],
+        "tags": {
+          "highway": "primary",
+          "name": "안양판교로",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "node",
+        "ref": "2889225258"
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "285240799",
+        "nodes": [
+          "2889225258",
+          "2889225260",
+          "2889225261",
+          "2889225262",
+          "2889225263",
+          "2889225264",
+          "2889225265",
+          "2889225266"
+        ],
+        "tags": {
+          "highway": "primary_link",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=12 edges=11 forbiddenTurns=0 viaRules=0 arrayBytes=560"
+  },
+  {
+    "relation": 9157736,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "658494247",
+        "nodes": [
+          "5449147420",
+          "7548571110",
+          "1000488926"
+        ],
+        "tags": {
+          "highway": "trunk",
+          "name": "북부간선로",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "node",
+        "ref": "5449147420"
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "565937915",
+        "nodes": [
+          "5449147420",
+          "7548571111",
+          "6355797432",
+          "5449147421"
+        ],
+        "tags": {
+          "highway": "trunk_link",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=6 edges=5 forbiddenTurns=0 viaRules=0 arrayBytes=272"
+  },
+  {
+    "relation": 9157737,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "565937916",
+        "nodes": [
+          "10688742047",
+          "10688742046",
+          "7548571113",
+          "7548571112",
+          "5449147423",
+          "6355797431",
+          "5449147424"
+        ],
+        "tags": {
+          "highway": "trunk_link",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "node",
+        "ref": "5449147424"
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "86198525",
+        "nodes": [
+          "1000489007",
+          "5449147424"
+        ],
+        "tags": {
+          "highway": "trunk",
+          "name": "북부간선로",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=8 edges=7 forbiddenTurns=0 viaRules=0 arrayBytes=368"
+  },
+  {
+    "relation": 9424649,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "678806056",
+        "nodes": [
+          "6355797434",
+          "6355797433"
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "name": "다산중앙로",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "node",
+        "ref": "6355797434"
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "678806056",
+        "nodes": [
+          "6355797434",
+          "6355797433"
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "name": "다산중앙로",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=2 edges=1 forbiddenTurns=0 viaRules=0 arrayBytes=80"
+  },
+  {
+    "relation": 9424650,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "678806056",
+        "nodes": [
+          "6355797434",
+          "6355797433"
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "name": "다산중앙로",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "node",
+        "ref": "6355797433"
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "678806056",
+        "nodes": [
+          "6355797434",
+          "6355797433"
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "name": "다산중앙로",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=2 edges=1 forbiddenTurns=0 viaRules=0 arrayBytes=80"
+  },
+  {
+    "relation": 9424665,
+    "members": [
+      {
+        "role": "from",
+        "type": "way",
+        "ref": "678806050",
+        "nodes": [
+          "5449147421",
+          "6355797433"
+        ],
+        "tags": {
+          "highway": "trunk_link",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "via",
+        "type": "way",
+        "ref": "678806056",
+        "nodes": [
+          "6355797434",
+          "6355797433"
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "name": "다산중앙로",
+          "oneway": "yes"
+        }
+      },
+      {
+        "role": "to",
+        "type": "way",
+        "ref": "678806053",
+        "nodes": [
+          "6355797434",
+          "5449147415"
+        ],
+        "tags": {
+          "highway": "trunk_link",
+          "oneway": "yes"
+        }
+      }
+    ],
+    "classification": "STATIC_DIRECTION_BLOCKED_NO",
+    "graph": "Nodes=4 edges=3 forbiddenTurns=0 viaRules=0 arrayBytes=176"
+  }
+]

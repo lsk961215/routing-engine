@@ -1,0 +1,1054 @@
+{
+  "sourceFile": "seoul-routing-complete.osm.pbf",
+  "sourceSha256": "404b4dcd37c8063f99ad45daf65b324d2dd35c5f21bf4addb67e6677e5762b31",
+  "policy": "Review only. No proposals approved or applied. Revalidate snapshot and members before any future application.",
+  "candidates": [
+    {
+      "relation": "8065255",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "3",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "565574610",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5446790024",
+          "role": "via"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/8065255/2",
+      "historicalVersion": 2,
+      "historicalTimestamp": "2018-03-02T00:11:51Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "565574610",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5446790024",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "285240586",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "w285240586"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "8107282",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "node",
+          "ref": "4061859389",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565574608",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/8107282/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2018-03-13T04:33:44Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "285240586",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "4061859389",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565574608",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "w285240586"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "8301295",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "617401136",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "588443263",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "588443257",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/8301295/2",
+      "historicalVersion": 2,
+      "historicalTimestamp": "2018-08-16T12:04:44Z",
+      "proposedMembers": null,
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [],
+      "status": "NO_MEMBER_REPAIR_FROM_HISTORY"
+    },
+    {
+      "relation": "8871502",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "639701457",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "614607332",
+          "role": "via"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/8871502/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2018-10-31T13:32:05Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "639701457",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "614607332",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "639701459",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "w639701459"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9157729",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9157729/2",
+      "historicalVersion": 2,
+      "historicalTimestamp": "2025-11-22T00:54:49Z",
+      "proposedMembers": null,
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [],
+      "status": "NO_MEMBER_REPAIR_FROM_HISTORY"
+    },
+    {
+      "relation": "9157730",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "661420771",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "661420771",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9157730/2",
+      "historicalVersion": 2,
+      "historicalTimestamp": "2019-01-08T12:27:00Z",
+      "proposedMembers": null,
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [],
+      "status": "NO_MEMBER_REPAIR_FROM_HISTORY"
+    },
+    {
+      "relation": "9157731",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "1452754543",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1452754543",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9157731/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2018-12-27T15:35:20Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5300249444",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads",
+        "No additional forbidden transitions in the isolated current graph"
+      ],
+      "missingReferences": [],
+      "status": "BUILDABLE_NO_EFFECT_UNAPPROVED",
+      "diagnostics": [],
+      "buildSummary": [
+        "Direction-blocked no restrictions: []",
+        "Nodes=5 edges=4 forbiddenTurns=0 viaRules=0 arrayBytes=224"
+      ]
+    },
+    {
+      "relation": "9157732",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494229",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9157732/2",
+      "historicalVersion": 2,
+      "historicalTimestamp": "2025-11-22T00:54:49Z",
+      "proposedMembers": null,
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [],
+      "status": "NO_MEMBER_REPAIR_FROM_HISTORY"
+    },
+    {
+      "relation": "9195810",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "3",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5449147424",
+          "role": "via"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9195810/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-01-08T12:24:57Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6031225817",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937914",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n6031225817",
+        "w565937914"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9195811",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "4",
+      "expectedBeforeMembers": [
+        {
+          "type": "node",
+          "ref": "5449147420",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9195811/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-01-08T12:24:57Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6031225816",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n6031225816"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9195812",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "3",
+      "expectedBeforeMembers": [
+        {
+          "type": "node",
+          "ref": "5449147420",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494247",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9195812/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-01-08T12:24:57Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6031225816",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494247",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n6031225816"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424647",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "node",
+          "ref": "6355797434",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806052",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888410",
+          "role": "from"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424647/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:35Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "678806052",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6355797434",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806055",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "w678806055"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424651",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424651/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:35Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "678806057",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806057",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "w678806057"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424653",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "678806050",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424653/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:35Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "678806050",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806057",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "w678806057"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424654",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "from"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424654/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:35Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5465362632",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806057",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n5465362632",
+        "w678806057"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424655",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424655/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:35Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5465362632",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n5465362632"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424656",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424656/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:35Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "678806057",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5465362632",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n5465362632",
+        "w678806057"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424658",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "3",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888408",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424658/2",
+      "historicalVersion": 2,
+      "historicalTimestamp": "2020-09-24T00:35:19Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5465362633",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n5465362633"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424659",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "3",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888408",
+          "role": "from"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424659/2",
+      "historicalVersion": 2,
+      "historicalTimestamp": "2020-09-24T00:35:19Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5465362633",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806055",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n5465362633",
+        "w678806055"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424660",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "2",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424660/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:35Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "678806055",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5465362633",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n5465362633",
+        "w678806055"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    },
+    {
+      "relation": "9424662",
+      "approved": false,
+      "apply": false,
+      "sourceRelationVersion": "3",
+      "expectedBeforeMembers": [
+        {
+          "type": "way",
+          "ref": "1452565552",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565553",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "576344905",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565554",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565550",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1452565551",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "678806054",
+          "role": "to"
+        }
+      ],
+      "expectedBeforeTags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "evidenceUrl": "https://api.openstreetmap.org/api/0.6/relation/9424662/1",
+      "historicalVersion": 1,
+      "historicalTimestamp": "2019-03-23T02:29:36Z",
+      "proposedMembers": [
+        {
+          "type": "way",
+          "ref": "576344905",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6355797439",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806054",
+          "role": "to"
+        }
+      ],
+      "uncertainties": [
+        "Current restriction validity unverified",
+        "Historical topology may not match current roads"
+      ],
+      "missingReferences": [
+        "n6355797439"
+      ],
+      "status": "HISTORICAL_REFERENCE_MISSING"
+    }
+  ]
+}

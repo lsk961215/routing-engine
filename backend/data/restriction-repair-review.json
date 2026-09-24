@@ -1,0 +1,1571 @@
+{
+  "relations": [
+    {
+      "relation": 8065255,
+      "issues": "[INVALID_MEMBERS, MISSING_TO]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "565574610",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5446790024",
+          "role": "via"
+        }
+      ],
+      "missingRoles": [
+        "to"
+      ],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "5446790024",
+          "role": "from",
+          "way": "565574610",
+          "contained": true,
+          "nearestExistingNode": "5446790024",
+          "distanceMetres": 0.0
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 8107282,
+      "issues": "[INVALID_MEMBERS, MISSING_FROM]",
+      "members": [
+        {
+          "type": "node",
+          "ref": "4061859389",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565574608",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "from"
+      ],
+      "roleCounts": {
+        "from": 0,
+        "via": 1,
+        "to": 1
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "4061859389",
+          "role": "to",
+          "way": "565574608",
+          "contained": true,
+          "nearestExistingNode": "4061859389",
+          "distanceMetres": 0.0
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 8301295,
+      "issues": "[DISCONNECTED_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "617401136",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "588443263",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "588443257",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 1
+      },
+      "fromToIntersections": [
+        {
+          "from": "617401136",
+          "to": "588443257",
+          "sameWay": false,
+          "nodes": []
+        }
+      ],
+      "viaNodeMembership": [],
+      "chainIntersections": [
+        {
+          "a": "617401136",
+          "b": "588443263",
+          "sharedNodes": []
+        },
+        {
+          "a": "588443263",
+          "b": "588443257",
+          "sharedNodes": [
+            "5620151503"
+          ]
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 8871502,
+      "issues": "[INVALID_MEMBERS, MISSING_TO]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "639701457",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "614607332",
+          "role": "via"
+        }
+      ],
+      "missingRoles": [
+        "to"
+      ],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "614607332",
+          "role": "from",
+          "way": "639701457",
+          "contained": true,
+          "nearestExistingNode": "614607332",
+          "distanceMetres": 0.0
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9157729,
+      "issues": "[DISCONNECTED_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 1
+      },
+      "fromToIntersections": [
+        {
+          "from": "658494231",
+          "to": "658494231",
+          "sameWay": true,
+          "nodes": [
+            "13323211541",
+            "13323211544",
+            "5300249444",
+            "5449146654",
+            "5449146655"
+          ]
+        }
+      ],
+      "viaNodeMembership": [
+        {
+          "via": "6166378882",
+          "role": "from",
+          "way": "658494231",
+          "contained": false,
+          "nearestExistingNode": "13323211544",
+          "distanceMetres": 17.538
+        },
+        {
+          "via": "6166378882",
+          "role": "to",
+          "way": "658494231",
+          "contained": false,
+          "nearestExistingNode": "13323211544",
+          "distanceMetres": 17.538
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9157730,
+      "issues": "[DISCONNECTED_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "661420771",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "661420771",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 1
+      },
+      "fromToIntersections": [
+        {
+          "from": "661420771",
+          "to": "661420771",
+          "sameWay": true,
+          "nodes": [
+            "13323211540",
+            "13323211544",
+            "13323211545"
+          ]
+        }
+      ],
+      "viaNodeMembership": [
+        {
+          "via": "6166378882",
+          "role": "from",
+          "way": "661420771",
+          "contained": false,
+          "nearestExistingNode": "13323211544",
+          "distanceMetres": 17.538
+        },
+        {
+          "via": "6166378882",
+          "role": "to",
+          "way": "661420771",
+          "contained": false,
+          "nearestExistingNode": "13323211544",
+          "distanceMetres": 17.538
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9157731,
+      "issues": "[INVALID_MEMBERS, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "1452754543",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1452754543",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "via"
+      ],
+      "roleCounts": {
+        "from": 2,
+        "via": 0,
+        "to": 2
+      },
+      "fromToIntersections": [
+        {
+          "from": "1452754543",
+          "to": "658494231",
+          "sameWay": false,
+          "nodes": [
+            "5449146654"
+          ]
+        },
+        {
+          "from": "1452754543",
+          "to": "1452754543",
+          "sameWay": true,
+          "nodes": [
+            "5300229580",
+            "5449146654"
+          ]
+        },
+        {
+          "from": "658494231",
+          "to": "658494231",
+          "sameWay": true,
+          "nodes": [
+            "13323211541",
+            "13323211544",
+            "5300249444",
+            "5449146654",
+            "5449146655"
+          ]
+        },
+        {
+          "from": "658494231",
+          "to": "1452754543",
+          "sameWay": false,
+          "nodes": [
+            "5449146654"
+          ]
+        }
+      ],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9157732,
+      "issues": "[DISCONNECTED_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "658494231",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6166378882",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494229",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 1
+      },
+      "fromToIntersections": [
+        {
+          "from": "658494231",
+          "to": "658494229",
+          "sameWay": false,
+          "nodes": [
+            "13323211544"
+          ]
+        }
+      ],
+      "viaNodeMembership": [
+        {
+          "via": "6166378882",
+          "role": "from",
+          "way": "658494231",
+          "contained": false,
+          "nearestExistingNode": "13323211544",
+          "distanceMetres": 17.538
+        },
+        {
+          "via": "6166378882",
+          "role": "to",
+          "way": "658494229",
+          "contained": false,
+          "nearestExistingNode": "13323211531",
+          "distanceMetres": 12.605
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9195810,
+      "issues": "[INVALID_MEMBERS, MISSING_TO]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "5449147424",
+          "role": "via"
+        }
+      ],
+      "missingRoles": [
+        "to"
+      ],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "5449147424",
+          "role": "from",
+          "way": "565937916",
+          "contained": true,
+          "nearestExistingNode": "5449147424",
+          "distanceMetres": 0.0
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9195811,
+      "issues": "[INVALID_MEMBERS, MISSING_FROM]",
+      "members": [
+        {
+          "type": "node",
+          "ref": "5449147420",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "from"
+      ],
+      "roleCounts": {
+        "from": 0,
+        "via": 1,
+        "to": 2
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "5449147420",
+          "role": "to",
+          "way": "565937915",
+          "contained": true,
+          "nearestExistingNode": "5449147420",
+          "distanceMetres": 0.0
+        },
+        {
+          "via": "5449147420",
+          "role": "to",
+          "way": "1148888407",
+          "contained": false,
+          "nearestExistingNode": "5449147421",
+          "distanceMetres": 210.935
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9195812,
+      "issues": "[INVALID_MEMBERS, MISSING_FROM]",
+      "members": [
+        {
+          "type": "node",
+          "ref": "5449147420",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "658494247",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "from"
+      ],
+      "roleCounts": {
+        "from": 0,
+        "via": 1,
+        "to": 1
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "5449147420",
+          "role": "to",
+          "way": "658494247",
+          "contained": true,
+          "nearestExistingNode": "5449147420",
+          "distanceMetres": 0.0
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424647,
+      "issues": "[INVALID_MEMBERS, MISSING_TO]",
+      "members": [
+        {
+          "type": "node",
+          "ref": "6355797434",
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": "678806052",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888410",
+          "role": "from"
+        }
+      ],
+      "missingRoles": [
+        "to"
+      ],
+      "roleCounts": {
+        "from": 2,
+        "via": 1,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "6355797434",
+          "role": "from",
+          "way": "678806052",
+          "contained": false,
+          "nearestExistingNode": "6355797436",
+          "distanceMetres": 12.63
+        },
+        {
+          "via": "6355797434",
+          "role": "from",
+          "way": "1148888410",
+          "contained": true,
+          "nearestExistingNode": "6355797434",
+          "distanceMetres": 0.0
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424651,
+      "issues": "[INVALID_MEMBERS, MISSING_FROM, MISSING_TO]",
+      "members": [
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        }
+      ],
+      "missingRoles": [
+        "from",
+        "to"
+      ],
+      "roleCounts": {
+        "from": 0,
+        "via": 1,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424653,
+      "issues": "[INVALID_MEMBERS, MISSING_TO]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "678806050",
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": "6355797433",
+          "role": "via"
+        }
+      ],
+      "missingRoles": [
+        "to"
+      ],
+      "roleCounts": {
+        "from": 1,
+        "via": 1,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [
+        {
+          "via": "6355797433",
+          "role": "from",
+          "way": "678806050",
+          "contained": true,
+          "nearestExistingNode": "6355797433",
+          "distanceMetres": 0.0
+        }
+      ],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424654,
+      "issues": "[INVALID_MEMBERS, MISSING_TO, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "from"
+        }
+      ],
+      "missingRoles": [
+        "via",
+        "to"
+      ],
+      "roleCounts": {
+        "from": 2,
+        "via": 0,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424655,
+      "issues": "[INVALID_MEMBERS, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "565937915",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888407",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "via"
+      ],
+      "roleCounts": {
+        "from": 2,
+        "via": 0,
+        "to": 1
+      },
+      "fromToIntersections": [
+        {
+          "from": "565937915",
+          "to": "565937916",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1148888407",
+          "to": "565937916",
+          "sameWay": false,
+          "nodes": []
+        }
+      ],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424656,
+      "issues": "[INVALID_MEMBERS, MISSING_FROM, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "565937916",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "from",
+        "via"
+      ],
+      "roleCounts": {
+        "from": 0,
+        "via": 0,
+        "to": 1
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424658,
+      "issues": "[INVALID_MEMBERS, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888408",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "via"
+      ],
+      "roleCounts": {
+        "from": 2,
+        "via": 0,
+        "to": 1
+      },
+      "fromToIntersections": [
+        {
+          "from": "850678275",
+          "to": "565937913",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1148888408",
+          "to": "565937913",
+          "sameWay": false,
+          "nodes": []
+        }
+      ],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424659,
+      "issues": "[INVALID_MEMBERS, MISSING_TO, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "850678275",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1148888408",
+          "role": "from"
+        }
+      ],
+      "missingRoles": [
+        "via",
+        "to"
+      ],
+      "roleCounts": {
+        "from": 2,
+        "via": 0,
+        "to": 0
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424660,
+      "issues": "[INVALID_MEMBERS, MISSING_FROM, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "565937913",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "from",
+        "via"
+      ],
+      "roleCounts": {
+        "from": 0,
+        "via": 0,
+        "to": 1
+      },
+      "fromToIntersections": [],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    },
+    {
+      "relation": 9424662,
+      "issues": "[INVALID_MEMBERS, MISSING_VIA]",
+      "members": [
+        {
+          "type": "way",
+          "ref": "1452565552",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565553",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "576344905",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565554",
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": "1452565550",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "1452565551",
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": "678806054",
+          "role": "to"
+        }
+      ],
+      "missingRoles": [
+        "via"
+      ],
+      "roleCounts": {
+        "from": 4,
+        "via": 0,
+        "to": 3
+      },
+      "fromToIntersections": [
+        {
+          "from": "1452565552",
+          "to": "1452565550",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565552",
+          "to": "1452565551",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565552",
+          "to": "678806054",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565553",
+          "to": "1452565550",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565553",
+          "to": "1452565551",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565553",
+          "to": "678806054",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "576344905",
+          "to": "1452565550",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "576344905",
+          "to": "1452565551",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "576344905",
+          "to": "678806054",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565554",
+          "to": "1452565550",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565554",
+          "to": "1452565551",
+          "sameWay": false,
+          "nodes": []
+        },
+        {
+          "from": "1452565554",
+          "to": "678806054",
+          "sameWay": false,
+          "nodes": []
+        }
+      ],
+      "viaNodeMembership": [],
+      "decision": "REQUIRES_EXTERNAL_EVIDENCE"
+    }
+  ],
+  "referencedWays": {
+    "565574608": {
+      "nodes": [
+        "4061859389",
+        "2889236622"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "oneway": "yes"
+      }
+    },
+    "565574610": {
+      "nodes": [
+        "2889236622",
+        "5446790024"
+      ],
+      "tags": {
+        "highway": "secondary",
+        "name": "운중로",
+        "oneway": "yes"
+      }
+    },
+    "565937913": {
+      "nodes": [
+        "10688742055",
+        "10688742054",
+        "7548571116",
+        "10688742051",
+        "7548571117",
+        "5449147415",
+        "5449147413",
+        "6192237852",
+        "7935964027",
+        "7935964082"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "565937915": {
+      "nodes": [
+        "5449147420",
+        "7548571111",
+        "6355797432",
+        "5449147421"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "565937916": {
+      "nodes": [
+        "10688742047",
+        "10688742046",
+        "7548571113",
+        "7548571112",
+        "5449147423",
+        "6355797431",
+        "5449147424"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "576344905": {
+      "nodes": [
+        "13321476977",
+        "10688742055"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산중앙로",
+        "oneway": "yes"
+      }
+    },
+    "588443257": {
+      "nodes": [
+        "5620151503",
+        "5620151504",
+        "5620151501"
+      ],
+      "tags": {
+        "highway": "residential",
+        "oneway": "yes"
+      }
+    },
+    "588443263": {
+      "nodes": [
+        "5620151500",
+        "5620151503"
+      ],
+      "tags": {
+        "highway": "residential",
+        "name": "화곡로66길"
+      }
+    },
+    "617401136": {
+      "nodes": [
+        "5836270432",
+        "4605022147",
+        "5836270438",
+        "3042643889",
+        "2826071143",
+        "2825875097",
+        "10814323666"
+      ],
+      "tags": {
+        "highway": "residential",
+        "name": "화곡로66길",
+        "oneway": "yes"
+      }
+    },
+    "639701457": {
+      "nodes": [
+        "614607371",
+        "614607332"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "연현로",
+        "oneway": "no"
+      }
+    },
+    "658494229": {
+      "nodes": [
+        "13323211544",
+        "13323211531",
+        "6166378884",
+        "5300249443"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "658494231": {
+      "nodes": [
+        "13323211544",
+        "5300249444",
+        "13323211541",
+        "5449146655",
+        "5449146654"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산순환로",
+        "oneway": "yes"
+      }
+    },
+    "658494247": {
+      "nodes": [
+        "5449147420",
+        "7548571110",
+        "1000488926"
+      ],
+      "tags": {
+        "highway": "trunk",
+        "name": "북부간선로",
+        "oneway": "yes"
+      }
+    },
+    "661420771": {
+      "nodes": [
+        "13323211545",
+        "13323211540",
+        "13323211544"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산순환로",
+        "oneway": "yes"
+      }
+    },
+    "678806050": {
+      "nodes": [
+        "5449147421",
+        "6355797433"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "678806052": {
+      "nodes": [
+        "5449147417",
+        "6355797436"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "678806054": {
+      "nodes": [
+        "13321476975",
+        "5519211903",
+        "5300229592"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산중앙로",
+        "oneway": "yes"
+      }
+    },
+    "850678275": {
+      "nodes": [
+        "7935964078",
+        "7548571120",
+        "5449147419",
+        "5449147417"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "1148888407": {
+      "nodes": [
+        "5449147421",
+        "7548571115",
+        "7548571114",
+        "10688742048",
+        "10688742049"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "1148888408": {
+      "nodes": [
+        "5449147417",
+        "13321476974",
+        "7548571119",
+        "7548571118",
+        "10688742052"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "1148888410": {
+      "nodes": [
+        "6355797436",
+        "6355797434"
+      ],
+      "tags": {
+        "highway": "trunk_link",
+        "oneway": "yes"
+      }
+    },
+    "1452565550": {
+      "nodes": [
+        "6355797436",
+        "10688742052"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산중앙로",
+        "oneway": "yes"
+      }
+    },
+    "1452565551": {
+      "nodes": [
+        "10688742052",
+        "13321476975"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산중앙로",
+        "oneway": "yes"
+      }
+    },
+    "1452565552": {
+      "nodes": [
+        "5465362642",
+        "13321476976"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산중앙로",
+        "oneway": "yes"
+      }
+    },
+    "1452565553": {
+      "nodes": [
+        "13321476976",
+        "13321476977"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산중앙로",
+        "oneway": "yes"
+      }
+    },
+    "1452565554": {
+      "nodes": [
+        "10688742055",
+        "6355797434"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산중앙로",
+        "oneway": "yes"
+      }
+    },
+    "1452754543": {
+      "nodes": [
+        "5449146654",
+        "5300229580"
+      ],
+      "tags": {
+        "highway": "tertiary",
+        "name": "다산순환로",
+        "oneway": "yes"
+      }
+    }
+  },
+  "nodes": {
+    "614607332": [
+      126.9049919,
+      37.4244062
+    ],
+    "614607371": [
+      126.9049231,
+      37.4245686
+    ],
+    "1000488926": [
+      127.1543516,
+      37.6175746
+    ],
+    "2825875097": [
+      126.8615232,
+      37.5547207
+    ],
+    "2826071143": [
+      126.8606186,
+      37.5551806
+    ],
+    "2889236622": [
+      127.0629804,
+      37.3912102
+    ],
+    "3042643889": [
+      126.8597456,
+      37.5556244
+    ],
+    "4061859389": [
+      127.0631248,
+      37.391113
+    ],
+    "4605022147": [
+      126.8591848,
+      37.5559094
+    ],
+    "5300229580": [
+      127.1482789,
+      37.6197522
+    ],
+    "5300229592": [
+      127.1547379,
+      37.6205736
+    ],
+    "5300249443": [
+      127.1492691,
+      37.6179297
+    ],
+    "5300249444": [
+      127.1495903,
+      37.6182861
+    ],
+    "5446790024": [
+      127.0623492,
+      37.3910731
+    ],
+    "5449146654": [
+      127.1487296,
+      37.6192796
+    ],
+    "5449146655": [
+      127.1492157,
+      37.6187663
+    ],
+    "5449147413": [
+      127.1536228,
+      37.6177997
+    ],
+    "5449147415": [
+      127.1539717,
+      37.6178084
+    ],
+    "5449147417": [
+      127.155184,
+      37.6178264
+    ],
+    "5449147419": [
+      127.1554743,
+      37.617829
+    ],
+    "5449147420": [
+      127.1517161,
+      37.61755
+    ],
+    "5449147421": [
+      127.154108,
+      37.6174556
+    ],
+    "5449147423": [
+      127.1551584,
+      37.617464
+    ],
+    "5449147424": [
+      127.1566271,
+      37.6175986
+    ],
+    "5465362642": [
+      127.1545825,
+      37.6205729
+    ],
+    "5519211903": [
+      127.15474,
+      37.6202975
+    ],
+    "5620151500": [
+      126.8557506,
+      37.5576509
+    ],
+    "5620151501": [
+      126.855688,
+      37.5578336
+    ],
+    "5620151503": [
+      126.855597,
+      37.5577067
+    ],
+    "5620151504": [
+      126.8556604,
+      37.5578193
+    ],
+    "5836270432": [
+      126.8588129,
+      37.556097
+    ],
+    "5836270438": [
+      126.8596522,
+      37.5556719
+    ],
+    "6166378882": [
+      127.1495928,
+      37.6180773
+    ],
+    "6166378884": [
+      127.1495248,
+      37.6179538
+    ],
+    "6192237852": [
+      127.1533735,
+      37.6177923
+    ],
+    "6355797431": [
+      127.1555739,
+      37.6174844
+    ],
+    "6355797432": [
+      127.1531229,
+      37.6174514
+    ],
+    "6355797433": [
+      127.1545753,
+      37.6174539
+    ],
+    "6355797434": [
+      127.1545789,
+      37.6178243
+    ],
+    "6355797436": [
+      127.1547223,
+      37.6178248
+    ],
+    "7548571110": [
+      127.1528432,
+      37.6175671
+    ],
+    "7548571111": [
+      127.1525787,
+      37.6174551
+    ],
+    "7548571112": [
+      127.1549892,
+      37.6174078
+    ],
+    "7548571113": [
+      127.1548935,
+      37.6173479
+    ],
+    "7548571114": [
+      127.1543723,
+      37.617344
+    ],
+    "7548571115": [
+      127.1542436,
+      37.6174035
+    ],
+    "7548571116": [
+      127.1544421,
+      37.6179899
+    ],
+    "7548571117": [
+      127.1542516,
+      37.6178645
+    ],
+    "7548571118": [
+      127.1548203,
+      37.6180281
+    ],
+    "7548571119": [
+      127.1548925,
+      37.6179458
+    ],
+    "7548571120": [
+      127.1560554,
+      37.6177773
+    ],
+    "7935964027": [
+      127.1524742,
+      37.6177731
+    ],
+    "7935964078": [
+      127.1565824,
+      37.6177471
+    ],
+    "7935964082": [
+      127.1516053,
+      37.6177288
+    ],
+    "10688742046": [
+      127.1548239,
+      37.6172851
+    ],
+    "10688742047": [
+      127.1547263,
+      37.6171391
+    ],
+    "10688742048": [
+      127.1544549,
+      37.6172636
+    ],
+    "10688742049": [
+      127.1545683,
+      37.617146
+    ],
+    "10688742051": [
+      127.1543458,
+      37.617898
+    ],
+    "10688742052": [
+      127.1547245,
+      37.6182081
+    ],
+    "10688742054": [
+      127.1545109,
+      37.6181563
+    ],
+    "10688742055": [
+      127.1545804,
+      37.618272
+    ],
+    "10814323666": [
+      126.8635399,
+      37.553806
+    ],
+    "13321476974": [
+      127.1549869,
+      37.6178954
+    ],
+    "13321476975": [
+      127.1547323,
+      37.6192528
+    ],
+    "13321476976": [
+      127.1545702,
+      37.6199333
+    ],
+    "13321476977": [
+      127.1545762,
+      37.618966
+    ],
+    "13323211531": [
+      127.1496523,
+      37.6179742
+    ],
+    "13323211540": [
+      127.1497962,
+      37.6179126
+    ],
+    "13323211541": [
+      127.1494,
+      37.6185587
+    ],
+    "13323211544": [
+      127.1497598,
+      37.6179914
+    ],
+    "13323211545": [
+      127.1499465,
+      37.6175866
+    ]
+  }
+}

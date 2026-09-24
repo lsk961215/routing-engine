@@ -1,0 +1,221 @@
+{
+  "os": "Darwin",
+  "architecture": "arm64",
+  "serverMaxHeapMiB": 512,
+  "gc": "G1",
+  "rssSamplingIntervalSeconds": 0.1,
+  "regions": [
+    {
+      "region": 8603390,
+      "warmup": 300,
+      "before": {
+        "heapCommittedKiB": 61440,
+        "heapUsedKiB": 17890,
+        "rssKiB": 244944
+      },
+      "phases": [
+        {
+          "concurrency": 1,
+          "requests": 12000,
+          "seconds": 2.8042,
+          "requestsPerSecond": 4279.3,
+          "p50Ms": 0.1912,
+          "p95Ms": 0.4222,
+          "p99Ms": 0.6481,
+          "http200": 9800,
+          "http404": 2200,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 256848,
+          "rssSamples": 27,
+          "afterGc": {
+            "heapCommittedKiB": 61440,
+            "heapUsedKiB": 17711,
+            "rssKiB": 256848
+          }
+        },
+        {
+          "concurrency": 4,
+          "requests": 12000,
+          "seconds": 1.5444,
+          "requestsPerSecond": 7769.8,
+          "p50Ms": 0.4743,
+          "p95Ms": 0.7718,
+          "p99Ms": 1.073,
+          "http200": 9800,
+          "http404": 2200,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 257920,
+          "rssSamples": 15,
+          "afterGc": {
+            "heapCommittedKiB": 61440,
+            "heapUsedKiB": 17922,
+            "rssKiB": 258000
+          }
+        },
+        {
+          "concurrency": 8,
+          "requests": 12000,
+          "seconds": 1.6221,
+          "requestsPerSecond": 7398.0,
+          "p50Ms": 0.9913,
+          "p95Ms": 1.7779,
+          "p99Ms": 2.4168,
+          "http200": 9800,
+          "http404": 2200,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 258192,
+          "rssSamples": 16,
+          "afterGc": {
+            "heapCommittedKiB": 61440,
+            "heapUsedKiB": 18097,
+            "rssKiB": 258256
+          }
+        },
+        {
+          "concurrency": 16,
+          "requests": 12000,
+          "seconds": 1.6018,
+          "requestsPerSecond": 7491.7,
+          "p50Ms": 1.9739,
+          "p95Ms": 3.6754,
+          "p99Ms": 4.6574,
+          "http200": 9800,
+          "http404": 2200,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 258400,
+          "rssSamples": 15,
+          "afterGc": {
+            "heapCommittedKiB": 61440,
+            "heapUsedKiB": 18287,
+            "rssKiB": 258448
+          }
+        },
+        {
+          "concurrency": 32,
+          "requests": 12000,
+          "seconds": 1.6117,
+          "requestsPerSecond": 7445.4,
+          "p50Ms": 3.8998,
+          "p95Ms": 7.612,
+          "p99Ms": 10.374,
+          "http200": 9800,
+          "http404": 2200,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 258672,
+          "rssSamples": 15,
+          "afterGc": {
+            "heapCommittedKiB": 61440,
+            "heapUsedKiB": 18301,
+            "rssKiB": 258672
+          }
+        }
+      ]
+    },
+    {
+      "region": 9305993,
+      "warmup": 300,
+      "before": {
+        "heapCommittedKiB": 65536,
+        "heapUsedKiB": 17819,
+        "rssKiB": 217120
+      },
+      "phases": [
+        {
+          "concurrency": 1,
+          "requests": 12000,
+          "seconds": 2.6276,
+          "requestsPerSecond": 4566.8,
+          "p50Ms": 0.1902,
+          "p95Ms": 0.3813,
+          "p99Ms": 0.4921,
+          "http200": 12000,
+          "http404": 0,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 232320,
+          "rssSamples": 25,
+          "afterGc": {
+            "heapCommittedKiB": 65536,
+            "heapUsedKiB": 17673,
+            "rssKiB": 232496
+          }
+        },
+        {
+          "concurrency": 4,
+          "requests": 12000,
+          "seconds": 1.5437,
+          "requestsPerSecond": 7773.8,
+          "p50Ms": 0.4721,
+          "p95Ms": 0.7534,
+          "p99Ms": 1.0338,
+          "http200": 12000,
+          "http404": 0,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 243616,
+          "rssSamples": 15,
+          "afterGc": {
+            "heapCommittedKiB": 65536,
+            "heapUsedKiB": 17909,
+            "rssKiB": 243664
+          }
+        },
+        {
+          "concurrency": 8,
+          "requests": 12000,
+          "seconds": 1.5822,
+          "requestsPerSecond": 7584.5,
+          "p50Ms": 0.979,
+          "p95Ms": 1.7222,
+          "p99Ms": 2.3754,
+          "http200": 12000,
+          "http404": 0,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 243696,
+          "rssSamples": 15,
+          "afterGc": {
+            "heapCommittedKiB": 65536,
+            "heapUsedKiB": 18157,
+            "rssKiB": 243696
+          }
+        },
+        {
+          "concurrency": 16,
+          "requests": 12000,
+          "seconds": 1.6188,
+          "requestsPerSecond": 7413.1,
+          "p50Ms": 1.9883,
+          "p95Ms": 3.7572,
+          "p99Ms": 4.8092,
+          "http200": 12000,
+          "http404": 0,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 244016,
+          "rssSamples": 15,
+          "afterGc": {
+            "heapCommittedKiB": 65536,
+            "heapUsedKiB": 18177,
+            "rssKiB": 244192
+          }
+        },
+        {
+          "concurrency": 32,
+          "requests": 12000,
+          "seconds": 1.6638,
+          "requestsPerSecond": 7212.6,
+          "p50Ms": 3.9721,
+          "p95Ms": 7.9262,
+          "p99Ms": 12.3968,
+          "http200": 12000,
+          "http404": 0,
+          "unexpectedResponses": 0,
+          "rssSamplePeakKiB": 244384,
+          "rssSamples": 16,
+          "afterGc": {
+            "heapCommittedKiB": 65536,
+            "heapUsedKiB": 18186,
+            "rssKiB": 244400
+          }
+        }
+      ]
+    }
+  ]
+}

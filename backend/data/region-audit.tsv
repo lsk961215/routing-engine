@@ -1,0 +1,21 @@
+region	status	relations	nodeViaCandidates	viaWayCandidates	nodes	edges	turnPairs	viaRules	queries	detail
+8107280.osm.pbf	BUILD_FAILED	10	4	1	0	0	0	0	0	IOException: Unresolved road/restriction rules: {DIRECTION_CONFLICT=3, INVALID_MEMBERS=2, MISSING_FROM=1, MISSING_TO=1, VIA_WAY_DEFERRED=1} {ACCEPTED:accepted=35, EXCLUDED:highway_out_of_scope=8}
+8234982.osm.pbf	PASS	1	0	1	128	166	0	1	42	
+8301285.osm.pbf	BUILD_FAILED	13	10	1	0	0	0	0	0	IOException: Unresolved road/restriction rules: {DISCONNECTED_VIA=1, VIA_WAY_DEFERRED=2, WAY_NOT_ACCEPTED=1} {ACCEPTED:accepted=25, DEFERRED:oneway_modifier=1}
+8603389.osm.pbf	PASS	8	3	5	160	204	3	5	59	
+8603390.osm.pbf	PASS	13	4	9	161	209	4	9	75	
+8603391.osm.pbf	PASS	13	4	9	161	209	4	9	75	
+8603392.osm.pbf	PASS	8	3	5	160	204	3	5	59	
+8603399.osm.pbf	PASS	14	5	9	171	216	5	9	75	
+8603400.osm.pbf	PASS	14	5	9	171	216	5	9	75	
+8603401.osm.pbf	PASS	13	5	8	125	168	5	8	71	
+8603402.osm.pbf	PASS	8	4	4	117	156	4	4	56	
+8871509.osm.pbf	BUILD_FAILED	11	9	1	0	0	0	0	0	IOException: Unresolved road/restriction rules: {INVALID_MEMBERS=1, MISSING_TO=1, VIA_WAY_DEFERRED=1} {ACCEPTED:accepted=39, EXCLUDED:highway_out_of_scope=1}
+9195815.osm.pbf	BUILD_FAILED	6	1	1	0	0	0	0	0	IOException: Unresolved road/restriction rules: {DISCONNECTED_VIA=3, INVALID_MEMBERS=1, MISSING_VIA=1, VIA_WAY_DEFERRED=1} {ACCEPTED:accepted=30, EXCLUDED:access_denied=1, EXCLUDED:highway_out_of_scope=19}
+9305969.osm.pbf	PASS	3	0	3	179	306	0	3	49	
+9305971.osm.pbf	PASS	3	0	3	175	304	0	3	49	
+9305972.osm.pbf	PASS	3	0	3	179	306	0	3	49	
+9305993.osm.pbf	PASS	20	19	1	180	375	19	1	43	
+9424666.osm.pbf	BUILD_FAILED	21	2	1	0	0	0	0	0	IOException: Unresolved road/restriction rules: {DIRECTION_CONFLICT=5, INVALID_MEMBERS=13, MISSING_FROM=5, MISSING_TO=6, MISSING_VIA=7, VIA_WAY_DEFERRED=2} {ACCEPTED:accepted=33, EXCLUDED:access_denied=9, EXCLUDED:highway_out_of_scope=10}
+9606471.osm.pbf	PASS	4	3	1	114	198	5	1	44	
+9611381.osm.pbf	PASS	3	2	1	87	163	2	1	45	
