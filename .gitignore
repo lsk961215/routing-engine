@@ -22,3 +22,8 @@ backend/data/processed/*.pbf
 
 # Generated routing graphs
 backend/data/processed/*.rgraph
+
+# Offline subset selections
+backend/data/processed/*.ids
+backend/data/processed/*.rgraph.exclusions.tsv
+backend/data/processed/*.geojson
