@@ -21,6 +21,16 @@ class RoutingServiceTest {
         assertEquals(java.util.List.of(127.0,37.0),result.routes().getFirst().geometry().coordinates().getFirst());
         assertEquals(0,result.waypoints().getFirst().distance());
     }
+    @Test void selectsAlgorithmAndRejectsUnknownNames() {
+        var service=service(true);
+        var d=service.route(127,37,127,37.001,"dijkstra");
+        var a=service.route(127,37,127,37.001,"astar");
+        assertEquals(d.routes(),a.routes());
+        assertEquals("astar",a.metrics().algorithm());
+        assertEquals(0,a.metrics().expandedStates()); // Direct same-edge candidate needs no expansion.
+        assertEquals("dijkstra",service.route(127,37,127,37.001).metrics().algorithm());
+        assertEquals(400,assertThrows(ResponseStatusException.class,()->service.route(127,37,127,37.001,"unknown")).getStatusCode().value());
+    }
     @Test void returnsExplicitStatuses() {
         assertEquals(503,assertThrows(ResponseStatusException.class,()->service(false).route(127,37,127,37)).getStatusCode().value());
         assertEquals(400,assertThrows(ResponseStatusException.class,()->service(true).route(Double.NaN,37,127,37)).getStatusCode().value());

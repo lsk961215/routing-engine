@@ -2,6 +2,7 @@ package com.lsk.routing.api.service;
 
 import com.lsk.routing.api.dto.RouteResponse;
 import com.lsk.routing.core.graph.CoordinateRouter;
+import com.lsk.routing.core.graph.RoutingAlgorithm;
 import com.lsk.routing.core.graph.RoutingGraph;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
@@ -17,15 +18,25 @@ public class RoutingService {
         router=graph==null?null:new CoordinateRouter(graph);
     }
     public RouteResponse route(double startLon,double startLat,double endLon,double endLat) {
+        return route(startLon,startLat,endLon,endLat,"dijkstra");
+    }
+    public RouteResponse route(double startLon,double startLat,double endLon,double endLat,String algorithm) {
+        RoutingAlgorithm strategy=switch(algorithm) {
+            case "dijkstra" -> RoutingAlgorithm.DIJKSTRA;
+            case "astar" -> RoutingAlgorithm.ASTAR;
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unknown routing algorithm");
+        };
         validate(startLon,startLat);validate(endLon,endLat);
         if(router==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"Graph not configured");
         try {
-            var result=router.route(startLon,startLat,endLon,endLat)
+            var search=router.search(startLon,startLat,endLon,endLat,strategy);
+            var result=search.route()
                     .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"No directed route"));
             var geometry=result.geometry().stream().map(p->List.of(p.longitude(),p.latitude())).toList();
             return new RouteResponse("Ok",List.of(new RouteResponse.Route(
                     new RouteResponse.Geometry("LineString",geometry),result.distanceMetres(),null)),
-                    List.of(waypoint(result.start()),waypoint(result.end())));
+                    List.of(waypoint(result.start()),waypoint(result.end())),
+                    new RouteResponse.Metrics(algorithm,search.snapMillis(),search.searchMillis(),search.expandedStates()));
         } catch(CoordinateRouter.OutsideGraphException e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,e.getMessage());
         }

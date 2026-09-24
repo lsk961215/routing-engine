@@ -19,11 +19,12 @@ public class RouteController {
             @RequestParam double startLon,
             @RequestParam double startLat,
             @RequestParam double endLon,
-            @RequestParam double endLat) {
+            @RequestParam double endLat,
+            @RequestParam(defaultValue = "dijkstra") String algorithm) {
 
         return routingService.route(
                 startLon, startLat,
-                endLon, endLat
+                endLon, endLat, algorithm
         );
     }
 }
