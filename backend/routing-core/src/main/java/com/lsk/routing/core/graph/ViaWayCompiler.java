@@ -28,7 +28,9 @@ final class ViaWayCompiler {
         if(++visits>100_000 || path.size()>127)throw new IOException("Via-way expansion limit exceeded");
         int incoming=path.getLast(),node=graph.target(incoming);
         for(int outgoing=graph.edgeStart(node);outgoing<graph.edgeEnd(node);outgoing++) {
-            if(!graph.turnAllowed(incoming,outgoing))continue;
+            // Compile geometry independently: an existing node turn ban may make this
+            // restriction redundant (no) or impossible to complete (only). Keep both
+            // rules; the router enforces their intersection when traversing edges.
             long way=graph.osmWayId(outgoing);
             if(traversed && stage==via.size()-1 && way==to) {
                 var complete=new ArrayList<>(path);complete.add(outgoing);paths.add(List.copyOf(complete));

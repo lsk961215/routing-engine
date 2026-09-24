@@ -105,6 +105,28 @@ public final class RestrictionValidator {
         return Set.copyOf(issues);
     }
 
+    /** Only a structurally valid static prohibition with no directed realization is redundant.
+     * Never use this for only_ rules or to suppress other validation failures. */
+    public boolean isDirectionBlockedNo(Restriction restriction, Set<Issue> issues) {
+        if (!issues.contains(Issue.DIRECTION_CONFLICT)
+                || issues.stream().anyMatch(i -> i != Issue.DIRECTION_CONFLICT && i != Issue.VIA_WAY_DEFERRED)) return false;
+        String value = restriction.tags().get("restriction");
+        for (String mode : MODES) {
+            if (restriction.tags().containsKey("restriction:" + mode)) {
+                value = restriction.tags().get("restriction:" + mode); break;
+            }
+        }
+        if (value == null || !value.startsWith("no_")) return false;
+        var from = restriction.members().stream().filter(m -> m.role().equals("from")).findFirst().orElseThrow();
+        var to = restriction.members().stream().filter(m -> m.role().equals("to")).findFirst().orElseThrow();
+        if (from.id() == to.id() && !value.equals("no_u_turn")) return false;
+        var seen = new HashSet<Long>();
+        for (var member : restriction.members()) if (member.role().equals("via") && member.kind() == Kind.WAY) {
+            if (member.id() == from.id() || member.id() == to.id() || !seen.add(member.id())) return false;
+        }
+        return true;
+    }
+
     // Propagate reachable boundary nodes through via ways in relation-member order.
     // Each via way must contribute at least one non-self segment; do not jump across
     // disconnected intersections or silently reorder malformed member lists.

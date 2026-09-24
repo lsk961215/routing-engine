@@ -11,8 +11,9 @@ import java.util.*;
 public final class CarDataAnalysis {
     public record Result(long highwayWays, long acceptedWays, long uniqueNodes, long directedSegments,
                          Map<String, Long> decisions, long restrictions, long candidateNodeVia, long connectedViaWay,
-                         Map<String, Long> issues, Map<String, List<Long>> examples) {
+                         Map<String, Long> issues, Map<String, List<Long>> examples, List<Long> directionBlockedNoRestrictions) {
         public Result {
+            directionBlockedNoRestrictions = List.copyOf(directionBlockedNoRestrictions);
             decisions = Collections.unmodifiableMap(new TreeMap<>(decisions));
             issues = Collections.unmodifiableMap(new TreeMap<>(issues));
             var copy = new TreeMap<String, List<Long>>();
@@ -21,8 +22,16 @@ public final class CarDataAnalysis {
         }
     }
 
-    public Result read(Path path) throws IOException {
+    public Result read(Path path) throws IOException { return read(path,false); }
+    public Result readForGraph(Path path) throws IOException {
+        try { return read(path,true); }
+        catch(ConditionalOneway.UnsupportedRuleException e) { throw new IOException(e.getMessage(),e); }
+    }
+    public Result readForComparison(Path path) throws IOException { return read(path,false,true); }
+    private Result read(Path path, boolean temporalUnion) throws IOException { return read(path,temporalUnion,false); }
+    private Result read(Path path, boolean temporalUnion, boolean comparison) throws IOException {
         var profile = new CarProfile();
+        var conditionalWays = new HashSet<Long>();
         var decisions = new TreeMap<String, Long>();
         var restrictions = new ArrayList<RestrictionValidator.Restriction>();
         var referencedNodes = new HashSet<Long>();
@@ -37,9 +46,10 @@ public final class CarDataAnalysis {
                 if (entity.getType() == EntityType.Way) {
                     var way = (OsmWay) entity.getEntity();
                     var tags = tags(way);
+                    if(comparison)tags=ComparisonProfile.normalize(tags);
                     if (!tags.containsKey("highway")) continue;
                     highways++;
-                    var decision = profile.evaluate(tags, way.getNumberOfNodes());
+                    var decision = temporalUnion ? RoadDirections.forGraph(way.getId(),tags,way.getNumberOfNodes()).decision() : profile.evaluate(tags, way.getNumberOfNodes());
                     decisions.merge(decision.status() + ":" + decision.reason(), 1L, Long::sum);
                     if (!decision.accepted()) continue;
                     accepted++;
@@ -89,7 +99,11 @@ public final class CarDataAnalysis {
                         var way = (OsmWay) entity.getEntity();
                         long[] nodes = new long[way.getNumberOfNodes()];
                         for (int i = 0; i < nodes.length; i++) nodes[i] = way.getNodeId(i);
-                        ways.put(id, new RestrictionValidator.Way(nodes, profile.evaluate(tags(way), nodes.length)));
+                        var roadTags=tags(way);
+                        if(comparison)roadTags=ComparisonProfile.normalize(roadTags);
+                        if(roadTags.containsKey(ConditionalOneway.KEY))conditionalWays.add(id);
+                        var decision=temporalUnion?RoadDirections.forGraph(id,roadTags,nodes.length).decision():profile.evaluate(roadTags,nodes.length);
+                        ways.put(id, new RestrictionValidator.Way(nodes, decision));
                     }
                 }
             }
@@ -98,8 +112,11 @@ public final class CarDataAnalysis {
         var counts = new TreeMap<String, Long>();
         var examples = new TreeMap<String, List<Long>>();
         long candidates = 0, connectedViaWays = 0;
+        var directionBlockedNoRestrictions = new ArrayList<Long>();
         for (var restriction : restrictions) {
             var issues = validator.validate(restriction, ways, existingNodes, existingRelations);
+            if (restriction.members().stream().noneMatch(m -> m.kind()==RestrictionValidator.Kind.WAY && conditionalWays.contains(m.id()))
+                    && validator.isDirectionBlockedNo(restriction, issues)) directionBlockedNoRestrictions.add(restriction.id());
             if (issues.isEmpty()) candidates++;
             if (issues.equals(Set.of(RestrictionValidator.Issue.VIA_WAY_DEFERRED))) connectedViaWays++;
             for (var issue : issues) {
@@ -109,7 +126,7 @@ public final class CarDataAnalysis {
             }
         }
         return new Result(highways, accepted, ids.uniqueCount(), directed, decisions,
-                restrictions.size(), candidates, connectedViaWays, counts, examples);
+                restrictions.size(), candidates, connectedViaWays, counts, examples, directionBlockedNoRestrictions);
     }
 
     private static Map<String, String> tags(OsmEntity entity) {

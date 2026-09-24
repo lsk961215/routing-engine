@@ -23,6 +23,19 @@ class RestrictionValidatorTest {
     private Set<Issue> check(Restriction r, Map<Long, Way> ways) {
         return validator.validate(r, ways, Set.of(2L), Set.of());
     }
+    @Test void redundancyRequiresDirectionOnlyStaticNoRule() {
+        var ways=ways();ways.put(11L,way(new long[]{2,3},"-1"));
+        var no=restriction(members);
+        assertTrue(validator.isDirectionBlockedNo(no,check(no,ways)));
+        for(var r:List.of(restriction(members,"restriction","only_left_turn"),
+                restriction(members,"restriction:conditional","no_left_turn @ wet"),
+                restriction(members,"restriction:motorcar","only_right_turn"),
+                restriction(members,"except","motorcar")))
+            assertFalse(validator.isDirectionBlockedNo(r,check(r,ways)));
+        ways.remove(11L);
+        assertFalse(validator.isDirectionBlockedNo(no,check(no,ways)));
+        assertFalse(validator.isDirectionBlockedNo(no,check(no,ways())));
+    }
     @Test void acceptsConnectedNodeViaCandidate() {
         assertTrue(check(restriction(members), ways()).isEmpty());
         assertTrue(check(restriction(members, "except", "bus; hgv"), ways()).isEmpty());

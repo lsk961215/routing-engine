@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<osm version="0.6" generator="routing-engine-test">
+  <node id="1" lat="37" lon="127.0" />
+  <node id="2" lat="37" lon="127.001" />
+  <node id="3" lat="37" lon="127.002" />
+  <node id="4" lat="37" lon="127.003" />
+  <node id="5" lat="37" lon="127.004" />
+  <node id="6" lat="37" lon="127.005" />
+  <node id="7" lat="37.01" lon="127.002" />
+  <node id="8" lat="37.01" lon="127.001" />
+  <way id="10">
+    <nd ref="1" />
+    <nd ref="2" />
+    <tag k="highway" v="residential" />
+    <tag k="oneway" v="yes" />
+  </way>
+  <way id="20">
+    <nd ref="2" />
+    <nd ref="3" />
+    <nd ref="4" />
+    <tag k="highway" v="residential" />
+    <tag k="oneway" v="yes" />
+  </way>
+  <way id="21">
+    <nd ref="4" />
+    <nd ref="5" />
+    <tag k="highway" v="residential" />
+    <tag k="oneway" v="no" />
+  </way>
+  <way id="30">
+    <nd ref="5" />
+    <nd ref="6" />
+    <tag k="highway" v="residential" />
+    <tag k="oneway" v="yes" />
+  </way>
+  <way id="40">
+    <nd ref="3" />
+    <nd ref="7" />
+    <tag k="highway" v="residential" />
+    <tag k="oneway" v="yes" />
+  </way>
+  <way id="50">
+    <nd ref="8" />
+    <nd ref="2" />
+    <tag k="highway" v="residential" />
+    <tag k="oneway" v="yes" />
+  </way>
+  <relation id="100">
+    <member type="way" ref="21" role="from" />
+    <member type="way" ref="21" role="via" />
+    <member type="way" ref="30" role="to" />
+    <tag k="type" v="restriction" />
+    <tag k="restriction" v="no_left_turn" />
+  </relation>
+</osm>

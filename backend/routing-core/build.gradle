@@ -45,14 +45,15 @@ tasks.register('analyzeOsm', JavaExec) {
     }
 }
 
-// Small-area prototype; all paths are resolved relative to backend.
+// Strict offline builder; all paths are resolved relative to backend.
 tasks.register('buildGraph', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.lsk.routing.core.graph.GraphBuilder'
-    maxHeapSize = '512m'
+    maxHeapSize = '2g'
     doFirst {
         args = [rootProject.file(providers.gradleProperty('pbf').get()).absolutePath,
                 rootProject.file(providers.gradleProperty('graph').get()).absolutePath]
+        if (providers.gradleProperty('comparison').getOrElse('false') == 'true') args += ['--comparison']
     }
 }
 
@@ -63,6 +64,7 @@ tasks.register('routeGraph', JavaExec) {
     doFirst {
         args = [rootProject.file(providers.gradleProperty('graph').get()).absolutePath,
                 providers.gradleProperty('start').get(), providers.gradleProperty('end').get()]
+        if (providers.gradleProperty('snapshotAt').isPresent()) args += [providers.gradleProperty('snapshotAt').get()]
     }
 }
 
@@ -75,5 +77,56 @@ tasks.register('benchmarkRouting', JavaExec) {
     doFirst {
         args = providers.gradleProperty('graph').isPresent()
                 ? [rootProject.file(providers.gradleProperty('graph').get()).absolutePath] : []
+    }
+}
+
+// Offline validation of isolated relation extracts; no production dependency.
+tasks.register('auditViaWays', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.ViaWayAudit'
+    maxHeapSize = '512m'
+    doFirst {
+        args = [providers.gradleProperty('cases').get(), providers.gradleProperty('report').get()]
+    }
+}
+
+tasks.register('auditRegions', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.RegionAudit'
+    maxHeapSize = '512m'
+    doFirst {
+        args = [providers.gradleProperty('cases').get(), providers.gradleProperty('report').get()]
+    }
+}
+
+tasks.register('benchmarkRegionCoordinates', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.RegionCoordinateBenchmark'
+    maxHeapSize = '512m'
+    doFirst {
+        args = [providers.gradleProperty('graph').get(), providers.gradleProperty('queries').get()]
+    }
+}
+
+tasks.register('inspectRegionFailures', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.RegionFailureAnalysis'
+    maxHeapSize = '512m'
+    doFirst {
+        args = [providers.gradleProperty('cases').get(), providers.gradleProperty('report').get()]
+    }
+}
+
+// Produces a comparison road subset and an explicit rule/exclusion audit.
+tasks.register('prepareSeoul', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.lsk.routing.core.graph.SeoulPreparation'
+    maxHeapSize = '2g'
+    doFirst {
+        args = ['pbf', 'ids', 'report'].collect { rootProject.file(providers.gradleProperty(it).get()).absolutePath }
     }
 }

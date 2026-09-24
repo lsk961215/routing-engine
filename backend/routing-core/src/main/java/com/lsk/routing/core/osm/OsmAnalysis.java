@@ -29,6 +29,7 @@ public final class OsmAnalysis {
         System.out.println("Car restriction candidates (node via): " + car.candidateNodeVia());
         System.out.println("Car connected via-way restrictions (application deferred): " + car.connectedViaWay());
         System.out.println("Car restriction issues (overlapping): " + car.issues());
+        System.out.println("Car direction-blocked no restrictions: " + car.directionBlockedNoRestrictions());
         System.out.println("Car restriction issue examples: " + car.examples());
         System.out.printf("Analysis seconds: %.3f%n", (System.nanoTime() - started) / 1e9);
     }

@@ -14,6 +14,8 @@ public class RoutingConfig {
     @Bean
     @ConditionalOnProperty(name = "routing.graph.path")
     public RoutingGraph routingGraph(@Value("${routing.graph.path}") String path) throws IOException {
-        return RoutingGraph.read(Path.of(path));
+        var graph=RoutingGraph.read(Path.of(path));
+        if(graph.conditionalDirections().isPresent())throw new IOException("Conditional graphs require snapshotAt API support, not yet enabled");
+        return graph;
     }
 }

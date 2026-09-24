@@ -1,11 +1,14 @@
 package com.lsk.routing.core.graph;
 
 import java.util.*;
+import java.time.Instant;
+import java.util.function.IntPredicate;
 
-/** Small-area routing via projected points. Graph and spatial index are shared; only Dijkstra labels are query-local. */
+/** Routing via projected points. Graph and spatial index are shared; search labels are query-local. */
 public final class CoordinateRouter {
     private static final double EPS = 1e-10;
     private final RoutingGraph graph;
+    private final double heuristicScale;
     private final int[] sources;
     private final Segment[] edgeSegments;
     private final Box index;
@@ -33,10 +36,13 @@ public final class CoordinateRouter {
         sources=new int[graph.edgeCount()];edgeSegments=new Segment[graph.edgeCount()];
         var segments=new LinkedHashMap<Key,Segment>();
         var grouped=new HashMap<Key, List<Integer>>();
+        double scale=1;
         for(int node=0;node<graph.nodeCount();node++) {
             for(int edge=graph.edgeStart(node);edge<graph.edgeEnd(node);edge++) {
                 sources[edge]=node;
                 int target=graph.target(edge);
+                double geo=metres(graph.longitude(node),graph.latitude(node),graph.longitude(target),graph.latitude(target));
+                if(geo>0)scale=Math.min(scale,graph.distanceMetres(edge)/geo);
                 var key=new Key(graph.osmWayId(edge),Math.min(node,target),Math.max(node,target));
                 var segment=segments.computeIfAbsent(key,k->new Segment(k,graph.longitude(k.a),graph.latitude(k.a),
                         graph.longitude(k.b),graph.latitude(k.b)));
@@ -45,6 +51,7 @@ public final class CoordinateRouter {
                 grouped.computeIfAbsent(key,ignored->new ArrayList<>()).add(edge);
             }
         }
+        heuristicScale=scale*(1-1e-12);
         index=buildIndex(new ArrayList<>(segments.values()),0);
         var frozen=new HashMap<Key,int[]>();
         grouped.forEach((key,edges)->frozen.put(key,edges.stream().mapToInt(Integer::intValue).toArray()));
@@ -52,19 +59,43 @@ public final class CoordinateRouter {
     }
 
     public Optional<Route> route(double startLon,double startLat,double endLon,double endLat) {
+        return route(startLon,startLat,endLon,endLat,EdgeAvailability.staticOnly(graph));
+    }
+    public Optional<Route> route(double startLon,double startLat,double endLon,double endLat,Instant snapshotAt) {
+        return route(startLon,startLat,endLon,endLat,EdgeAvailability.at(graph,snapshotAt));
+    }
+    private Optional<Route> route(double startLon,double startLat,double endLon,double endLat,IntPredicate allowed) {
         validate(startLon,startLat);validate(endLon,endLat);
         Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
-        return search(start,end);
+        return search(start,end,allowed);
+    }
+
+    public record SearchResult(Optional<Route> route,RoutingAlgorithm algorithm,double snapMillis,double searchMillis,long expandedStates) {}
+    public SearchResult search(double startLon,double startLat,double endLon,double endLat,RoutingAlgorithm algorithm) {
+        Objects.requireNonNull(algorithm);
+        var allowed=EdgeAvailability.staticOnly(graph);
+        validate(startLon,startLat);validate(endLon,endLat);
+        long begin=System.nanoTime();
+        Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
+        long snapped=System.nanoTime();
+        var metrics=new HistorySearch.Metrics();
+        int startNode=endpoint(start),endNode=endpoint(end);
+        Optional<Route> route;
+        if((startNode>=0 && startNode==endNode) || (startNode<0 && endNode<0
+                && start.segment.key.equals(end.segment.key) && Math.abs(start.fraction-end.fraction)<EPS))
+            route=Optional.of(result(start,end,0,List.of()));
+        else route=searchWithHistory(start,end,startNode,endNode,allowed,algorithm,metrics);
+        return new SearchResult(route,algorithm,(snapped-begin)/1e6,(System.nanoTime()-snapped)/1e6,metrics.expandedStates);
     }
 
     private record Label(int edge,double distance) {}
-    private Optional<Route> search(Snap start,Snap end) {
+    private Optional<Route> search(Snap start,Snap end,IntPredicate allowed) {
         int startNode=endpoint(start),endNode=endpoint(end);
         if ((startNode>=0 && startNode==endNode) || (startNode<0 && endNode<0
                 && start.segment.key.equals(end.segment.key) && Math.abs(start.fraction-end.fraction)<EPS)) {
             return Optional.of(result(start,end,0,List.of()));
         }
-        if(!graph.sequenceRestrictions().isEmpty())return searchWithHistory(start,end,startNode,endNode);
+        if(!graph.sequenceRestrictions().isEmpty())return searchWithHistory(start,end,startNode,endNode,allowed);
         double[] best=new double[graph.edgeCount()];
         int[] previous=new int[graph.edgeCount()];
         Arrays.fill(best,Double.POSITIVE_INFINITY);
@@ -78,6 +109,7 @@ public final class CoordinateRouter {
                 ? java.util.stream.IntStream.range(graph.edgeStart(startNode),graph.edgeEnd(startNode)).toArray()
                 : segmentEdges.get(start.segment.key);
         for(int edge:seeds) {
+            if(!allowed.test(edge))continue;
             double from=startNode>=0?0:fractionAlong(start,edge);
             double remaining=graph.distanceMetres(edge)*(1-from);
             best[edge]=remaining;
@@ -99,7 +131,7 @@ public final class CoordinateRouter {
                 break;
             }
             for(int outgoing=graph.edgeStart(node);outgoing<graph.edgeEnd(node);outgoing++) {
-                if(!graph.turnAllowed(incoming,outgoing))continue;
+                if(!allowed.test(outgoing) || !graph.turnAllowed(incoming,outgoing))continue;
                 if(endNode<0 && edgeSegments[outgoing].key.equals(end.segment.key)) {
                     double candidate=add(label.distance,graph.distanceMetres(outgoing)*fractionAlong(end,outgoing));
                     if(candidate<winner){winner=candidate;winnerLast=incoming;}
@@ -116,13 +148,18 @@ public final class CoordinateRouter {
         Collections.reverse(path);
         return Optional.of(result(start,end,winner,path));
     }
-    private Optional<Route> searchWithHistory(Snap start,Snap end,int startNode,int endNode) {
+    private Optional<Route> searchWithHistory(Snap start,Snap end,int startNode,int endNode,IntPredicate allowed) {
+        return searchWithHistory(start,end,startNode,endNode,allowed,RoutingAlgorithm.DIJKSTRA,new HistorySearch.Metrics());
+    }
+    private Optional<Route> searchWithHistory(Snap start,Snap end,int startNode,int endNode,IntPredicate allowed,
+                                              RoutingAlgorithm algorithm,HistorySearch.Metrics metrics) {
         int[] initial=startNode>=0
                 ?java.util.stream.IntStream.range(graph.edgeStart(startNode),graph.edgeEnd(startNode)).toArray()
                 :segmentEdges.get(start.segment.key);
         var seeds=new ArrayList<HistorySearch.Seed>();
         double direct=Double.POSITIVE_INFINITY;
         for(int edge:initial) {
+            if(!allowed.test(edge))continue;
             double from=startNode>=0?0:fractionAlong(start,edge);
             seeds.add(new HistorySearch.Seed(edge,graph.distanceMetres(edge)*(1-from)));
             if(edgeSegments[edge].key.equals(end.segment.key)) {
@@ -132,7 +169,19 @@ public final class CoordinateRouter {
         }
         var partial=new HashMap<Integer,Double>();
         if(endNode<0)for(int edge:segmentEdges.get(end.segment.key))partial.put(edge,graph.distanceMetres(edge)*fractionAlong(end,edge));
-        return HistorySearch.route(graph,seeds,endNode,partial,direct).map(path->result(start,end,path.distance(),path.edges()));
+        // Bound distance to a virtual destination through its incoming edge's source.
+        // This also remains admissible when partial edge costs use linear interpolation.
+        java.util.function.IntToDoubleFunction estimate=node->{
+            if(algorithm==RoutingAlgorithm.DIJKSTRA)return 0;
+            if(endNode>=0)return lowerBound(node,endNode);
+            double bound=Double.POSITIVE_INFINITY;
+            for(var terminal:partial.entrySet())bound=Math.min(bound,lowerBound(node,sources[terminal.getKey()])+terminal.getValue());
+            return bound;
+        };
+        return HistorySearch.route(graph,seeds,endNode,partial,direct,allowed,estimate,metrics).map(path->result(start,end,path.distance(),path.edges()));
+    }
+    private double lowerBound(int from,int to) {
+        return heuristicScale*metres(graph.longitude(from),graph.latitude(from),graph.longitude(to),graph.latitude(to));
     }
     private Route result(Snap start,Snap end,double distance,List<Integer> fullEdges) {
         var geometry=new ArrayList<Point>();geometry.add(start.point);
