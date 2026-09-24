@@ -23,7 +23,7 @@ const assert = require('node:assert/strict');
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     // Test-only reference: no test globals or routes are added to the application source.
-    await page.route('**/src/main.ts', async route => {
+    await page.route('**/src/main.ts*', async route => {
       const response = await route.fetch();
       await route.fulfill({ response, body: (await response.text()) + '\nwindow.__routeTestMap = map;\n' });
     });
@@ -42,6 +42,7 @@ const assert = require('node:assert/strict');
     await click(start);
     const response = page.waitForResponse(r => r.url().includes('/api/route?'));
     await click(end);
+    await page.click('#search-route');
     const result = await response;
     if (result.status() !== 200) console.log({start,end,url:result.url(),body:await result.text()});
     assert.equal(result.status(), 200);
@@ -53,26 +54,28 @@ const assert = require('node:assert/strict');
     assert.equal(positions, data.routes[0].geometry.coordinates.length);
     await page.screenshot({ path: '/tmp/routing-segment-browser.png' });
 
-    // A third click resets the previous result. Reverse travel on this one-way chain is impossible.
-    await click(start);
+    // The panel resets the previous result. Reverse travel on this one-way chain is impossible.
+    await page.click('#reset-points');
     assert.equal(await page.evaluate(() => !!window.__routeTestMap.getLayer('route')), false);
     await click(end);
     const reverseResponse = page.waitForResponse(r => r.url().includes('/api/route?'));
     await click(start);
+    await page.click('#search-route');
     assert.equal((await reverseResponse).status(), 404);
     await page.waitForFunction(() => document.querySelector('#routing-status').textContent.includes('연결하는 경로가 없습니다'));
-    await click(start);
+    await page.click('#reset-points');
     // Outside the supported graph must show a useful error.
     await page.evaluate(() => window.__routeTestMap.jumpTo({ center: [128, 38], zoom: 17 }));
     await click([128, 38]);
     const outsideResponse = page.waitForResponse(r => r.url().includes('/api/route?'));
     await click([128.001, 38]);
+    await page.click('#search-route');
     assert.equal((await outsideResponse).status(), 422);
     await page.waitForFunction(() => document.querySelector('#routing-status').textContent.includes('지원 영역'));
     assert.equal(await page.locator('#route-info').evaluate(e => e.classList.contains('hidden')), true);
 
     // Reset while an actual request response is delayed: stale results must not reappear.
-    await click([128, 38]);
+    await page.click('#reset-points');
     await page.evaluate(([a, b]) => window.__routeTestMap.fitBounds([[Math.min(a[0],b[0]), Math.min(a[1],b[1])], [Math.max(a[0],b[0]), Math.max(a[1],b[1])]], { padding: 180, maxZoom: 19, duration: 0 }), [start, end]);
     let started;
     const requestStarted = new Promise(resolve => { started = resolve; });
@@ -82,10 +85,10 @@ const assert = require('node:assert/strict');
       await new Promise(resolve => setTimeout(resolve, 500));
       await route.fulfill({ response: fetched }).catch(() => {});
     });
-    await click(start); await click(end); await requestStarted; await click(start);
+    await click(start); await click(end); await page.click('#search-route'); await requestStarted; await page.click('#reset-points');
     await page.waitForTimeout(800);
     assert.equal(await page.evaluate(() => !!window.__routeTestMap.getLayer('route')), false);
-    assert.match(await page.locator('#routing-status').innerText(), /다시 선택/);
+    assert.equal(await page.locator('#routing-status').textContent(), '');
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({ status: 'passed', distance: data.routes[0].distance, positions, checks: ['route-render', 'reset', 'oneway-404', 'outside-422', 'stale-request'], screenshot: '/tmp/routing-segment-browser.png' }));
   } finally { await browser.close(); }

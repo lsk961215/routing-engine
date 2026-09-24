@@ -1,0 +1,44 @@
+const { selectTestRoute } = require('./browser-route-helpers.cjs');
+const { chromium } = require('playwright');
+const assert = require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-gl=angle','--use-angle=swiftshader']});
+ try {
+ const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/src/main.ts*',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text())+'\nwindow.__routeTestMap=map;\n'});});
+ const clickPoint=async c=>{const p=await page.evaluate(c=>{const m=window.__routeTestMap,p=m.project(c),r=m.getCanvas().getBoundingClientRect();return {x:p.x+r.left,y:p.y+r.top};},c);await page.mouse.click(p.x,p.y);};
+ await page.goto('http://localhost:5173');await page.waitForFunction(()=>!document.querySelector('#select-start').disabled);
+ let response=page.waitForResponse(r=>r.url().includes('/api/route?'));await selectTestRoute(page);assert.equal((await response).status(),200);
+ await page.waitForFunction(()=>window.__routeTestMap.queryRenderedFeatures({layers:['route']}).length>0);
+ const start=await page.textContent('#start-road'),end=await page.textContent('#end-road');assert.match(start,/37\.569014/);
+ await page.screenshot({path:'/tmp/routing-sidebar.png'});
+ const boundary=await page.evaluate(()=>({panel:document.querySelector('#routing-sidebar').getBoundingClientRect().right,button:document.querySelector('#sidebar-toggle').getBoundingClientRect().left}));
+ assert.equal(boundary.panel,boundary.button);
+ await page.click('#sidebar-toggle');await page.waitForFunction(()=>window.__routeTestMap.getCanvas().clientWidth===innerWidth);
+ assert.equal(await page.locator('#sidebar-toggle').getAttribute('aria-expanded'),'false');
+ assert.equal(await page.textContent('#start-road'),start);
+ await page.click('#sidebar-toggle');await page.waitForFunction(()=>window.__routeTestMap.getCanvas().clientWidth<innerWidth);
+ assert.ok(await page.evaluate(()=>!!window.__routeTestMap.getLayer('route')));
+ await page.click('#swap-points');assert.equal(await page.textContent('#start-road'),end);assert.equal(await page.textContent('#end-road'),start);
+ assert.equal(await page.evaluate(()=>!!window.__routeTestMap.getLayer('route')),false);
+ response=page.waitForResponse(r=>r.url().includes('/api/route?'));await page.click('#search-route');assert.equal((await response).status(),200);
+ await page.waitForFunction(()=>!document.querySelector('#search-route').disabled);
+ await page.click('#select-start');
+ await clickPoint([127.0276,37.4981]);
+ assert.equal(await page.textContent('#end-road'),start);assert.equal(await page.evaluate(()=>!!window.__routeTestMap.getLayer('route')),false);
+ await page.click('#reset-points');assert.equal(await page.locator('.maplibregl-marker').count(),0);assert.equal(await page.locator('#search-route').isDisabled(),true);
+ await page.click('#select-end');await clickPoint([127,37.5]);
+ assert.equal(await page.textContent('#start-road'),'지도에서 선택');assert.ok(Math.abs(parseFloat(await page.textContent('#end-road'))-37.5)<0.001);
+ let release;const gate=new Promise(r=>release=r);let started;const seen=new Promise(r=>started=r);
+ await page.route('**/api/route?*',async route=>{const response=await route.fetch();started();await gate;await route.fulfill({response}).catch(()=>{});});
+ await selectTestRoute(page);await seen;await page.click('#reset-points');release();await page.waitForTimeout(250);
+ assert.equal(await page.evaluate(()=>!!window.__routeTestMap.getLayer('route')),false);
+ assert.equal(await page.locator('.maplibregl-marker').count(),0);
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/tmp/routing-sidebar-mobile.png'});
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.waitForFunction(()=>Math.abs(document.querySelector('#sidebar-toggle').getBoundingClientRect().top-document.querySelector('#routing-sidebar').getBoundingClientRect().bottom)<1);
+ await page.click('#sidebar-toggle');await page.waitForFunction(()=>window.__routeTestMap.getCanvas().clientHeight===innerHeight);
+ await page.click('#sidebar-toggle');
+ assert.deepEqual(errors,[]);console.log('Sidebar PASS: selection, swap, explicit search, single endpoint edit, reset, destination-first, mobile');
+ } finally {await browser.close();}
+})().catch(e=>{console.error(e);process.exit(1);});
