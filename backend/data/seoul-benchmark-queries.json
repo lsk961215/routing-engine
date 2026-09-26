@@ -1,0 +1,13 @@
+{
+  "id": "seoul-fixed-v1",
+  "queries": [
+    {"id":"gwanghwamun-gangnam","name":"광화문 → 강남","startLon":126.97721885,"startLat":37.5690142,"endLon":127.0276,"endLat":37.4981},
+    {"id":"gangnam-gwanghwamun","name":"강남 → 광화문","startLon":127.0276,"startLat":37.4981,"endLon":126.97721885,"endLat":37.5690142},
+    {"id":"hongdae-jamsil","name":"홍대 → 잠실","startLon":126.9236,"startLat":37.5567,"endLon":127.1,"endLat":37.5132},
+    {"id":"jamsil-hongdae","name":"잠실 → 홍대","startLon":127.1,"startLat":37.5132,"endLon":126.9236,"endLat":37.5567},
+    {"id":"nowon-seoul-university","name":"노원 → 서울대입구","startLon":127.061,"startLat":37.655,"endLon":126.9527,"endLat":37.4812},
+    {"id":"seoul-university-nowon","name":"서울대입구 → 노원","startLon":126.9527,"startLat":37.4812,"endLon":127.061,"endLat":37.655},
+    {"id":"songjeong-cheonho","name":"송정 → 천호","startLon":126.8119,"startLat":37.5611,"endLon":127.1237,"endLat":37.5385},
+    {"id":"cheonho-songjeong","name":"천호 → 송정","startLon":127.1237,"startLat":37.5385,"endLon":126.8119,"endLat":37.5611}
+  ]
+}

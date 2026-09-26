@@ -76,14 +76,20 @@ public final class CoordinateRouter {
     }
     /** Snap once, then run each strategy sequentially with independent query state. */
     public ComparisonResult compare(double startLon,double startLat,double endLon,double endLat) {
+        return compare(startLon,startLat,endLon,endLat,RoutingAlgorithm.DIJKSTRA);
+    }
+    /** The benchmark alternates the first strategy to expose execution-order effects. */
+    public ComparisonResult compare(double startLon,double startLat,double endLon,double endLat,RoutingAlgorithm first) {
+        Objects.requireNonNull(first);
         var allowed=EdgeAvailability.staticOnly(graph);
         validate(startLon,startLat);validate(endLon,endLat);
         long begin=System.nanoTime();
         Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
         double snapMillis=(System.nanoTime()-begin)/1e6;
+        var second=first==RoutingAlgorithm.DIJKSTRA?RoutingAlgorithm.ASTAR:RoutingAlgorithm.DIJKSTRA;
         var results=List.of(
-                search(start,end,allowed,RoutingAlgorithm.DIJKSTRA,snapMillis),
-                search(start,end,allowed,RoutingAlgorithm.ASTAR,snapMillis));
+                search(start,end,allowed,first,snapMillis),
+                search(start,end,allowed,second,snapMillis));
         return new ComparisonResult(new Waypoint(start.point,start.distance),new Waypoint(end.point,end.distance),snapMillis,results);
     }
     public SearchResult search(double startLon,double startLat,double endLon,double endLat,RoutingAlgorithm algorithm) {

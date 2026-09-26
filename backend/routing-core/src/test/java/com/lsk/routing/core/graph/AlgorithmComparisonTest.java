@@ -64,4 +64,16 @@ class AlgorithmComparisonTest {
             for(var task:tasks)task.get();
         }
     }
+    @Test void comparisonCanReverseExecutionOrderWithoutChangingResults() {
+        var g=RoutingTestGraphs.grid(8,true);var router=new CoordinateRouter(g);
+        var start=RoutingTestGraphs.point(g,1,.25);var end=RoutingTestGraphs.point(g,g.edgeCount()-2,.75);
+        var normal=router.compare(start[0],start[1],end[0],end[1]);
+        var reversed=router.compare(start[0],start[1],end[0],end[1],RoutingAlgorithm.ASTAR);
+        assertEquals(RoutingAlgorithm.ASTAR,reversed.results().getFirst().algorithm());
+        assertEquals(normal.start(),reversed.start());assertEquals(normal.end(),reversed.end());
+        for(int i=0;i<2;i++) {
+            assertEquals(normal.results().get(i).route(),reversed.results().get(1-i).route());
+            assertEquals(normal.results().get(i).expandedStates(),reversed.results().get(1-i).expandedStates());
+        }
+    }
 }

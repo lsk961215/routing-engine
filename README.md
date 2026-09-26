@@ -82,6 +82,38 @@ v3는 조건부 방향을 추가한다. 서울 시험 그래프는 v2이며 파�
 조건부 일방통행의 제작·시각 고정 탐색은 코어에 구현되어 있지만 HTTP API에는 연결되지 않았다.
 지원 시간대는 Asia/Seoul이며 주행 중 시간 변화·조건부 회전 제한은 지원하지 않는다.
 
+## 반복 성능 측정
+
+```sh
+./scripts/benchmark.sh
+```
+
+서버 실행 없이 전용 JVM에서 서울 고정 질의 8개를 측정한다. 기본 설정은 **독립 JVM 3개 × 질의별 워밍업 4회 + 측정 20회**다.
+JVM은 순차 실행하며 각 JVM의 힙은 `-Xms1g -Xmx2g`, GC는 G1이다. 실행 중 다른 부하 작업을 피한다.
+질의 좌표는 `backend/data/seoul-benchmark-queries.json`에 고정한다. 질의 순서는 시드로 섞고, 각 질의에서 먼저 실행하는 알고리즘을 매 라운드 교대한다.
+짝수 측정 횟수만 허용하므로 알고리즘마다 먼저/나중 실행한 표본 수가 같다. 두 알고리즘은 매번 같은 좌표 연결 결과를 공유한다.
+
+완료 시 출력하는 `.runtime/benchmarks/<실행 ID>/report.html`을 브라우저에서 열면 다음을 확인할 수 있다.
+
+- 질의·알고리즘별 표본 수, 중앙값(p50), p95, 최소·최대, 평균·표준편차.
+- JVM별 또는 먼저/나중 실행한 표본만 선택한 통계와 그래프.
+- `report.json`: 모든 원시 표본, 질의 좌표, 설정, 그래프/질의 SHA-256, JVM·OS·Git 정보, GC 횟수·시간.
+- `fork-1.json` 등: 각 독립 JVM의 측정 결과. 기존 출력 디렉터리를 지정하면 덮어쓰지 않고 실패한다.
+
+`searchMillis`는 탐색·경로 복원만 포함한다. 그래프/인덱스 초기화·좌표 연결·HTTP·JSON·워밍업은 제외한다.
+거리·경로 유무·연결 좌표가 두 알고리즘에서 일치하는지 매 쌍 검증하며 불일치하면 중단한다.
+자연 발생한 GC와 이상값은 제거하지 않는다. 중앙값은 짝수 표본의 가운데 두 값 평균, p95는 nearest-rank 방식이다.
+서로 다른 질의는 하나의 분포로 합치지 않는다. JVM별 편차를 함께 확인하며, 고정 워밍업만으로 JIT 안정화나 통계적 유의성을 보장하지는 않는다.
+
+설정 변경 예시(경로는 `backend/` 기준):
+
+```sh
+./scripts/benchmark.sh -PwarmupRounds=6 -PmeasuredRounds=30 -Pforks=3 -Pseed=20260926
+./scripts/benchmark.sh -Pqueries=data/seoul-benchmark-queries.json -PbenchmarkReport=../.runtime/benchmarks/my-run
+```
+
+기존 `benchmarkRouting`은 이전/현재 구현을 비교하는 진단 도구다. Dijkstra·A* 반복 비교에는 위 스크립트를 사용한다.
+
 ## 검증
 
 브라우저 검증 도구는 프로젝트 루트에 별도로 설치한다. 루트 `package-lock.json`으로 Playwright 버전을 고정한다.
@@ -105,6 +137,8 @@ node scripts/browser-comparison-check.cjs
 node scripts/browser-panel-check.cjs
 node scripts/browser-seoul-check.cjs
 node scripts/browser-exclusions-check.cjs
+# 반복 측정 보고서 생성 후 통계·필터·모바일 검증
+node scripts/check-benchmark-report.cjs .runtime/benchmarks/my-run/report.json
 ```
 
 현재 진행 상태와 다음 작업은 [TODO.md](TODO.md)에서 관리한다.

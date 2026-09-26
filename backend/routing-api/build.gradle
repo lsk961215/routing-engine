@@ -39,3 +39,22 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Offline runner: each measured fork starts a fresh JVM; Spring is not started.
+tasks.register('benchmarkAlgorithms', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lsk.routing.api.benchmark.AlgorithmBenchmark'
+    maxHeapSize = '256m'
+    doFirst {
+        args = [
+            rootProject.file(providers.gradleProperty('graph').getOrElse('data/processed/seoul.rgraph')).absolutePath,
+            rootProject.file(providers.gradleProperty('queries').getOrElse('data/seoul-benchmark-queries.json')).absolutePath,
+            rootProject.file(providers.gradleProperty('benchmarkReport').getOrElse('../.runtime/benchmarks/' + System.currentTimeMillis())).absolutePath,
+            providers.gradleProperty('warmupRounds').getOrElse('4'),
+            providers.gradleProperty('measuredRounds').getOrElse('20'),
+            providers.gradleProperty('forks').getOrElse('3'),
+            providers.gradleProperty('seed').getOrElse('20260926')
+        ]
+    }
+}
