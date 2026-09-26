@@ -51,4 +51,39 @@ class RoutingServiceTest {
         assertEquals(404,assertThrows(ResponseStatusException.class,
                 ()->service.route(127,37.00075,127,37.00025)).getStatusCode().value());
     }
+    @Test void comparisonSharesProjectedWaypointsAndMatchesIndividualRoutes() {
+        var service=service(true);
+        var comparison=service.compare(127.0001,37.00025,127,37.00075);
+        assertEquals("Ok",comparison.code());
+        assertEquals(2,comparison.results().size());
+        assertTrue(comparison.snapMillis()>=0);
+        assertEquals(127,comparison.waypoints().getFirst().location().getFirst(),1e-8);
+        for(var result:comparison.results()) {
+            var individual=service.route(127.0001,37.00025,127,37.00075,result.algorithm());
+            assertEquals("Ok",result.code());
+            assertEquals(individual.routes(),result.routes());
+            assertEquals(individual.waypoints(),comparison.waypoints());
+            assertTrue(result.metrics().searchMillis()>=0);
+            assertEquals(individual.metrics().expandedStates(),result.metrics().expandedStates());
+        }
+    }
+    @Test void comparisonRetainsBothNoRouteResultsAndMetrics() {
+        var comparison=service(true).compare(127,37.00075,127,37.00025);
+        assertEquals(2,comparison.results().size());
+        assertEquals(2,comparison.waypoints().size());
+        for(var result:comparison.results()) {
+            assertEquals("NoRoute",result.code());
+            assertTrue(result.routes().isEmpty());
+            assertTrue(result.metrics().searchMillis()>=0);
+        }
+    }
+    @Test void comparisonHandlesSamePointAndInputErrors() {
+        for(var result:service(true).compare(127,37.0005,127,37.0005).results()) {
+            assertEquals(0,result.routes().getFirst().distance());
+            assertEquals(2,result.routes().getFirst().geometry().coordinates().size());
+        }
+        assertEquals(503,assertThrows(ResponseStatusException.class,()->service(false).compare(127,37,127,37)).getStatusCode().value());
+        assertEquals(400,assertThrows(ResponseStatusException.class,()->service(true).compare(Double.NaN,37,127,37)).getStatusCode().value());
+        assertEquals(422,assertThrows(ResponseStatusException.class,()->service(true).compare(128,38,127,37)).getStatusCode().value());
+    }
 }

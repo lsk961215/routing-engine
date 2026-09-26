@@ -71,13 +71,31 @@ public final class CoordinateRouter {
     }
 
     public record SearchResult(Optional<Route> route,RoutingAlgorithm algorithm,double snapMillis,double searchMillis,long expandedStates) {}
+    public record ComparisonResult(Waypoint start,Waypoint end,double snapMillis,List<SearchResult> results) {
+        public ComparisonResult { results=List.copyOf(results); }
+    }
+    /** Snap once, then run each strategy sequentially with independent query state. */
+    public ComparisonResult compare(double startLon,double startLat,double endLon,double endLat) {
+        var allowed=EdgeAvailability.staticOnly(graph);
+        validate(startLon,startLat);validate(endLon,endLat);
+        long begin=System.nanoTime();
+        Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
+        double snapMillis=(System.nanoTime()-begin)/1e6;
+        var results=List.of(
+                search(start,end,allowed,RoutingAlgorithm.DIJKSTRA,snapMillis),
+                search(start,end,allowed,RoutingAlgorithm.ASTAR,snapMillis));
+        return new ComparisonResult(new Waypoint(start.point,start.distance),new Waypoint(end.point,end.distance),snapMillis,results);
+    }
     public SearchResult search(double startLon,double startLat,double endLon,double endLat,RoutingAlgorithm algorithm) {
         Objects.requireNonNull(algorithm);
         var allowed=EdgeAvailability.staticOnly(graph);
         validate(startLon,startLat);validate(endLon,endLat);
         long begin=System.nanoTime();
         Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
-        long snapped=System.nanoTime();
+        return search(start,end,allowed,algorithm,(System.nanoTime()-begin)/1e6);
+    }
+    private SearchResult search(Snap start,Snap end,IntPredicate allowed,RoutingAlgorithm algorithm,double snapMillis) {
+        long begin=System.nanoTime();
         var metrics=new HistorySearch.Metrics();
         int startNode=endpoint(start),endNode=endpoint(end);
         Optional<Route> route;
@@ -85,7 +103,7 @@ public final class CoordinateRouter {
                 && start.segment.key.equals(end.segment.key) && Math.abs(start.fraction-end.fraction)<EPS))
             route=Optional.of(result(start,end,0,List.of()));
         else route=searchWithHistory(start,end,startNode,endNode,allowed,algorithm,metrics);
-        return new SearchResult(route,algorithm,(snapped-begin)/1e6,(System.nanoTime()-snapped)/1e6,metrics.expandedStates);
+        return new SearchResult(route,algorithm,snapMillis,(System.nanoTime()-begin)/1e6,metrics.expandedStates);
     }
 
     private record Label(int edge,double distance) {}

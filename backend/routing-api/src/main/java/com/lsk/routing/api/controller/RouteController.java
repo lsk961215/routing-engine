@@ -14,6 +14,15 @@ public class RouteController {
         this.routingService = routingService;
     }
 
+    @GetMapping("/api/compare")
+    public com.lsk.routing.api.dto.ComparisonResponse compare(
+            @RequestParam double startLon,
+            @RequestParam double startLat,
+            @RequestParam double endLon,
+            @RequestParam double endLat) {
+        return routingService.compare(startLon,startLat,endLon,endLat);
+    }
+
     @GetMapping({"/route", "/api/route"})
     public com.lsk.routing.api.dto.RouteResponse route(
             @RequestParam double startLon,

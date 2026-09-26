@@ -9,8 +9,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class AlgorithmComparisonTest {
     private void compare(CoordinateRouter router,double[] a,double[] b) {
         var reference=router.route(a[0],a[1],b[0],b[1]);
+        var comparison=router.compare(a[0],a[1],b[0],b[1]);
+        assertEquals(List.of(RoutingAlgorithm.DIJKSTRA,RoutingAlgorithm.ASTAR),
+                comparison.results().stream().map(CoordinateRouter.SearchResult::algorithm).toList());
         for(var algorithm:RoutingAlgorithm.values()) {
             var measured=router.search(a[0],a[1],b[0],b[1],algorithm);
+            var together=comparison.results().stream().filter(r->r.algorithm()==algorithm).findFirst().orElseThrow();
+            assertEquals(measured.route(),together.route());
+            assertEquals(measured.expandedStates(),together.expandedStates());
+            assertEquals(comparison.snapMillis(),together.snapMillis());
+            assertTrue(together.searchMillis()>=0);
+            together.route().ifPresent(route->{
+                assertEquals(comparison.start(),route.start());
+                assertEquals(comparison.end(),route.end());
+            });
             assertEquals(reference.isPresent(),measured.route().isPresent());
             if(reference.isPresent()) {
                 var actual=measured.route().orElseThrow();

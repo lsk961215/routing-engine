@@ -1,7 +1,7 @@
 # Routing Engine
 
 같은 서울 도로 그래프에서 경로 탐색 알고리즘별 결과·실행 비용을 비교하는 프로젝트.
-현재 패널에서 Dijkstra·A*를 선택해 동일한 조건으로 탐색할 수 있다.
+현재 패널에서 Dijkstra·A*를 개별 선택하거나 **함께 비교**할 수 있다.
 Java 21·Spring Boot 백엔드와 TypeScript·Vite·MapLibre 프론트로 구성한다.
 
 ## 실행
@@ -35,6 +35,9 @@ macOS/Linux에서 실행하며 `curl`, `lsof`, `ps`가 필요하다. 서버별 O
 같은 서버의 다른 명령이 진행 중이면 완료 후 다시 실행하라는 메시지를 표시한다.
 
 `http://localhost:5173`의 사이드 패널에서 출발지·도착지를 선택하고 지도에 지정한 뒤 **경로 탐색**을 누른다.
+**함께 비교 → 경로 비교**를 누르면 같은 좌표 연결을 공유하는 두 알고리즘의 거리·탐색/복원 시간·확장 상태 수를 나란히 표시한다.
+지도에는 Dijkstra를 파란 실선, A*를 주황 점선으로 표시하며, 결과 표의 체크박스로 각 경로를 켜고 끌 수 있다.
+요청 중 **취소**하거나 지점·알고리즘을 변경하면 늦은 응답은 반영하지 않는다. 브라우저 요청 취소가 이미 시작된 서버 계산의 중단까지 보장하지는 않는다.
 각 지점 재선택, 출발·도착 교환, 초기화를 패널에서 관리한다. 패널 경계의 화살표로 접거나 펼칠 수 있다. 좌표는 위도·경도 순서이며 선택한 입력 지점을 유지한다. **제외 도로 보기**를 켜고 도로를 클릭하면 제외 사유가 나온다.
 
 ## 핵심 구조
@@ -48,11 +51,13 @@ macOS/Linux에서 실행하며 `curl`, `lsof`, `ps`가 필요하다. 서버별 O
 간선에는 목적 노드·원본 도로 ID·거리(m)가 있다. 형상용 중간 노드도 유지한다.
 탐색은 진입 간선 기반 Dijkstra이며 노드 회전 금지와 via-way 경유 이력을 검사한다.
 클릭 좌표는 50m 이내의 가장 가까운 도로 구간에 연결한다. 요청마다 그래프를 복사하지 않는다.
-배경 지도는 OpenFreeMap이며 파란 선은 탐색 결과의 GeoJSON이다.
+배경 지도는 OpenFreeMap이며 경로는 GeoJSON으로 표시한다.
 
 알고리즘 선택 API는 동일한 진입 간선·회전 이력 탐색을 공유한다. Dijkstra는 남은 비용을 0으로,
 A*는 구면거리 하한으로 평가한다. 하한은 간선 비용에 맞춰 보정하며 도로 중간 목적지는 진입 부분 비용을 고려한다.
 결과의 좌표 연결 시간, 탐색·경로 복원 시간, 확장 상태 수는 요청별 측정값이다. JSON 변환·통신 시간은 포함하지 않는다.
+비교 API는 좌표를 한 번 연결한 뒤 Dijkstra → A* 순서로 실행하며 각 탐색 상태는 독립적이다.
+공통 좌표 연결 시간은 한 번만 표시한다. 워밍업·반복 측정을 적용한 벤치마크는 아니므로 단일 요청의 시간만으로 성능을 단정하지 않는다.
 
 지도에서 서울 데이터 추출 영역(보라색 점선)과 바깥쪽 음영을 켜고 끌 수 있다.
 **영역 전체 보기**로 경계를 확인한다. 행정 경계나 API의 강제 차단 경계는 아니며, 경계 도로 일부는 바깥까지 포함한다.
@@ -64,6 +69,10 @@ v3는 조건부 방향을 추가한다. 서울 시험 그래프는 v2이며 파�
 
 - `GET /api/route?startLon=...&startLat=...&endLon=...&endLat=...&algorithm=dijkstra`
   — `algorithm=dijkstra|astar`(기본 Dijkstra). 경로·거리·연결 좌표·`metrics` 반환. `/route`도 지원한다.
+- `GET /api/compare?startLon=...&startLat=...&endLon=...&endLat=...`
+  — 공통 `waypoints`·`snapMillis`와 `results`(Dijkstra, A* 순서)를 반환한다.
+  각 결과에는 `algorithm`, `code=Ok|NoRoute`, `routes`, `metrics.searchMillis`, `metrics.expandedStates`가 있다.
+  경로가 없어도 HTTP 200으로 `NoRoute`·빈 `routes`·측정값을 반환한다. 좌표 오류·영역 밖·그래프 미설정은 400·422·503이다.
 - `GET /api/excluded-roads?west=...&south=...&east=...&north=...`
   — 현재 영역과 경계 상자가 겹치는 제외 도로·사유 반환.
 - 경로 오류: 400 좌표·알고리즘 오류, 404 경로 없음, 422 도로에서 50m 초과, 503 그래프 미설정.
@@ -75,6 +84,13 @@ v3는 조건부 방향을 추가한다. 서울 시험 그래프는 v2이며 파�
 
 ## 검증
 
+브라우저 검증 도구는 프로젝트 루트에 별도로 설치한다. 루트 `package-lock.json`으로 Playwright 버전을 고정한다.
+
+```sh
+npm ci
+npm run browsers:install
+```
+
 ```sh
 ./backend/gradlew -p backend test
 npm run build --prefix frontend
@@ -85,6 +101,7 @@ python3 scripts/check-seoul-api.py
 python3 scripts/check-algorithms.py
 # Playwright를 사용할 수 있는 Node 환경에서
 node scripts/browser-algorithms-check.cjs
+node scripts/browser-comparison-check.cjs
 node scripts/browser-panel-check.cjs
 node scripts/browser-seoul-check.cjs
 node scripts/browser-exclusions-check.cjs

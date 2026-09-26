@@ -1,0 +1,12 @@
+{
+  "name": "routing-engine-tools",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "browsers:install": "playwright install chromium",
+    "test:browser": "node scripts/browser-seoul-check.cjs && node scripts/browser-algorithms-check.cjs && node scripts/browser-comparison-check.cjs && node scripts/browser-panel-check.cjs && node scripts/browser-exclusions-check.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
+  }
+}

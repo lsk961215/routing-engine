@@ -37,6 +37,19 @@ interface OsrmResponse {
   metrics: { algorithm: string; snapMillis: number; searchMillis: number; expandedStates: number };
 }
 
+type Algorithm = "dijkstra" | "astar";
+interface ComparisonResponse {
+  code: string;
+  waypoints: OsrmWaypoint[];
+  snapMillis: number;
+  results: {
+    algorithm: Algorithm;
+    code: "Ok" | "NoRoute";
+    routes: OsrmRoute[];
+    metrics: { searchMillis: number; expandedStates: number };
+  }[];
+}
+
 const mapElement = document.querySelector<HTMLDivElement>("#app");
 
 if (!mapElement) {
@@ -56,11 +69,27 @@ mapElement.innerHTML = `
       <div class="algorithm-buttons">
         <label><input type="radio" name="algorithm" value="dijkstra" checked><span><strong>Dijkstra</strong><small>기준 탐색</small></span></label>
         <label><input type="radio" name="algorithm" value="astar"><span><strong>A*</strong><small>목적지 방향 탐색</small></span></label>
+        <label class="compare-option"><input type="radio" name="algorithm" value="compare"><span><strong>함께 비교</strong><small>Dijkstra · A*</small></span></label>
       </div>
     </fieldset>
-    <button id="search-route" class="primary" disabled>경로 탐색</button>
+    <div class="search-actions"><button id="search-route" class="primary" disabled>경로 탐색</button><button id="cancel-route" hidden>취소</button></div>
     <p id="routing-status" class="status" role="status" aria-live="polite">지도를 불러오는 중입니다.</p>
     <section id="route-info" class="route-info hidden" aria-label="탐색 결과"><div><span>총 거리</span><strong id="route-distance">-</strong></div><div><span>예상 시간</span><strong id="route-duration">제공 예정</strong></div><div><span>알고리즘</span><strong id="result-algorithm">-</strong></div><div><span>탐색·경로 복원</span><strong id="search-time">-</strong></div><div><span>확장 상태 수</span><strong id="expanded-states">-</strong></div><small id="snap-time"></small></section>
+    <section id="comparison-info" class="comparison-info hidden" aria-label="알고리즘 비교 결과">
+      <table>
+        <caption>탐색 결과 비교</caption>
+        <thead><tr><th scope="col">항목</th><th scope="col"><span class="route-key dijkstra-key" aria-hidden="true"></span>Dijkstra</th><th scope="col"><span class="route-key astar-key" aria-hidden="true"></span>A*</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">결과</th><td id="dijkstra-code">-</td><td id="astar-code">-</td></tr>
+          <tr><th scope="row">거리</th><td id="dijkstra-distance">-</td><td id="astar-distance">-</td></tr>
+          <tr><th scope="row">탐색·복원<br><small>ms</small></th><td id="dijkstra-time">-</td><td id="astar-time">-</td></tr>
+          <tr><th scope="row">확장 상태</th><td id="dijkstra-states">-</td><td id="astar-states">-</td></tr>
+          <tr><th scope="row">지도 경로</th><td><label><input id="show-dijkstra" type="checkbox" checked aria-label="Dijkstra 경로 표시">표시</label></td><td><label><input id="show-astar" type="checkbox" checked aria-label="A* 경로 표시">표시</label></td></tr>
+        </tbody>
+      </table>
+      <p id="comparison-snap"></p>
+      <small>이번 요청의 측정값 · Dijkstra → A* 순서</small>
+    </section>
     <section class="exclusion-toolbar" aria-labelledby="map-options-title">
       <h2 id="map-options-title">지도 표시</h2>
       <div class="map-options">
@@ -90,6 +119,8 @@ function updatePanel() {
     button(`select-${kind}`).disabled = !ready;
   }
   button("search-route").disabled = !ready || !startPoint || !endPoint || !!pendingRoute;
+  button("search-route").textContent = selectedMode() === "compare" ? "경로 비교" : "경로 탐색";
+  button("cancel-route").hidden = !pendingRoute;
   button("swap-points").disabled = !ready || !startPoint || !endPoint;
   button("reset-points").disabled = !ready || (!startPoint && !endPoint);
   map.getCanvas().style.cursor = selection ? "crosshair" : "";
@@ -103,6 +134,13 @@ function invalidateRoute() {
   pendingRoute?.abort(); pendingRoute = null;
   resetRoute();
   document.querySelector("#route-info")!.classList.add("hidden");
+  document.querySelector("#comparison-info")!.classList.add("hidden");
+}
+function selectedMode() {
+  return document.querySelector<HTMLInputElement>('input[name="algorithm"]:checked')!.value;
+}
+function searchPrompt() {
+  return selectedMode() === "compare" ? "경로 비교를 눌러주세요." : "경로 탐색을 눌러주세요.";
 }
 
 const map = new Map({
@@ -179,16 +217,27 @@ for (const kind of ["start", "end"] as const) {
 }
 document.querySelector<HTMLFieldSetElement>("#algorithm")!.addEventListener("change", () => {
   invalidateRoute(); updatePanel();
-  status().textContent = "알고리즘을 변경했습니다. 경로 탐색을 눌러주세요.";
+  status().textContent = `알고리즘을 변경했습니다. ${searchPrompt()}`;
 });
 button("reset-points").addEventListener("click", resetPoints);
 button("search-route").addEventListener("click", () => { void findRoute(); });
+button("cancel-route").addEventListener("click", () => {
+  invalidateRoute(); updatePanel();
+  status().textContent = "요청을 취소했습니다.";
+});
+for (const algorithm of ["dijkstra", "astar"] as const) {
+  document.querySelector<HTMLInputElement>(`#show-${algorithm}`)!.addEventListener("change", event => {
+    if (map.getLayer(`route-${algorithm}`)) {
+      map.setLayoutProperty(`route-${algorithm}`, "visibility", (event.target as HTMLInputElement).checked ? "visible" : "none");
+    }
+  });
+}
 button("swap-points").addEventListener("click", () => {
   invalidateRoute();
   [startPoint, endPoint] = [endPoint, startPoint];
   selection = null;
   updateMarkers(); updatePanel();
-  status().textContent = "출발지와 도착지를 바꿨습니다. 경로 탐색을 눌러주세요.";
+  status().textContent = `출발지와 도착지를 바꿨습니다. ${searchPrompt()}`;
 });
 map.on("click", (event) => {
   if (!ready || inspectExcludedRoad(event) || !selection) return;
@@ -198,7 +247,7 @@ map.on("click", (event) => {
   else endPoint = point;
   selection = !startPoint ? "start" : !endPoint ? "end" : null;
   updateMarkers(); updatePanel();
-  status().textContent = selection ? "" : "두 지점이 준비됐습니다. 경로 탐색을 눌러주세요.";
+  status().textContent = selection ? "" : `두 지점이 준비됐습니다. ${searchPrompt()}`;
 });
 
 async function findRoute() {
@@ -214,13 +263,14 @@ async function findRoute() {
   updatePanel();
   const status = document.querySelector<HTMLElement>("#routing-status")!;
   status.textContent = "경로를 찾고 있습니다…";
+  const mode = selectedMode();
   const params = new URLSearchParams({
     startLon: String(startPoint[0]), startLat: String(startPoint[1]),
     endLon: String(endPoint[0]), endLat: String(endPoint[1]),
-    algorithm: document.querySelector<HTMLInputElement>('input[name="algorithm"]:checked')!.value,
   });
+  if (mode !== "compare") params.set("algorithm", mode);
   try {
-    const response = await fetch(`/api/route?${params}`, { signal: request.signal });
+    const response = await fetch(`/api/${mode === "compare" ? "compare" : "route"}?${params}`, { signal: request.signal });
     if (!response.ok) {
       const messages: Record<number, string> = {
         400: "좌표를 확인해 주세요.", 404: "두 지점을 연결하는 경로가 없습니다.",
@@ -228,22 +278,29 @@ async function findRoute() {
       };
       throw new Error(messages[response.status] ?? "경로 요청에 실패했습니다.");
     }
-    const data: OsrmResponse = await response.json();
+    const data = await response.json();
     if (pendingRoute !== request) return;
-    drawRoute(data.routes[0].geometry);
-    showRouteInfo(data);
-    // Keep selected input coordinates stable; the route geometry shows snapped endpoints.
-    status.textContent = "선택 지점 근처 도로 사이의 경로입니다. 지점을 바꾸려면 패널에서 출발지 또는 도착지를 눌러주세요.";
+    if (mode === "compare") {
+      showComparison(data as ComparisonResponse);
+    } else {
+      drawRoute(data.routes[0].geometry);
+      showRouteInfo(data as OsrmResponse);
+      // Keep selected input coordinates stable; the route geometry shows snapped endpoints.
+      status.textContent = "선택 지점 근처 도로 사이의 경로입니다. 지점을 바꾸려면 패널에서 출발지 또는 도착지를 눌러주세요.";
+    }
   } catch (error) {
     if (request.signal.aborted || pendingRoute !== request) return;
+    resetRoute();
+    document.querySelector("#comparison-info")!.classList.add("hidden");
+    document.querySelector("#route-info")!.classList.add("hidden");
     status.textContent = error instanceof Error ? error.message : "경로 요청에 실패했습니다.";
   } finally {
     if (pendingRoute === request) { pendingRoute = null; updatePanel(); }
   }
 }
 
-function drawRoute(geometry: OsrmGeometry) {
-  map.addSource("route", {
+function drawRoute(geometry: OsrmGeometry, id = "route", color = "#2563eb", dashed = false) {
+  map.addSource(id, {
     type: "geojson",
     data: {
       type: "Feature",
@@ -253,16 +310,17 @@ function drawRoute(geometry: OsrmGeometry) {
   });
 
   map.addLayer({
-    id: "route",
+    id,
     type: "line",
-    source: "route",
+    source: id,
     layout: {
       "line-join": "round",
       "line-cap": "round",
     },
     paint: {
-      "line-color": "#2563eb",
-      "line-width": 6,
+      "line-color": color,
+      "line-width": dashed ? 3.5 : 7,
+      ...(dashed ? { "line-dasharray": [2, 2] } : {}),
     },
   });
 }
@@ -275,13 +333,32 @@ function resetPoints() {
 }
 
 function resetRoute() {
-  if (map.getLayer("route")) {
-    map.removeLayer("route");
+  for (const id of ["route", "route-dijkstra", "route-astar"]) {
+    if (map.getLayer(id)) map.removeLayer(id);
+    if (map.getSource(id)) map.removeSource(id);
   }
+}
 
-  if (map.getSource("route")) {
-    map.removeSource("route");
+function showComparison(data: ComparisonResponse) {
+  for (const algorithm of ["dijkstra", "astar"] as const) {
+    const result = data.results.find(item => item.algorithm === algorithm);
+    if (!result) throw new Error("비교 결과가 완전하지 않습니다. 다시 시도해 주세요.");
+    const route = result.routes[0];
+    const found = result.code === "Ok" && !!route;
+    const text = (key: string, value: string) => { document.querySelector(`#${algorithm}-${key}`)!.textContent = value; };
+    text("code", found ? "경로 있음" : "경로 없음");
+    text("distance", found ? `${route.distance.toLocaleString(undefined, { maximumFractionDigits: 1 })} m` : "—");
+    text("time", result.metrics.searchMillis.toFixed(2));
+    text("states", result.metrics.expandedStates.toLocaleString());
+    const toggle = document.querySelector<HTMLInputElement>(`#show-${algorithm}`)!;
+    toggle.checked = found; toggle.disabled = !found;
+    if (found) drawRoute(route.geometry, `route-${algorithm}`, algorithm === "dijkstra" ? "#2563eb" : "#c2410c", algorithm === "astar");
   }
+  document.querySelector("#comparison-snap")!.textContent = `공통 좌표 연결 ${data.snapMillis.toFixed(2)} ms`;
+  document.querySelector("#comparison-info")!.classList.remove("hidden");
+  const foundCount = data.results.filter(result => result.code === "Ok").length;
+  status().textContent = foundCount === 2 ? "파란 실선 Dijkstra · 주황 점선 A*. 경로가 겹치면 하나씩 표시해 보세요."
+    : foundCount === 0 ? "두 지점을 연결하는 경로가 없습니다." : "알고리즘별 경로 유무가 다릅니다. 비교 결과를 확인해 주세요.";
 }
 
 function showRouteInfo(data: OsrmResponse) {

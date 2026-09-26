@@ -55,6 +55,9 @@ body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sa
  .algorithm-options { min-width: 0; border: 0; padding: 0; margin: 0 0 16px; }
 .algorithm-options legend { padding: 0; }
 .algorithm-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.algorithm-buttons .compare-option { grid-column: 1 / -1; }
+.algorithm-buttons .compare-option > span { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 10px; }
+.algorithm-buttons .compare-option small { margin: 0; }
 .algorithm-buttons label { position: relative; cursor: pointer; }
 .algorithm-buttons input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .algorithm-buttons label > span { display: block; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: white; text-align: center; }
@@ -66,6 +69,23 @@ body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sa
 .algorithm-buttons input:focus-visible + span { outline: 3px solid #93c5fd; outline-offset: 2px; }
 .sidebar .primary { width: 100%; background: var(--accent); border-color: var(--accent); color: white; }
 .sidebar .primary:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; }
+.search-actions { display: flex; gap: 8px; }
+.search-actions .primary { flex: 1; }
+.search-actions #cancel-route { flex-shrink: 0; }
+.comparison-info { margin-bottom: 16px; }
+.comparison-info table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
+.comparison-info caption { text-align: left; font-weight: 600; margin-bottom: 8px; }
+.comparison-info th, .comparison-info td { padding: 10px 4px; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+.comparison-info th { font-weight: 600; text-align: left; }
+.comparison-info td, .comparison-info thead th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+.comparison-info thead { background: var(--surface); }
+.comparison-info tbody th { color: var(--muted); }
+.comparison-info td label { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; min-height: 28px; cursor: pointer; }
+.comparison-info input { accent-color: var(--accent); margin: 0; }
+.comparison-info p { margin: 12px 0 4px; font-size: 12px; color: var(--muted); }
+.route-key { display: inline-block; width: 12px; margin-right: 4px; vertical-align: middle; }
+.dijkstra-key { border-top: 3px solid #2563eb; }
+.astar-key { border-top: 3px dashed #c2410c; }
 .status { font-size: 12px; line-height: 1.6; min-height: 40px; margin: 16px 0; color: var(--muted); }
 .route-info { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; }
 .route-info > div { min-width: 0; }

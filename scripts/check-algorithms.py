@@ -22,6 +22,17 @@ for case in cases['results']:
     a,b=results
     assert math.isclose(a['routes'][0]['distance'],b['routes'][0]['distance'],abs_tol=1e-6)
     assert a['waypoints']==b['waypoints']
+    params.pop('algorithm')
+    with urllib.request.urlopen('http://localhost:8080/api/compare?'+urllib.parse.urlencode(params),timeout=60) as r:
+        comparison=json.load(r)
+    assert comparison['waypoints']==a['waypoints']
+    assert comparison['snapMillis']>=0
+    assert [r['algorithm'] for r in comparison['results']]==['dijkstra','astar']
+    for together,individual in zip(comparison['results'],results):
+        assert together['code']=='Ok'
+        assert together['routes']==individual['routes']
+        assert together['metrics']['expandedStates']==individual['metrics']['expandedStates']
+        assert together['metrics']['searchMillis']>=0
     print(case['from'], '→', case['to'],round(a['routes'][0]['distance'],2),
           [(r['metrics']['algorithm'],round(r['metrics']['searchMillis'],2),r['metrics']['expandedStates']) for r in results],flush=True)
 params['algorithm']='unknown'
