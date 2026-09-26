@@ -6,21 +6,33 @@ Java 21·Spring Boot 백엔드와 TypeScript·Vite·MapLibre 프론트로 구성
 
 ## 실행
 
-Java 21, Node.js/npm이 필요하다. 최초 데이터 생성에는 Python 3와 osmium도 필요하다.
+Java 21, Node.js/npm, Python 3가 필요하다. 최초 데이터 생성에는 osmium도 필요하다.
 그래프가 없으면 [데이터 준비](backend/data/README.md)를 먼저 진행한다.
-프로젝트 루트에서 실행한다.
+프로젝트 루트에서 실행한다. 최초 한 번 프론트 의존성을 설치한다.
 
 ```sh
-scripts/run-seoul.sh                 # 백엔드 :8080
+npm ci --prefix frontend
+./scripts/start.sh                  # 백엔드 :8080 + 프론트 :5173 백그라운드 실행
+./scripts/status.sh                 # 실행 상태 확인
+./scripts/stop.sh                   # 모두 종료
 ```
 
-다른 터미널에서:
+각 서버만 실행·종료하려면 대상을 지정한다.
 
 ```sh
-cd frontend
-npm ci
-npm run dev                         # 프론트 :5173
+./scripts/start.sh backend
+./scripts/start.sh frontend
+./scripts/stop.sh backend
+./scripts/stop.sh frontend
 ```
+
+백엔드는 실행 전에 JAR를 빌드하고 서울 그래프를 적재한다. HTTP 응답을 확인한 후 실행 완료를 표시한다.
+로그와 PID는 `.runtime/`에 저장하며, 로그는 `tail -f .runtime/backend.log .runtime/frontend.log`로 확인한다.
+중복 실행은 건너뛰고 종료는 스크립트가 기록한 프로세스에만 적용한다. 기존에 수동으로 실행한 서버는
+해당 터미널에서 `Ctrl+C`로 종료한 뒤 스크립트를 사용한다. 종료 후 다시 `start.sh`를 실행하면 변경 사항이 반영된다.
+포그라운드 실행은 기존 `scripts/run-seoul.sh`와 `cd frontend && npm run dev`도 사용할 수 있다.
+macOS/Linux에서 실행하며 `curl`, `lsof`, `ps`가 필요하다. 서버별 OS 잠금으로 실행·종료·상태 확인의 동시 접근을 막는다.
+같은 서버의 다른 명령이 진행 중이면 완료 후 다시 실행하라는 메시지를 표시한다.
 
 `http://localhost:5173`의 사이드 패널에서 출발지·도착지를 선택하고 지도에 지정한 뒤 **경로 탐색**을 누른다.
 각 지점 재선택, 출발·도착 교환, 초기화를 패널에서 관리한다. 패널 경계의 화살표로 접거나 펼칠 수 있다. 좌표는 위도·경도 순서이며 선택한 입력 지점을 유지한다. **제외 도로 보기**를 켜고 도로를 클릭하면 제외 사유가 나온다.
@@ -67,6 +79,7 @@ v3는 조건부 방향을 추가한다. 서울 시험 그래프는 v2이며 파�
 ./backend/gradlew -p backend test
 npm run build --prefix frontend
 python3 scripts/test-excluded-export.py
+python3 scripts/test-server-lock.py
 # 서울 서버 실행 후
 python3 scripts/check-seoul-api.py
 python3 scripts/check-algorithms.py
