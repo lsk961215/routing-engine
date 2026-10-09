@@ -70,7 +70,7 @@ public final class CoordinateRouter {
         return search(start,end,allowed);
     }
 
-    public record SearchResult(Optional<Route> route,RoutingAlgorithm algorithm,double snapMillis,double searchMillis,long expandedStates) {}
+    public record SearchResult(Optional<Route> route,RoutingAlgorithm algorithm,double snapMillis,double searchMillis,long expandedStates,Long allocatedBytes) {}
     public record ComparisonResult(Waypoint start,Waypoint end,double snapMillis,List<SearchResult> results) {
         public ComparisonResult { results=List.copyOf(results); }
     }
@@ -101,6 +101,7 @@ public final class CoordinateRouter {
         return search(start,end,allowed,algorithm,(System.nanoTime()-begin)/1e6);
     }
     private SearchResult search(Snap start,Snap end,IntPredicate allowed,RoutingAlgorithm algorithm,double snapMillis) {
+        long allocatedBefore=ThreadAllocation.currentBytes();
         long begin=System.nanoTime();
         var metrics=new HistorySearch.Metrics();
         int startNode=endpoint(start),endNode=endpoint(end);
@@ -109,7 +110,9 @@ public final class CoordinateRouter {
                 && start.segment.key.equals(end.segment.key) && Math.abs(start.fraction-end.fraction)<EPS))
             route=Optional.of(result(start,end,0,List.of()));
         else route=searchWithHistory(start,end,startNode,endNode,allowed,algorithm,metrics);
-        return new SearchResult(route,algorithm,snapMillis,(System.nanoTime()-begin)/1e6,metrics.expandedStates);
+        double searchMillis=(System.nanoTime()-begin)/1e6;
+        Long allocatedBytes=ThreadAllocation.since(allocatedBefore);
+        return new SearchResult(route,algorithm,snapMillis,searchMillis,metrics.expandedStates,allocatedBytes);
     }
 
     private record Label(int edge,double distance) {}

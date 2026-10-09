@@ -25,10 +25,11 @@ public final class AlgorithmBenchmark {
         }
     }
     public record Sample(int fork,int round,int queryPosition,String queryId,String algorithm,int position,
-                         String code,Double distanceMetres,double snapMillis,double searchMillis,long expandedStates) {}
+                         String code,Double distanceMetres,double snapMillis,double searchMillis,long expandedStates,Long allocatedBytes) {}
     public record Distribution(int count,double min,double median,double p95,double max,double mean,double standardDeviation) {}
     public record Summary(String queryId,String algorithm,Distribution searchMillis,Distribution firstMillis,
-                          Distribution secondMillis,Distribution expandedStates) {}
+                          Distribution secondMillis,Distribution expandedStates,Distribution allocatedBytes,
+                          Distribution firstAllocatedBytes,Distribution secondAllocatedBytes) {}
     public record Gc(long collections,long millis) {
         static Gc now() {
             long count=0,time=0;
@@ -87,12 +88,13 @@ public final class AlgorithmBenchmark {
             forks.add(result);
         }
         var samples=forks.stream().flatMap(f->f.samples().stream()).toList();
-        var report=new Report(1,Instant.now().toString(),git("rev-parse","HEAD"),git("status","--porcelain"),settings,querySet,
+        var report=new Report(2,Instant.now().toString(),git("rev-parse","HEAD"),git("status","--porcelain"),settings,querySet,
                 Map.of("scope","Search and path reconstruction; snapping, graph/index loading, JSON, HTTP and warmup excluded",
                         "order","Sequential paired runs, first algorithm alternates per query each round; query order shuffled with seed + fork",
                         "statistics","Median: midpoint for even N; p95: nearest rank ceil(0.95*N); population standard deviation; no outlier removal",
                         "aggregation","Per query only, equal measured sample count per fork; first/second positions also reported",
                         "gc","Natural GC included in timings; no forced GC; measured-phase GC deltas recorded per fork",
+                        "allocation","Current-thread heap bytes allocated during search and path reconstruction via ThreadMXBean; approximate, not retained or peak memory; null when unavailable; null samples excluded from allocation distributions, whose counts show availability",
                         "limits","Local wall-clock measurements; fixed warmup does not prove JIT convergence; OS activity and thermal effects remain"),
                 forks,summarize(samples));
         JSON.writerWithDefaultPrettyPrinter().writeValue(output.resolve("report.json").toFile(),report);
@@ -150,7 +152,7 @@ public final class AlgorithmBenchmark {
                     var result=pair.results().get(algorithmPosition);
                     samples.add(new Sample(fork,round+1,position+1,query.id(),name(result.algorithm()),algorithmPosition+1,
                             result.route().isPresent()?"Ok":"NoRoute",result.route().map(CoordinateRouter.Route::distanceMetres).orElse(null),
-                            pair.snapMillis(),result.searchMillis(),result.expandedStates()));
+                            pair.snapMillis(),result.searchMillis(),result.expandedStates(),result.allocatedBytes()));
                 }
             }
             System.out.printf("  fork %d %s %d/%d%n",fork,samples==null?"warmup":"measure",round+1,rounds);
@@ -193,7 +195,8 @@ public final class AlgorithmBenchmark {
                 summaries.add(new Summary(query,algorithm,distribution(selected.stream().mapToDouble(Sample::searchMillis).toArray()),
                         distribution(selected.stream().filter(s->s.position()==1).mapToDouble(Sample::searchMillis).toArray()),
                         distribution(selected.stream().filter(s->s.position()==2).mapToDouble(Sample::searchMillis).toArray()),
-                        distribution(selected.stream().mapToDouble(Sample::expandedStates).toArray())));
+                        distribution(selected.stream().mapToDouble(Sample::expandedStates).toArray()),
+                        allocationDistribution(selected,0),allocationDistribution(selected,1),allocationDistribution(selected,2)));
             }
         }
         return List.copyOf(summaries);
@@ -206,6 +209,11 @@ public final class AlgorithmBenchmark {
         double median=n%2==0?(sorted[n/2-1]+sorted[n/2])/2:sorted[n/2];
         double variance=Arrays.stream(sorted).map(value->(value-mean)*(value-mean)).average().orElseThrow();
         return new Distribution(n,sorted[0],median,sorted[(int)Math.ceil(.95*n)-1],sorted[n-1],mean,Math.sqrt(variance));
+    }
+    private static Distribution allocationDistribution(List<Sample> samples,int position) {
+        var values=samples.stream().filter(s->position==0 || s.position()==position)
+                .map(Sample::allocatedBytes).filter(Objects::nonNull).mapToDouble(Long::doubleValue).toArray();
+        return values.length==0?null:distribution(values);
     }
     private static String name(RoutingAlgorithm algorithm) { return algorithm==RoutingAlgorithm.DIJKSTRA?"dijkstra":"astar"; }
     private static String sha256(Path path) throws Exception {

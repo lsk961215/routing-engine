@@ -19,6 +19,7 @@ class AlgorithmComparisonTest {
             assertEquals(measured.expandedStates(),together.expandedStates());
             assertEquals(comparison.snapMillis(),together.snapMillis());
             assertTrue(together.searchMillis()>=0);
+            assertTrue(together.allocatedBytes()==null || together.allocatedBytes()>=0);
             together.route().ifPresent(route->{
                 assertEquals(comparison.start(),route.start());
                 assertEquals(comparison.end(),route.end());
@@ -30,6 +31,7 @@ class AlgorithmComparisonTest {
                 assertEquals(reference.get().start(),actual.start());assertEquals(reference.get().end(),actual.end());
             }
             assertTrue(measured.snapMillis()>=0 && measured.searchMillis()>=0 && measured.expandedStates()>=0);
+            assertTrue(measured.allocatedBytes()==null || measured.allocatedBytes()>=0);
         }
     }
     @Test void agreesWithExistingSearchOnRandomPartialEdgesWithDirectionAndTurnBans() {

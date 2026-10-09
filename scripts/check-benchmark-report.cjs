@@ -14,15 +14,24 @@ const { chromium } = require('playwright');
   const summaryCheck = (samples, summaries) => {
     for (const summary of summaries) {
       const selected = samples.filter(s => s.queryId === summary.queryId && s.algorithm === summary.algorithm);
-      for (const [key, predicate] of [
-        ['searchMillis', () => true], ['firstMillis', s => s.position === 1], ['secondMillis', s => s.position === 2],
+      for (const [key, source, predicate] of [
+        ['searchMillis', 'searchMillis', () => true], ['firstMillis', 'searchMillis', s => s.position === 1], ['secondMillis', 'searchMillis', s => s.position === 2],
+        ...(report.version >= 2 ? [
+          ['allocatedBytes', 'allocatedBytes', () => true], ['firstAllocatedBytes', 'allocatedBytes', s => s.position === 1], ['secondAllocatedBytes', 'allocatedBytes', s => s.position === 2],
+        ] : []),
       ]) {
-        const values = selected.filter(predicate).map(s => s.searchMillis).sort((a,b) => a-b);
+        const values = selected.filter(predicate).map(s => s[source]).filter(value => value != null).sort((a,b) => a-b);
         const stats = summary[key], count = values.length;
+        if (!count) { assert.equal(stats, null); continue; }
+        assert.ok(values.every(value => Number.isFinite(value) && value >= 0));
         assert.equal(stats.count, count);
         assert.equal(stats.median, count % 2 ? values[Math.floor(count/2)] : (values[count/2-1]+values[count/2])/2);
         assert.equal(stats.p95, values[Math.ceil(count*.95)-1]);
         assert.equal(stats.min, values[0]); assert.equal(stats.max, values.at(-1));
+        const mean = values.reduce((sum,value) => sum+value,0)/count;
+        const deviation = Math.sqrt(values.reduce((sum,value) => sum+(value-mean)**2,0)/count);
+        assert.ok(Math.abs(stats.mean-mean) <= Math.max(1e-8,Math.abs(mean)*1e-12));
+        assert.ok(Math.abs(stats.standardDeviation-deviation) <= Math.max(1e-8,deviation*1e-12));
       }
       assert.equal(summary.firstMillis.count, summary.secondMillis.count);
     }
@@ -68,6 +77,33 @@ const { chromium } = require('playwright');
     assert.equal(await count(), measuredRounds/2);
     await page.selectOption('#query',report.querySet.queries.at(-1).id);
     assert.ok((await page.locator('#chart').textContent()).includes('ms'));
+    if (report.version >= 2) {
+      await page.selectOption('#metric','allocation');
+      assert.ok((await page.locator('#chart').textContent()).includes('MiB'));
+      const format = value => (value/1048576).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const firstQuery = report.querySet.queries[0].id;
+      for (const forkValue of ['all',String(report.forks[0].fork)]) {
+        await page.selectOption('#fork',forkValue);
+        const summaries = forkValue==='all'?report.summaries:report.forks[0].summaries;
+        const summary = summaries.find(s => s.queryId===firstQuery && s.algorithm==='dijkstra');
+        for (const [position,field,timeField] of [['all','allocatedBytes','searchMillis'],['first','firstAllocatedBytes','firstMillis'],['second','secondAllocatedBytes','secondMillis']]) {
+          await page.selectOption('#position',position);
+          const cells = page.locator('#rows tr').first().locator('td'), stats = summary[field];
+          assert.equal(await cells.nth(2).textContent(),`${stats?.count??0} / ${summary[timeField].count}`);
+          assert.equal(await cells.nth(3).textContent(),stats?format(stats.median):'측정 불가');
+        }
+      }
+      await page.screenshot({path:'/tmp/routing-benchmark-allocation.png',fullPage:true});
+      // Missing allocation counters must render as unavailable, never as zero.
+      await page.evaluate(() => {
+        for (const summary of report.forks[0].summaries) summary.secondAllocatedBytes=null;
+        render();
+      });
+      assert.equal(await page.locator('#rows tr').first().locator('td').nth(3).textContent(),'측정 불가');
+      assert.equal(await page.locator('#chart rect').count(),0);
+      await page.selectOption('#fork','all');
+      await page.selectOption('#position','all');
+    }
     await page.setViewportSize({width:390,height:844});
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({path:'/tmp/routing-benchmark-report-mobile.png',fullPage:true});

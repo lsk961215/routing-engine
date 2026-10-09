@@ -22,8 +22,9 @@ const assert = require('node:assert/strict');
       assert.ok(await page.locator('#comparison-info').evaluate(e => e.classList.contains('hidden')));
     };
     await selectMode('compare');
+    await selectTestRoute(page, {search:false});
     const pending = page.waitForResponse(r => r.url().includes('/api/compare?'));
-    await selectTestRoute(page);
+    await page.click('#search-route');
     const response = await pending;
     assert.equal(response.status(),200);
     const data = await response.json();
@@ -36,6 +37,8 @@ const assert = require('node:assert/strict');
       const geometry = await page.evaluate(async id => (await window.__routeTestMap.getSource(id).getData()).geometry, `route-${result.algorithm}`);
       assert.deepEqual(geometry,result.routes[0].geometry);
       assert.equal(await page.textContent(`#${result.algorithm}-time`),result.metrics.searchMillis.toFixed(2));
+      assert.ok(Number.isInteger(result.metrics.allocatedBytes) && result.metrics.allocatedBytes >= 0);
+      assert.match(await page.textContent(`#${result.algorithm}-allocation`),/ (B|KiB|MiB)$/);
     }
     assert.match(await page.textContent('#comparison-snap'),/공통 좌표 연결 .* ms/);
     await page.uncheck('#show-astar');
@@ -59,6 +62,13 @@ const assert = require('node:assert/strict');
     assert.equal(await page.textContent('#dijkstra-code'),'경로 없음');
     assert.ok(await page.locator('#show-dijkstra').isDisabled());
     assert.equal(await page.evaluate(() => !!window.__routeTestMap.getLayer('route-dijkstra')),false);
+    await page.unroute('**/api/compare?*');
+
+    // Unsupported allocation measurement is distinct from a measured zero.
+    await page.route('**/api/compare?*', route => route.fulfill({json:{...data,results:data.results.map((r,index) => ({...r,metrics:{...r.metrics,allocatedBytes:index?0:null}}))}}));
+    await page.click('#search-route'); await visible();
+    assert.equal(await page.textContent('#dijkstra-allocation'),'측정 불가');
+    assert.equal(await page.textContent('#astar-allocation'),'0 B');
     await page.unroute('**/api/compare?*');
 
     // Service errors clear previous results and allow another request.

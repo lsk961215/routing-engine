@@ -34,7 +34,7 @@ interface OsrmResponse {
   code: string;
   routes: OsrmRoute[];
   waypoints: OsrmWaypoint[];
-  metrics: { algorithm: string; snapMillis: number; searchMillis: number; expandedStates: number };
+  metrics: { algorithm: string; snapMillis: number; searchMillis: number; expandedStates: number; allocatedBytes: number | null };
 }
 
 type Algorithm = "dijkstra" | "astar";
@@ -46,7 +46,7 @@ interface ComparisonResponse {
     algorithm: Algorithm;
     code: "Ok" | "NoRoute";
     routes: OsrmRoute[];
-    metrics: { searchMillis: number; expandedStates: number };
+    metrics: { searchMillis: number; expandedStates: number; allocatedBytes: number | null };
   }[];
 }
 
@@ -74,7 +74,7 @@ mapElement.innerHTML = `
     </fieldset>
     <div class="search-actions"><button id="search-route" class="primary" disabled>경로 탐색</button><button id="cancel-route" hidden>취소</button></div>
     <p id="routing-status" class="status" role="status" aria-live="polite">지도를 불러오는 중입니다.</p>
-    <section id="route-info" class="route-info hidden" aria-label="탐색 결과"><div><span>총 거리</span><strong id="route-distance">-</strong></div><div><span>예상 시간</span><strong id="route-duration">제공 예정</strong></div><div><span>알고리즘</span><strong id="result-algorithm">-</strong></div><div><span>탐색·경로 복원</span><strong id="search-time">-</strong></div><div><span>확장 상태 수</span><strong id="expanded-states">-</strong></div><small id="snap-time"></small></section>
+    <section id="route-info" class="route-info hidden" aria-label="탐색 결과"><div><span>총 거리</span><strong id="route-distance">-</strong></div><div><span>예상 시간</span><strong id="route-duration">제공 예정</strong></div><div><span>알고리즘</span><strong id="result-algorithm">-</strong></div><div><span>탐색·경로 복원</span><strong id="search-time">-</strong></div><div><span>확장 상태 수</span><strong id="expanded-states">-</strong></div><div title="탐색·경로 복원 중 할당한 힙 메모리의 추정 누계. 현재 또는 최대 점유량과 다릅니다."><span>메모리 할당량</span><strong id="allocated-bytes">-</strong></div><small id="snap-time"></small></section>
     <section id="comparison-info" class="comparison-info hidden" aria-label="알고리즘 비교 결과">
       <table>
         <caption>탐색 결과 비교</caption>
@@ -84,6 +84,7 @@ mapElement.innerHTML = `
           <tr><th scope="row">거리</th><td id="dijkstra-distance">-</td><td id="astar-distance">-</td></tr>
           <tr><th scope="row">탐색·복원<br><small>ms</small></th><td id="dijkstra-time">-</td><td id="astar-time">-</td></tr>
           <tr><th scope="row">확장 상태</th><td id="dijkstra-states">-</td><td id="astar-states">-</td></tr>
+          <tr title="탐색·경로 복원 중 할당한 힙 메모리의 추정 누계. 현재 또는 최대 점유량과 다릅니다."><th scope="row">메모리 할당량</th><td id="dijkstra-allocation">-</td><td id="astar-allocation">-</td></tr>
           <tr><th scope="row">지도 경로</th><td><label><input id="show-dijkstra" type="checkbox" checked aria-label="Dijkstra 경로 표시">표시</label></td><td><label><input id="show-astar" type="checkbox" checked aria-label="A* 경로 표시">표시</label></td></tr>
         </tbody>
       </table>
@@ -339,6 +340,13 @@ function resetRoute() {
   }
 }
 
+function formatAllocation(bytes: number | null | undefined) {
+  if (bytes == null) return "측정 불가";
+  if (bytes < 1024) return `${bytes.toLocaleString()} B`;
+  const divisor = bytes < 1024 * 1024 ? 1024 : 1024 * 1024;
+  return `${(bytes / divisor).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${divisor === 1024 ? "KiB" : "MiB"}`;
+}
+
 function showComparison(data: ComparisonResponse) {
   for (const algorithm of ["dijkstra", "astar"] as const) {
     const result = data.results.find(item => item.algorithm === algorithm);
@@ -350,6 +358,7 @@ function showComparison(data: ComparisonResponse) {
     text("distance", found ? `${route.distance.toLocaleString(undefined, { maximumFractionDigits: 1 })} m` : "—");
     text("time", result.metrics.searchMillis.toFixed(2));
     text("states", result.metrics.expandedStates.toLocaleString());
+    text("allocation", formatAllocation(result.metrics.allocatedBytes));
     const toggle = document.querySelector<HTMLInputElement>(`#show-${algorithm}`)!;
     toggle.checked = found; toggle.disabled = !found;
     if (found) drawRoute(route.geometry, `route-${algorithm}`, algorithm === "dijkstra" ? "#2563eb" : "#c2410c", algorithm === "astar");
@@ -389,6 +398,7 @@ function showRouteInfo(data: OsrmResponse) {
   document.querySelector("#result-algorithm")!.textContent = data.metrics.algorithm === "astar" ? "A*" : "Dijkstra";
   document.querySelector("#search-time")!.textContent = `${data.metrics.searchMillis.toFixed(2)} ms`;
   document.querySelector("#expanded-states")!.textContent = data.metrics.expandedStates.toLocaleString();
+  document.querySelector("#allocated-bytes")!.textContent = formatAllocation(data.metrics.allocatedBytes);
   document.querySelector("#snap-time")!.textContent = `좌표 연결 ${data.metrics.snapMillis.toFixed(2)} ms · 단일 요청 측정`;
   routeInfo.classList.remove("hidden");
 }

@@ -4,13 +4,17 @@ const { chromium }=require('playwright');const assert=require('node:assert/stric
 try {const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.route('**/src/main.ts*',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text())+'\nwindow.__routeTestMap=map;\n'});});
 await page.goto('http://localhost:5173');await page.waitForFunction(()=>!document.querySelector('#select-start').disabled);
-let pending=page.waitForResponse(r=>r.url().includes('/api/route?'));await selectTestRoute(page);let response=await pending;assert.equal(response.status(),200);const d=await response.json();
+await selectTestRoute(page,{search:false});
+let pending=page.waitForResponse(r=>r.url().includes('/api/route?'));await page.click('#search-route');let response=await pending;assert.equal(response.status(),200);const d=await response.json();
 await page.waitForFunction(()=>document.querySelector('#result-algorithm').textContent==='Dijkstra');
 await page.locator('#algorithm label').filter({has: page.locator('input[value=astar]')}).click();assert.ok(await page.locator('#route-info').evaluate(e=>e.classList.contains('hidden')));
 pending=page.waitForResponse(r=>r.url().includes('/api/route?'));await page.click('#search-route');response=await pending;const a=await response.json();
 assert.equal(response.status(),200);assert.match(response.url(),/algorithm=astar/);assert.ok(Math.abs(a.routes[0].distance-d.routes[0].distance)<1e-6);
 await page.waitForFunction(()=>document.querySelector('#result-algorithm').textContent==='A*');
 assert.match(await page.textContent('#search-time'),/ms/);assert.ok(a.metrics.expandedStates<d.metrics.expandedStates);
+assert.ok(Number.isInteger(a.metrics.allocatedBytes) && a.metrics.allocatedBytes>=0);
+assert.ok(Number.isInteger(d.metrics.allocatedBytes) && d.metrics.allocatedBytes>=0);
+assert.match(await page.textContent('#allocated-bytes'),/ (B|KiB|MiB)$/);
 await page.click('#coverage-overview');
 await page.waitForFunction(()=>window.__routeTestMap.queryRenderedFeatures({layers:['coverage-boundary']}).length>0);
 assert.equal(await page.evaluate(()=>window.__routeTestMap.getSource('coverage-boundary').serialize().data.geometry.coordinates[0][0]),126.70);

@@ -35,7 +35,7 @@ public class RoutingService {
                     .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"No directed route"));
             return new RouteResponse("Ok",List.of(routeData(result)),
                     List.of(waypoint(result.start()),waypoint(result.end())),
-                    new RouteResponse.Metrics(algorithm,search.snapMillis(),search.searchMillis(),search.expandedStates()));
+                    new RouteResponse.Metrics(algorithm,search.snapMillis(),search.searchMillis(),search.expandedStates(),search.allocatedBytes()));
         } catch(CoordinateRouter.OutsideGraphException e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,e.getMessage());
         }
@@ -49,7 +49,7 @@ public class RoutingService {
                     search.algorithm()==RoutingAlgorithm.DIJKSTRA?"dijkstra":"astar",
                     search.route().isPresent()?"Ok":"NoRoute",
                     search.route().map(result->List.of(routeData(result))).orElseGet(List::of),
-                    new ComparisonResponse.Metrics(search.searchMillis(),search.expandedStates()))).toList();
+                    new ComparisonResponse.Metrics(search.searchMillis(),search.expandedStates(),search.allocatedBytes()))).toList();
             return new ComparisonResponse("Ok",List.of(waypoint(comparison.start()),waypoint(comparison.end())),
                     comparison.snapMillis(),results);
         } catch(CoordinateRouter.OutsideGraphException e) {

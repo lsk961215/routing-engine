@@ -18,6 +18,7 @@ for case in cases['results']:
             result=json.load(r)
         assert result['metrics']['algorithm']==algorithm
         assert result['metrics']['searchMillis']>=0 and result['metrics']['expandedStates']>=0
+        assert isinstance(result['metrics']['allocatedBytes'],int) and result['metrics']['allocatedBytes']>=0
         results.append(result)
     a,b=results
     assert math.isclose(a['routes'][0]['distance'],b['routes'][0]['distance'],abs_tol=1e-6)
@@ -33,6 +34,7 @@ for case in cases['results']:
         assert together['routes']==individual['routes']
         assert together['metrics']['expandedStates']==individual['metrics']['expandedStates']
         assert together['metrics']['searchMillis']>=0
+        assert isinstance(together['metrics']['allocatedBytes'],int) and together['metrics']['allocatedBytes']>=0
     print(case['from'], '→', case['to'],round(a['routes'][0]['distance'],2),
           [(r['metrics']['algorithm'],round(r['metrics']['searchMillis'],2),r['metrics']['expandedStates']) for r in results],flush=True)
 params['algorithm']='unknown'

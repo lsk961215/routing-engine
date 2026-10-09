@@ -20,8 +20,8 @@ class AlgorithmBenchmarkTest {
     private CoordinateRouter.ComparisonResult pair(RoutingAlgorithm first,int call) {
         var second=first==RoutingAlgorithm.DIJKSTRA?RoutingAlgorithm.ASTAR:RoutingAlgorithm.DIJKSTRA;
         return new CoordinateRouter.ComparisonResult(point,point,.25,List.of(
-                new CoordinateRouter.SearchResult(Optional.empty(),first,.25,call*10,call),
-                new CoordinateRouter.SearchResult(Optional.empty(),second,.25,call*10+1,call)));
+                new CoordinateRouter.SearchResult(Optional.empty(),first,.25,call*10,call,call*1024L),
+                new CoordinateRouter.SearchResult(Optional.empty(),second,.25,call*10+1,call,call*512L)));
     }
     @Test void computesMedianNearestRankP95AndPopulationDeviationWithoutRemovingOutliers() {
         var stats=AlgorithmBenchmark.distribution(new double[]{100,2,1,3});
@@ -42,9 +42,12 @@ class AlgorithmBenchmarkTest {
         assertEquals(18,calls.get()); // 3 queries × (2 warmup + 4 measured) pairs.
         assertEquals(24,first.samples().size());
         assertTrue(first.samples().stream().allMatch(s->s.searchMillis()>=70));
+        assertTrue(first.samples().stream().allMatch(s->s.allocatedBytes()>=7*512));
         for(var summary:AlgorithmBenchmark.summarize(first.samples())) {
             assertEquals(4,summary.searchMillis().count());
             assertEquals(2,summary.firstMillis().count());assertEquals(2,summary.secondMillis().count());
+            assertEquals(4,summary.allocatedBytes().count());
+            assertEquals(2,summary.firstAllocatedBytes().count());assertEquals(2,summary.secondAllocatedBytes().count());
         }
         for(var query:queries.queries()) {
             var leaders=first.samples().stream().filter(s->s.queryId().equals(query.id()) && s.position()==1).toList();
@@ -62,11 +65,11 @@ class AlgorithmBenchmarkTest {
         var noRoute=pair(RoutingAlgorithm.DIJKSTRA,1);
         assertThrows(IllegalStateException.class,()->AlgorithmBenchmark.validatePair(noRoute,RoutingAlgorithm.ASTAR));
         var found=new CoordinateRouter.SearchResult(Optional.of(new CoordinateRouter.Route(1,List.of(point.point(),point.point()),point,point)),
-                RoutingAlgorithm.DIJKSTRA,.25,1,1);
+                RoutingAlgorithm.DIJKSTRA,.25,1,1,null);
         assertThrows(IllegalStateException.class,()->AlgorithmBenchmark.validatePair(new CoordinateRouter.ComparisonResult(point,point,.25,
                 List.of(found,noRoute.results().get(1))),RoutingAlgorithm.DIJKSTRA));
         var different=new CoordinateRouter.SearchResult(Optional.of(new CoordinateRouter.Route(2,List.of(point.point(),point.point()),point,point)),
-                RoutingAlgorithm.ASTAR,.25,1,1);
+                RoutingAlgorithm.ASTAR,.25,1,1,null);
         assertThrows(IllegalStateException.class,()->AlgorithmBenchmark.validatePair(new CoordinateRouter.ComparisonResult(point,point,.25,
                 List.of(found,different)),RoutingAlgorithm.DIJKSTRA));
     }
@@ -81,6 +84,9 @@ class AlgorithmBenchmarkTest {
         AlgorithmBenchmark.main(new String[]{graph.toString(),queries.toString(),output.toString(),"1","2","1","123"});
         var report=mapper.readValue(output.resolve("report.json").toFile(),AlgorithmBenchmark.Report.class);
         assertEquals(4,report.forks().getFirst().samples().size());
+        assertEquals(2,report.version());
+        assertTrue(report.methodology().containsKey("allocation"));
+        assertTrue(report.forks().getFirst().samples().stream().allMatch(s->s.allocatedBytes()!=null && s.allocatedBytes()>=0));
         assertEquals(64,report.forks().getFirst().graphSha256().length());
         assertTrue(report.forks().getFirst().environment().jvmArguments().contains("-Xmx2g"));
         assertEquals(2,report.summaries().size());
@@ -89,5 +95,21 @@ class AlgorithmBenchmarkTest {
         assertFalse(html.contains("__REPORT_JSON__"));assertTrue(html.contains("tiny"));
         assertThrows(FileAlreadyExistsException.class,()->AlgorithmBenchmark.main(
                 new String[]{graph.toString(),queries.toString(),output.toString(),"1","2","1","123"}));
+    }
+    @Test void allocationStatisticsKeepZeroAndExcludeUnavailableSamplesWithAccurateCounts() {
+        var samples=new ArrayList<AlgorithmBenchmark.Sample>();
+        for(var algorithm:List.of("dijkstra","astar"))for(int i=0;i<4;i++)
+            samples.add(new AlgorithmBenchmark.Sample(1,i+1,1,"q",algorithm,i%2+1,"NoRoute",null,0,1,0,
+                    algorithm.equals("astar") || i%2==1?null:i*1024L));
+        var summaries=AlgorithmBenchmark.summarize(samples);
+        var measured=summaries.getFirst();
+        assertEquals(4,measured.searchMillis().count());
+        assertEquals(2,measured.allocatedBytes().count());
+        assertEquals(0,measured.allocatedBytes().min());
+        assertEquals(1024,measured.allocatedBytes().median());
+        assertEquals(2048,measured.allocatedBytes().p95());
+        assertEquals(measured.allocatedBytes(),measured.firstAllocatedBytes());
+        assertNull(measured.secondAllocatedBytes());
+        assertNull(summaries.get(1).allocatedBytes());
     }
 }

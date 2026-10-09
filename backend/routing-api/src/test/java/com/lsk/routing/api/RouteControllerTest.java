@@ -27,13 +27,16 @@ class RouteControllerTest {
                 .andExpect(jsonPath("$.results[0].algorithm").value("dijkstra"))
                 .andExpect(jsonPath("$.results[1].algorithm").value("astar"))
                 .andExpect(jsonPath("$.results[1].routes[0].distance").value(111))
-                .andExpect(jsonPath("$.results[1].metrics.expandedStates").isNumber());
+                .andExpect(jsonPath("$.results[1].metrics.expandedStates").isNumber())
+                .andExpect(jsonPath("$.results[0].metrics.allocatedBytes").isNumber())
+                .andExpect(jsonPath("$.results[1].metrics.allocatedBytes").isNumber());
     }
     @Test void unreachableComparisonIsAResultWhileSingleRouteKeeps404() throws Exception {
         var query="?startLon=127&startLat=37.001&endLon=127&endLat=37";
         api().perform(get("/api/compare"+query)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].code").value("NoRoute"))
-                .andExpect(jsonPath("$.results[1].routes").isEmpty());
+                .andExpect(jsonPath("$.results[1].routes").isEmpty())
+                .andExpect(jsonPath("$.results[1].metrics.allocatedBytes").isNumber());
         api().perform(get("/api/route"+query)).andExpect(status().isNotFound());
     }
     @Test void rejectsMissingOrInvalidCoordinates() throws Exception {
@@ -42,5 +45,16 @@ class RouteControllerTest {
                 .andExpect(status().isBadRequest());
         api().perform(get("/api/compare?startLon=128&startLat=38&endLon=127&endLat=37"))
                 .andExpect(status().isUnprocessableContent());
+    }
+    @Test void singleRouteIncludesAllocationAndVirtualThreadSerializesUnavailableAsNull() throws Exception {
+        var path="/api/route?startLon=127&startLat=37&endLon=127&endLat=37.001";
+        var mvc=api();
+        mvc.perform(get(path)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.metrics.allocatedBytes").isNumber());
+        try(var executor=java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()) {
+            executor.submit(()->mvc.perform(get(path)).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.metrics.allocatedBytes").value(org.hamcrest.Matchers.nullValue()))
+                    .andExpect(content().string(org.hamcrest.Matchers.containsString("\"allocatedBytes\":null")))).get();
+        }
     }
 }
