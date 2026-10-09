@@ -17,6 +17,10 @@ npm ci --prefix frontend
 ./scripts/stop.sh                   # 모두 종료
 ```
 
+Windows에서는 루트의 `start.bat`을 더블클릭해 기동하고 `stop.bat`으로 종료한다. Windows의 Node.js/npm과 WSL Ubuntu의 Java 21·Python 3·curl·lsof가 필요하다. 프론트 의존성이 없으면 자동 설치하며, 백엔드 빌드 후 WSL IP를 확인해 프론트 프록시를 연결한다. 접속 주소는 `http://localhost:5173`이다.
+
+이미 실행 중인 서버는 중복 실행하지 않는다. 로그·PID·로컬 설정은 `.runtime/`에 저장하며 두 배치 파일은 결과를 확인할 수 있도록 창을 유지한다. WSL 재시작 후에는 `start.bat`을 다시 실행해 변경된 IP를 반영한다.
+
 각 서버만 실행·종료하려면 대상을 지정한다.
 
 ```sh
