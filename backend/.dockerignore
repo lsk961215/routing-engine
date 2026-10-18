@@ -1,0 +1,23 @@
+# Git 관련 파일
+.git
+.gitignore
+
+# Gradle 캐시 및 빌드 결과
+.gradle
+**/build
+
+# IntelliJ 설정
+.idea
+*.iml
+
+# 환경변수 및 로그
+.env
+.env.*
+!.env.example
+*.log
+
+# OS 파일
+.DS_Store
+
+# 로컬 데이터
+data/
