@@ -6,6 +6,8 @@ Java 21·Spring Boot 백엔드와 TypeScript·Vite·MapLibre 프론트로 구성
 
 ## 실행
 
+### 로컬 개발
+
 Java 21, Node.js/npm, Python 3가 필요하다. 최초 데이터 생성에는 osmium도 필요하다.
 그래프가 없으면 [데이터 준비](backend/data/README.md)를 먼저 진행한다.
 프로젝트 루트에서 실행한다. 최초 한 번 프론트 의존성을 설치한다.
@@ -38,7 +40,84 @@ Windows에서는 루트의 `start.bat`을 더블클릭해 기동하고 `stop.bat
 macOS/Linux에서 실행하며 `curl`, `lsof`, `ps`가 필요하다. 서버별 OS 잠금으로 실행·종료·상태 확인의 동시 접근을 막는다.
 같은 서버의 다른 명령이 진행 중이면 완료 후 다시 실행하라는 메시지를 표시한다.
 
-`http://localhost:5173`의 사이드 패널에서 출발지·도착지를 선택하고 지도에 지정한 뒤 **경로 탐색**을 누른다.
+### Docker
+
+Docker가 실행 중이어야 한다. API는 Java 21 이미지에서 빌드하고, 프론트는 Node 24에서 빌드한 정적 파일을 Nginx가 제공한다.
+그래프가 준비돼 있다면 이미지 빌드·컨테이너 실행에 호스트의 Java나 Node 설치는 필요하지 않다.
+현재는 Compose 없이 두 컨테이너를 개별 실행한다. 아래 명령은 Bash/zsh 기준이며 **프로젝트 루트**에서 실행한다.
+
+먼저 [데이터 준비](backend/data/README.md)에 따라 다음 파일을 준비한다. 데이터는 Git과 API 이미지에 포함되지 않는다.
+
+- `backend/data/processed/seoul.rgraph`
+- `backend/data/processed/seoul.rgraph.exclusions.geojson`
+
+이미지 빌드:
+
+```sh
+docker build -t routing-api:1.0 ./backend
+docker build -t routing-frontend:1.0 ./frontend
+```
+
+최초 실행 시 사용자 정의 네트워크를 생성한다. 이미 `routing-net`이 있다면 생성은 생략한다.
+컨테이너 이름으로 통신하려면 두 컨테이너를 이 네트워크에 연결해야 한다.
+
+```sh
+docker network create routing-net
+```
+
+아래는 같은 이름의 컨테이너가 없을 때의 생성 명령이다. 로컬 개발 API가 8080 포트를 사용 중이면 먼저 종료한다.
+API에 그래프 디렉터리를 읽기 전용으로 마운트하고, 환경변수로 컨테이너 내부의 파일 경로를 지정한다.
+
+```sh
+docker run -d \
+  --name routing-api \
+  --network routing-net \
+  -p 127.0.0.1:8080:8080 \
+  --mount "type=bind,source=$(pwd)/backend/data/processed,target=/data,readonly" \
+  -e ROUTING_GRAPH_PATH=/data/seoul.rgraph \
+  -e ROUTING_EXCLUSIONS_PATH=/data/seoul.rgraph.exclusions.geojson \
+  routing-api:1.0
+
+docker run -d \
+  --name routing-frontend \
+  --network routing-net \
+  -p 127.0.0.1:8082:80 \
+  routing-frontend:1.0
+```
+
+이미 그래프를 설정해 실행한 `routing-api`가 다른 네트워크에 있다면,
+`docker network connect routing-net routing-api`로 추가 연결한 뒤 프론트를 실행할 수 있다.
+
+접속 주소는 **http://localhost:8082**다. Nginx가 `/api/` 요청을 `http://routing-api:8080`으로 전달한다.
+배경 지도는 브라우저가 OpenFreeMap에서 직접 불러오므로 외부 인터넷 연결이 필요하다.
+
+상태·로그 확인과 API 기동 후 연결 검증:
+
+```sh
+docker ps -a --filter network=routing-net
+docker logs --tail 100 routing-api
+docker logs --tail 100 routing-frontend
+curl -fsS http://127.0.0.1:8080/actuator/health
+curl -fsS -o /dev/null -w '경로 API HTTP %{http_code}\n' \
+  'http://127.0.0.1:8082/api/route?startLon=126.97721885&startLat=37.5690142&endLon=127.0276&endLat=37.4981'
+```
+
+실시간 로그는 `docker logs -f <컨테이너 이름>`으로 확인한다. Nginx의 access/error 로그와 API의 콘솔 출력을 Docker가 수집한다.
+컨테이너는 `scripts/start.sh`, `stop.sh`, `status.sh`의 관리 대상이 아니다.
+종료는 `docker stop routing-frontend routing-api`, 같은 컨테이너 재시작은 `docker start routing-api routing-frontend`로 한다.
+
+소스를 수정했다면 먼저 해당 이미지를 다시 빌드한다. 빌드 성공 후 기존 컨테이너를 `docker stop`과 `docker rm`으로 제거하고,
+위의 해당 `docker run` 명령을 다시 실행한다. 이미지 빌드나 `docker restart`만으로는 기존 컨테이너에 새 이미지가 적용되지 않는다.
+API 컨테이너를 재생성해 내부 IP가 바뀌면 `docker restart routing-frontend`로 Nginx도 이름을 다시 조회하게 한다.
+
+- `host not found in upstream "routing-api"`: API가 존재하고 두 컨테이너가 `routing-net`에 연결됐는지 확인한다. 기본 `bridge`는 컨테이너 이름을 자동으로 조회하지 않는다.
+- 프로덕션 화면에서 지도가 준비되지 않는 경우: MapLibre Worker가 빌드에 포함됐는지 확인한다. `frontend/src/main.ts`의 `?worker&url` import와 `setWorkerUrl` 설정이 필요하다. Worker 요청에 HTML이 반환되면 빌드 산출물이 누락된 것이다.
+- 각 `.dockerignore`는 로컬 데이터·의존성·빌드 결과·환경 파일을 제외한다. 프론트 의존성은 이미지 안에서 `npm ci`로 설치한다.
+
+### 화면 사용
+
+로컬 개발은 `http://localhost:5173`, Docker 실행은 `http://localhost:8082`에 접속한다.
+사이드 패널에서 출발지·도착지를 선택하고 지도에 지정한 뒤 **경로 탐색**을 누른다.
 **함께 비교 → 경로 비교**를 누르면 같은 좌표 연결을 공유하는 두 알고리즘의 거리·탐색/복원 시간·확장 상태 수·메모리 할당량을 나란히 표시한다.
 지도에는 Dijkstra를 파란 실선, A*를 주황 점선으로 표시하며, 결과 표의 체크박스로 각 경로를 켜고 끌 수 있다.
 요청 중 **취소**하거나 지점·알고리즘을 변경하면 늦은 응답은 반영하지 않는다. 브라우저 요청 취소가 이미 시작된 서버 계산의 중단까지 보장하지는 않는다.

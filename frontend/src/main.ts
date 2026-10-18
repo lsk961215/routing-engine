@@ -3,7 +3,11 @@ import { setupCoverage } from "./coverage";
 import { setupExcludedRoads } from "./excluded-roads";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import { Map, Marker, NavigationControl, ScaleControl } from "maplibre-gl";
+import { Map, Marker, NavigationControl, ScaleControl, setWorkerUrl } from "maplibre-gl";
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+
+// Include MapLibre's worker in both Vite development and production builds.
+setWorkerUrl(workerUrl);
 
 let startPoint: [number, number] | null = null;
 let endPoint: [number, number] | null = null;

@@ -1,6 +1,6 @@
 # 진행 상태 · 세션 인계
 
-기준: 2026-10-09. 새 세션은 이 문서 → [실행·구조](README.md) → 필요한 소스 순서로 확인한다.
+기준: 2026-10-18. 새 세션은 이 문서 → [실행·구조](README.md) → 필요한 소스 순서로 확인한다.
 
 ## 프로젝트 방향과 사용자 선호
 
@@ -10,6 +10,7 @@
 - 문서는 현재 3개만 유지한다. 별도 작업 기록 MD를 늘리지 말고 기존 문서를 갱신한다.
 - 화면은 간결하게 유지한다. 예제 버튼과 개발 정책·지점 선택 안내 문구는 사용자 요청으로 제거했다.
 - 작업은 기능별로 커밋한다. 사용자는 `chore`보다 내용을 설명하는 커밋 메시지를 선호한다.
+- DevOps 학습을 병행한다. 현재는 서비스별 Dockerfile과 개별 컨테이너 실행을 먼저 확인하고, Compose 통합은 후속 작업으로 진행한다.
 
 ## 현재 완료
 
@@ -21,6 +22,10 @@
 - 비교 결과는 알고리즘별 `Ok`/`NoRoute`와 측정값을 유지한다. 요청 취소·모드 변경·초기화 후 늦은 응답은 무시한다.
 - 실행·종료·상태 스크립트: `scripts/start.sh`, `stop.sh`, `status.sh`. `backend`/`frontend` 개별 대상 지원. 서버별 OS 잠금으로 동시 명령 충돌을 막으며 로그·PID는 `.runtime/`에 저장.
 - Windows 실행·종료: `start.bat`·`stop.bat`에서 Windows Vite와 WSL Ubuntu 백엔드를 함께 관리한다. WSL IP 프록시와 LF 실행 사본을 자동 구성하며 PID·시작 시각·프로젝트 경로를 검사한다.
+- API Dockerfile: Java 21 멀티 스테이지 빌드, 일반 사용자 실행. 그래프·제외 도로 파일은 `/data`에 읽기 전용으로 마운트한다.
+- 프론트 Dockerfile: Node 24에서 빌드 후 Nginx로 제공. `routing-net`에서 `/api/`를 `routing-api:8080`으로 전달하며 접속 포트는 8082다.
+- MapLibre Worker를 Vite의 `?worker&url`로 빌드에 포함하도록 수정했다. 컨테이너에서 Worker 누락으로 HTML이 반환되던 지도 로딩 오류를 해결했다.
+- 백엔드·프론트 `.dockerignore`와 README의 Docker 빌드·실행·로그·컨테이너 교체 안내를 정리했다.
 - 공정한 반복 측정: `scripts/benchmark.sh`로 고정 서울 질의 8개를 독립 JVM 3개에서 워밍업 4회·측정 20회. 질의 순서는 시드로 섞고 알고리즘 선행 순서는 질의별로 교대한다.
 - 벤치마크는 질의별 분포와 실행 순서별/JVM별 통계를 HTML·JSON에 기록한다. 그래프·질의 해시, 환경, 원시 표본, GC 정보 포함. 경로 결과 불일치 시 중단한다.
 - 요청별 메모리 할당량: 개별/비교 API의 `metrics.allocatedBytes`와 화면 표시. 현재 탐색 스레드의 탐색·경로 복원 구간을 측정하며 미지원·가상 스레드는 `null`이다.
@@ -36,6 +41,9 @@
 
 요청별 메모리 할당량 확장은 완료했다. 추가 알고리즘·비교 지표의 우선순위는 미정이다.
 
+1. **컨테이너 운영 확장**: 개별 실행 구성을 Docker Compose로 통합.
+2. **추가 구성 논의**: PostgreSQL은 가공 전 도로 네트워크의 저장·관리·검증, Redis는 캐시 운영 학습 용도. 둘 다 미구현이며, 경로 탐색은 메모리 그래프를 사용하고 알고리즘 비교·벤치마크는 캐시를 우회하는 방향이다.
+
 OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용 도입은 후순위다.
 
 ## 이어서 수정할 핵심 코드
@@ -47,6 +55,8 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 - 기존 `route(...)`와 노드 기반 `DijkstraRouter`도 남아 있다. API 선택 기능과 혼동하지 않는다.
 - `backend/routing-api/src/main/java/com/lsk/routing/api/service/RoutingService.java`, `dto/RouteResponse.java`, `dto/ComparisonResponse.java`: 알고리즘 선택·비교 응답 지표.
 - `frontend/src/main.ts`: 패널·지점 상태·탐색 요청. 변경/초기화 시 이전 요청을 취소하고 늦은 응답을 무시한다.
+- 같은 파일의 `setWorkerUrl`은 MapLibre 지도 생성 전에 호출한다. Worker import를 제거하면 정적 빌드에서 지도가 로딩되지 않는다.
+- `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf`: 컨테이너 빌드와 API 프록시. Nginx upstream은 컨테이너 이름 `routing-api`를 사용한다.
 - `frontend/src/style.css`, `coverage.ts`, `excluded-roads.ts`: 스타일·영역 표시·제외 도로 조회.
 - `AlgorithmComparisonTest.java`: 임의 비용·회전 제한·부분 간선·동시 요청의 비용 동등성 검증.
 - `backend/routing-api/src/test/java/com/lsk/routing/api/benchmark/AlgorithmBenchmark.java`: 서버를 띄우지 않는 반복 측정 실행기. `CoordinateRouter.compare(..., first)`로 실행 순서를 교대한다. 보고서 템플릿은 같은 모듈의 `src/test/resources/benchmark-report.html`.
@@ -57,12 +67,13 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 
 ## 실행·검증·데이터
 
+- 2026-10-18 검증: 프론트 TypeScript/Vite 빌드·Docker 이미지 빌드 통과. 실제 Nginx 컨테이너에서 Worker JavaScript·OpenFreeMap 타일 응답 200, 지도 표시 및 브라우저 오류 없음, `/api/route` 프록시 응답 200 확인. 백엔드 전체 테스트는 이번 작업에서 재실행하지 않았다.
 - Windows 실제 기동·중복 기동 시 PID 유지·프록시 비교 API·종료·반복 종료 검증 통과(2026-10-09).
 - 메모리 지표 추가 후 백엔드 116개 테스트(실패·건너뜀 0)와 프론트 빌드 통과(2026-10-09). 스레드별 할당 분리, 가상 스레드의 null 응답, 0/미측정 표본 통계를 포함한다.
 - 할당량 포함 기본 벤치마크 완료(2026-10-09): 독립 JVM 3개 × 워밍업 4회·측정 20회, 서울 질의 8개, 측정 표본 960개 모두 할당량 기록. `.runtime/benchmarks/seoul-allocation-20261009/report.html`·`report.json`에 저장했다. 시간/할당량 원시 통계 재검산, JVM·실행 순서 필터, 측정 불가·모바일 표시 검증 통과.
 - 서울 대표 8개 경로의 개별/비교 API 및 할당량 검증 통과. 개별 알고리즘·비교 화면의 할당량·0/미측정 구분·경로 토글·모바일·오류·취소·늦은 응답 무시를 Windows Playwright로 검증했다. 응답 대기는 지도 지점 선택을 마친 뒤 시작한다.
-- 기본 포트는 백엔드 8080, Vite 5173이다. 새 세션에서는 `./scripts/status.sh`로 실제 실행 상태를 확인한다.
-- 실행·종료: 루트에서 `./scripts/start.sh`, `./scripts/stop.sh`. 상태는 `./scripts/status.sh`.
+- 기본 포트는 백엔드 8080, Vite 5173, Docker 프론트 8082다. 로컬 개발 프로세스는 `./scripts/status.sh`, 컨테이너는 `docker ps -a --filter network=routing-net`으로 확인한다.
+- 로컬 개발 실행·종료: 루트에서 `./scripts/start.sh`, `./scripts/stop.sh`. Docker 명령은 [README](README.md#docker)를 따른다. 로컬 API와 컨테이너 API는 같은 8080 포트를 동시에 사용할 수 없다.
 - 로컬 그래프: `backend/data/processed/seoul.rgraph`, 표시 데이터: 같은 경로의 `.exclusions.geojson`.
   이 파일과 원본 PBF는 Git 제외 대상이다. 다른 환경에서는 [데이터 준비](backend/data/README.md)를 따른다.
 - 이전 검증(2026-09-27): 백엔드 112개 테스트·프론트 빌드·서버 잠금 및 실패 후 해제 검증 통과. 비교 API의 부분 간선·회전 제한·동시 요청·HTTP 응답 형식과 벤치마크 통계·워밍업 제외·실행 순서 균형·독립 JVM 보고서 생성 검증 포함.
