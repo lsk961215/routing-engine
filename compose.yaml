@@ -1,0 +1,45 @@
+name: routing-engine
+
+services:
+  routing-api:
+    build:
+      context: ./backend
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      ROUTING_GRAPH_PATH: /data/seoul.rgraph
+      ROUTING_EXCLUSIONS_PATH: /data/seoul.rgraph.exclusions.geojson
+    volumes:
+      - type: bind
+        source: ./backend/data/processed/seoul.rgraph
+        target: /data/seoul.rgraph
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./backend/data/processed/seoul.rgraph.exclusions.geojson
+        target: /data/seoul.rgraph.exclusions.geojson
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--show-error", "--max-time", "3", "http://127.0.0.1:8080/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 12
+
+  routing-frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "127.0.0.1:8082:80"
+    depends_on:
+      routing-api:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "--timeout=3", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 5s
+      retries: 6

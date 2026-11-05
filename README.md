@@ -40,78 +40,74 @@ Windows에서는 루트의 `start.bat`을 더블클릭해 기동하고 `stop.bat
 macOS/Linux에서 실행하며 `curl`, `lsof`, `ps`가 필요하다. 서버별 OS 잠금으로 실행·종료·상태 확인의 동시 접근을 막는다.
 같은 서버의 다른 명령이 진행 중이면 완료 후 다시 실행하라는 메시지를 표시한다.
 
-### Docker
+### Docker Compose
 
-Docker가 실행 중이어야 한다. API는 Java 21 이미지에서 빌드하고, 프론트는 Node 24에서 빌드한 정적 파일을 Nginx가 제공한다.
-그래프가 준비돼 있다면 이미지 빌드·컨테이너 실행에 호스트의 Java나 Node 설치는 필요하지 않다.
-현재는 Compose 없이 두 컨테이너를 개별 실행한다. 아래 명령은 Bash/zsh 기준이며 **프로젝트 루트**에서 실행한다.
+Docker와 Docker Compose 2.20 이상이 필요하다. API는 Java 21 이미지에서 빌드하고, 프론트는 Node 24에서 빌드한 정적 파일을 Nginx가 제공한다.
+그래프가 준비돼 있다면 호스트의 Java나 Node 설치는 필요하지 않다. 아래 명령은 **프로젝트 루트**에서 실행한다.
 
-먼저 [데이터 준비](backend/data/README.md)에 따라 다음 파일을 준비한다. 데이터는 Git과 API 이미지에 포함되지 않는다.
+먼저 [데이터 준비](backend/data/README.md)에 따라 다음 파일을 준비한다. 데이터는 Git과 이미지에 포함되지 않는다.
 
 - `backend/data/processed/seoul.rgraph`
 - `backend/data/processed/seoul.rgraph.exclusions.geojson`
 
-이미지 빌드:
+Compose는 두 파일을 API 컨테이너의 `/data`에 읽기 전용으로 연결한다. 파일이 없으면 기동에 실패하며 빈 디렉터리를 대신 만들지 않는다.
+로컬 개발 서버나 기존 수동 실행 컨테이너가 8080·8082 포트를 사용 중이면 먼저 종료한다.
+로컬 서버는 `./scripts/stop.sh`, 기존 수동 컨테이너는 `docker stop routing-frontend routing-api`로 종료할 수 있다.
+
+빌드와 실행:
 
 ```sh
-docker build -t routing-api:1.0 ./backend
-docker build -t routing-frontend:1.0 ./frontend
+docker compose up --build -d --wait --wait-timeout 180
 ```
 
-최초 실행 시 사용자 정의 네트워크를 생성한다. 이미 `routing-net`이 있다면 생성은 생략한다.
-컨테이너 이름으로 통신하려면 두 컨테이너를 이 네트워크에 연결해야 한다.
-
-```sh
-docker network create routing-net
-```
-
-아래는 같은 이름의 컨테이너가 없을 때의 생성 명령이다. 로컬 개발 API가 8080 포트를 사용 중이면 먼저 종료한다.
-API에 그래프 디렉터리를 읽기 전용으로 마운트하고, 환경변수로 컨테이너 내부의 파일 경로를 지정한다.
-
-```sh
-docker run -d \
-  --name routing-api \
-  --network routing-net \
-  -p 127.0.0.1:8080:8080 \
-  --mount "type=bind,source=$(pwd)/backend/data/processed,target=/data,readonly" \
-  -e ROUTING_GRAPH_PATH=/data/seoul.rgraph \
-  -e ROUTING_EXCLUSIONS_PATH=/data/seoul.rgraph.exclusions.geojson \
-  routing-api:1.0
-
-docker run -d \
-  --name routing-frontend \
-  --network routing-net \
-  -p 127.0.0.1:8082:80 \
-  routing-frontend:1.0
-```
-
-이미 그래프를 설정해 실행한 `routing-api`가 다른 네트워크에 있다면,
-`docker network connect routing-net routing-api`로 추가 연결한 뒤 프론트를 실행할 수 있다.
-
-접속 주소는 **http://localhost:8082**다. Nginx가 `/api/` 요청을 `http://routing-api:8080`으로 전달한다.
+접속 주소는 **http://localhost:8082**다. API는 **http://localhost:8080**이며 두 포트 모두 로컬 호스트에만 공개한다.
 배경 지도는 브라우저가 OpenFreeMap에서 직접 불러오므로 외부 인터넷 연결이 필요하다.
 
-상태·로그 확인과 API 기동 후 연결 검증:
+`compose.yaml`이 이미지 빌드·컨테이너·전용 네트워크를 함께 관리한다. 별도로 `docker network create`를 실행할 필요가 없다.
+Nginx는 서비스 이름 `routing-api`로 API를 찾아 `/api/` 요청을 전달한다.
+API의 `/actuator/health`가 정상 응답한 뒤 프론트를 시작하고, `--wait`는 두 서비스의 상태 확인이 통과할 때까지 기다린다.
+이 대기 시간은 이미지 빌드 시간이 아닌 컨테이너 기동에 적용된다.
+
+상태·로그와 연결 확인:
 
 ```sh
-docker ps -a --filter network=routing-net
-docker logs --tail 100 routing-api
-docker logs --tail 100 routing-frontend
+docker compose ps
+docker compose logs --tail 100
+docker compose logs -f routing-api routing-frontend
+```
+
+`logs -f`는 Ctrl+C로 나가도 서버가 계속 실행된다. 경로·비교 API 연결은 다음처럼 확인한다.
+
+```sh
 curl -fsS http://127.0.0.1:8080/actuator/health
 curl -fsS -o /dev/null -w '경로 API HTTP %{http_code}\n' \
   'http://127.0.0.1:8082/api/route?startLon=126.97721885&startLat=37.5690142&endLon=127.0276&endLat=37.4981'
+curl -fsS -o /dev/null -w '비교 API HTTP %{http_code}\n' \
+  'http://127.0.0.1:8082/api/compare?startLon=126.97721885&startLat=37.5690142&endLon=127.0276&endLat=37.4981'
 ```
 
-실시간 로그는 `docker logs -f <컨테이너 이름>`으로 확인한다. Nginx의 access/error 로그와 API의 콘솔 출력을 Docker가 수집한다.
-컨테이너는 `scripts/start.sh`, `stop.sh`, `status.sh`의 관리 대상이 아니다.
-종료는 `docker stop routing-frontend routing-api`, 같은 컨테이너 재시작은 `docker start routing-api routing-frontend`로 한다.
+종료·재실행·소스 변경 반영:
 
-소스를 수정했다면 먼저 해당 이미지를 다시 빌드한다. 빌드 성공 후 기존 컨테이너를 `docker stop`과 `docker rm`으로 제거하고,
-위의 해당 `docker run` 명령을 다시 실행한다. 이미지 빌드나 `docker restart`만으로는 기존 컨테이너에 새 이미지가 적용되지 않는다.
-API 컨테이너를 재생성해 내부 IP가 바뀌면 `docker restart routing-frontend`로 Nginx도 이름을 다시 조회하게 한다.
+```sh
+docker compose stop                                      # 컨테이너를 남기고 종료
+docker compose up -d --wait --wait-timeout 180             # 기존 이미지로 다시 실행
+docker compose up --build -d --wait --wait-timeout 180     # 소스 수정 후 빌드·교체
+docker compose down                                      # 컨테이너와 전용 네트워크 제거
+```
 
-- `host not found in upstream "routing-api"`: API가 존재하고 두 컨테이너가 `routing-net`에 연결됐는지 확인한다. 기본 `bridge`는 컨테이너 이름을 자동으로 조회하지 않는다.
-- 프로덕션 화면에서 지도가 준비되지 않는 경우: MapLibre Worker가 빌드에 포함됐는지 확인한다. `frontend/src/main.ts`의 `?worker&url` import와 `setWorkerUrl` 설정이 필요하다. Worker 요청에 HTML이 반환되면 빌드 산출물이 누락된 것이다.
+`down`은 호스트의 그래프 파일과 빌드된 이미지를 삭제하지 않는다. 컨테이너는 `scripts/start.sh`, `stop.sh`, `status.sh`의 관리 대상이 아니다.
+Compose는 기존 수동 컨테이너와 다른 이름을 사용하며 기존 `routing-net`도 관리하지 않는다.
+
+전체 서비스를 `up --build`로 갱신하거나 `docker compose restart routing-api`로 API를 재시작할 때는
+`depends_on.restart: true`로 프론트도 재시작해 Nginx가 API 주소를 다시 조회한다.
+이 동작은 Compose를 통한 명시적 작업에 적용된다([공식 시작 순서 안내](https://docs.docker.com/compose/how-tos/startup-order/)).
+`docker compose up ... routing-api`처럼 API만 지정해 교체하면 프론트는 갱신 대상에서 빠진다.
+이때는 `docker compose restart routing-frontend`도 실행한다. 개별 컨테이너에 직접 `docker restart`를 실행하거나 `--no-deps`를 사용한 경우도 같다.
+
+- `port is already allocated`: 로컬 서버 또는 기존 수동 컨테이너가 8080·8082 포트를 사용 중인지 확인한다.
+- 데이터 마운트 오류: 위 두 파일의 존재 여부와 읽기 권한을 확인한다. 그래프 생성은 [데이터 준비](backend/data/README.md)를 따른다.
+- API가 `unhealthy`이면 `docker compose logs --tail 100 routing-api`로 그래프 적재·기동 오류를 확인한다.
+- 프로덕션 화면에서 지도가 준비되지 않는 경우: `frontend/src/main.ts`의 `?worker&url` import와 `setWorkerUrl` 설정을 확인한다. Worker 요청에 HTML이 반환되면 빌드 산출물이 누락된 것이다.
 - 각 `.dockerignore`는 로컬 데이터·의존성·빌드 결과·환경 파일을 제외한다. 프론트 의존성은 이미지 안에서 `npm ci`로 설치한다.
 
 ### 화면 사용
