@@ -24,6 +24,7 @@
 - Windows 실행·종료: `start.bat`·`stop.bat`에서 Windows Vite와 WSL Ubuntu 백엔드를 함께 관리한다. WSL IP 프록시와 LF 실행 사본을 자동 구성하며 PID·시작 시각·프로젝트 경로를 검사한다.
 - API Dockerfile: Java 21 멀티 스테이지 빌드, 일반 사용자 실행. 그래프·제외 도로 파일은 `/data`에 읽기 전용으로 마운트한다.
 - 프론트 Dockerfile: Node 24에서 빌드 후 Nginx로 제공. `/api/`를 `routing-api:8080`으로 전달하며 접속 포트는 8082다.
+- GitHub Pages 예제 데모: 서울 고정 예제 8개의 실제 경로와 반복 측정 결과를 정적으로 제공한다. 데모 전용 빌드(`npm run build:demo --prefix frontend`)·경로 토글·예제 해시 링크·JSON 다운로드·구현 과정과 측정 조건 안내·자동 배포 워크플로를 추가했다. 실시간 앱은 기존 빌드를 유지한다.
 - Docker Compose: 루트 `compose.yaml`에서 두 이미지·컨테이너·전용 네트워크를 관리한다. 그래프와 제외 도로 파일을 읽기 전용으로 연결하고, 파일이 없으면 자동 생성하지 않고 실패한다. API 상태 확인 후 프론트를 시작하며 전체 Compose 갱신 또는 `docker compose restart routing-api` 시 프론트도 재시작한다. API만 지정한 `up` 교체 후에는 프론트를 별도로 재시작한다.
 - MapLibre Worker를 Vite의 `?worker&url`로 빌드에 포함하도록 수정했다. 컨테이너에서 Worker 누락으로 HTML이 반환되던 지도 로딩 오류를 해결했다.
 - 백엔드·프론트 `.dockerignore`와 README의 Docker 빌드·실행·로그·컨테이너 교체 안내를 정리했다.
@@ -50,6 +51,8 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 
 ## 이어서 수정할 핵심 코드
 
+- `frontend/src/demo.ts`, `demo.css`, `demo-data.json`, `frontend/demo/index.html`: 공개 예제 데모. `scripts/export-demo.py`로 벤치마크와 API 결과를 검증해 데이터를 갱신한다. `.github/workflows/pages.yml`은 정적 빌드만 배포한다.
+
 - `backend/routing-core/src/main/java/com/lsk/routing/core/graph/CoordinateRouter.java`: 좌표 연결·공유 공간 인덱스. 개별 API는 `search(..., RoutingAlgorithm)`, 비교 API는 `compare(...)`를 사용한다.
 - 같은 디렉터리의 `HistorySearch.java`: `(진입 간선, 회전 이력)` 상태 탐색. Dijkstra와 A*가 전이 로직을 공유한다.
 - 같은 디렉터리의 `ThreadAllocation.java`: 현재 플랫폼 스레드의 힙 할당 카운터. 초기 활성화·미지원 처리를 담당하며 조회를 탐색 시간 측정 바깥에서 수행한다.
@@ -68,6 +71,8 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 `allocatedBytes`는 GC로 회수된 객체도 포함한 할당 누계의 추정값이며 현재·최대 점유량이 아니다. 좌표 연결·초기 적재·DTO/JSON 변환은 제외한다.
 
 ## 실행·검증·데이터
+
+- 2026-11-05 Pages 데모 검증: 실제 서울 그래프로 기본 벤치마크(3 JVM × 워밍업 4회·측정 20회 × 8질의, 표본 960개)를 완료했다. `.runtime/benchmarks/pages-demo-20261105/`에 원시 보고서를 저장하고, 모든 표본의 거리·확장 상태와 API 결과를 대조한 뒤 공개 데이터로 추출했다. 데모·실시간 프론트 빌드 및 Playwright의 8예제·경로 토글·해시 링크·설명 링크·JSON 다운로드·모바일·지도 실패 시 결과 유지·API 호출 없음·Worker 200 검증 통과.
 
 - 2026-11-05 Compose 검증: `docker compose config`·두 이미지 빌드·`up --wait` 통과. 실제 서울 그래프로 두 컨테이너 healthy, 경로·비교·제외 도로 프록시 정상, 브라우저 지도 준비·Worker JavaScript 200·페이지 오류 없음 확인. 두 데이터 파일의 읽기 전용 마운트와 데이터 누락 시 빈 경로를 생성하지 않고 실패하는 동작을 확인했다. `docker compose restart routing-api` 후 프론트 재시작·정상 상태 복구도 검증했다. 애플리케이션 코드는 변경하지 않았으며 백엔드 전체 단위 테스트는 재실행하지 않았다.
 

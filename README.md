@@ -4,6 +4,8 @@
 현재 패널에서 Dijkstra·A*를 개별 선택하거나 **함께 비교**할 수 있다.
 Java 21·Spring Boot 백엔드와 TypeScript·Vite·MapLibre 프론트로 구성한다.
 
+**[예제 데모 바로 보기](https://lsk961215.github.io/routing-engine/)** — 설치 없이 서울 경로 8개의 지도와 Dijkstra·A* 반복 측정 결과를 비교한다. 저장된 결과를 보여주는 정적 데모이며 실시간 경로 계산은 하지 않는다.
+
 ## 실행
 
 ### 로컬 개발
@@ -109,6 +111,50 @@ Compose는 기존 수동 컨테이너와 다른 이름을 사용하며 기존 `r
 - API가 `unhealthy`이면 `docker compose logs --tail 100 routing-api`로 그래프 적재·기동 오류를 확인한다.
 - 프로덕션 화면에서 지도가 준비되지 않는 경우: `frontend/src/main.ts`의 `?worker&url` import와 `setWorkerUrl` 설정을 확인한다. Worker 요청에 HTML이 반환되면 빌드 산출물이 누락된 것이다.
 - 각 `.dockerignore`는 로컬 데이터·의존성·빌드 결과·환경 파일을 제외한다. 프론트 의존성은 이미지 안에서 `npm ci`로 설치한다.
+
+### GitHub Pages 예제 데모
+
+공개 주소: **https://lsk961215.github.io/routing-engine/**
+
+예제 8개의 경로, 알고리즘별 표시 토글, 시간 중앙값·p95·확장 상태 수·메모리 할당량, 구현 과정과 측정 조건을 제공한다.
+실제 엔진에서 추출한 결과를 번들에 포함하므로 `/api/`나 Java 서버를 호출하지 않는다. 배경 지도는 OpenFreeMap에서 불러온다.
+지도 서버 연결에 실패해도 예제 선택과 측정 결과는 볼 수 있다. 선택한 예제는 URL 해시로 공유할 수 있고, 전체 예제 JSON을 내려받을 수 있다.
+
+```sh
+npm ci --prefix frontend
+npm run build:demo --prefix frontend
+npm run preview:demo --prefix frontend
+# http://localhost:4173/routing-engine/
+```
+
+데모는 `frontend/demo/index.html`·`frontend/src/demo.ts`·`demo.css`를 진입점으로 사용한다.
+`--mode demo`일 때만 `/routing-engine/` 경로와 `frontend/dist-demo/` 출력을 사용하며, 기존 `npm run build`와 Docker 프론트는 실시간 탐색 화면을 유지한다.
+GitHub 저장소 Settings → Pages의 Source는 **GitHub Actions**로 설정한다.
+`.github/workflows/pages.yml`이 main의 프론트 변경 또는 수동 실행 시 빌드하고 Pages에 배포한다.
+새 도로 데이터 생성과 벤치마크는 배포 과정에서 실행하지 않는다.
+
+데이터 갱신은 서울 API가 같은 그래프로 실행 중인 로컬 환경에서 수행한다.
+
+```sh
+./scripts/benchmark.sh -PbenchmarkReport=../.runtime/benchmarks/my-demo-run
+python3 scripts/export-demo.py .runtime/benchmarks/my-demo-run/report.json
+npm run build:demo --prefix frontend
+```
+
+`export-demo.py`는 그래프·고정 질의 해시를 검사하고 `/api/compare`의 거리·확장 상태가 벤치마크 표본과 일치하는지 확인한다.
+출력 `frontend/src/demo-data.json`은 버전 관리한다. 경로 형상은 API에서, 시간·메모리 통계는 독립 JVM 반복 측정 보고서에서 가져온다.
+출처에 측정일·엔진 커밋·JVM 환경·그래프/질의 해시를 포함한다. API 주소를 바꾸려면 `--api-url http://...`를 지정한다.
+
+정적 빌드 미리보기 실행 후 브라우저 검증:
+
+```sh
+node scripts/browser-demo-check.cjs
+# 공개 배포 검증
+DEMO_URL=https://lsk961215.github.io/routing-engine/ node scripts/browser-demo-check.cjs
+```
+
+예제 전환·표시 토글·해시 링크·JSON 내려받기·모바일·지도 연결 실패·API 요청 없음·Worker 응답을 확인한다.
+스크린샷은 `.runtime/demo-check/`에 저장한다. Playwright 준비는 아래 [검증](#검증)을 따른다.
 
 ### 화면 사용
 

@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:demo": "vite --mode demo",
+    "build:demo": "tsc && vite build --mode demo",
+    "preview:demo": "vite preview --mode demo"
   },
   "devDependencies": {
     "typescript": "~6.0.2",
