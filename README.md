@@ -116,7 +116,7 @@ Compose는 기존 수동 컨테이너와 다른 이름을 사용하며 기존 `r
 
 공개 주소: **https://lsk961215.github.io/routing-engine/**
 
-예제 8개의 경로와 실제 탐색 영역 확산, 알고리즘별 표시 토글, 시간 중앙값·p95·확장 상태 수·메모리 할당량, 구현 과정과 측정 조건을 제공한다.
+지도책과 실험 도구를 결합한 **Route studies.** 화면에서 예제 8개의 경로와 실제 탐색 영역 확산, 알고리즘별 표시 토글, 시간 중앙값·p95·확장 상태 수·메모리 할당량, 구현 과정과 측정 조건을 제공한다.
 실제 엔진에서 추출한 결과를 정적 파일로 제공하므로 `/api/`나 Java 서버를 호출하지 않는다. 배경 지도는 OpenFreeMap에서 불러온다.
 지도 서버 연결에 실패해도 예제 선택과 측정 결과는 볼 수 있다. 선택한 예제는 URL 해시로 공유할 수 있고, 전체 예제 JSON을 내려받을 수 있다.
 
@@ -137,6 +137,8 @@ npm run preview:demo --prefix frontend
 ```
 
 데모는 `frontend/demo/index.html`·`frontend/src/demo.ts`·`demo.css`를 진입점으로 사용한다.
+지도 바로 아래에 재생 조작을, 옆에는 확장 상태 차이와 반복 측정표를 배치한다. 모바일에서는 지도 → 재생 → 결과 순서로 이어진다.
+배경 지도는 OpenFreeMap Positron이다. Instrument Serif·IBM Plex Sans KR·IBM Plex Mono 글꼴은 `frontend/src/fonts/`에서 직접 제공하며, OFL 라이선스는 `frontend/demo/public/fonts/`에 포함한다.
 `--mode demo`일 때만 `/routing-engine/` 경로와 `frontend/dist-demo/` 출력을 사용하며, 기존 `npm run build`와 Docker 프론트는 실시간 탐색 화면을 유지한다.
 GitHub 저장소 Settings → Pages의 Source는 **GitHub Actions**로 설정한다.
 `.github/workflows/pages.yml`이 main의 프론트 변경 또는 수동 실행 시 빌드하고 Pages에 배포한다.

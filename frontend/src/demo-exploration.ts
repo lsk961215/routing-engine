@@ -79,6 +79,7 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
     const ordinal = step();
     map.setGlobalStateProperty("exploration-step", ordinal);
     range.value = String(Math.round(progress * 1000));
+    range.style.setProperty("--playback-position", `${progress * 100}%`);
     range.setAttribute("aria-valuetext", `누적 확장 ${format(ordinal)}회`);
     $("trace-count").textContent = `같은 확장 횟수 ${format(ordinal)}회`;
     for (const trace of data.traces) {
