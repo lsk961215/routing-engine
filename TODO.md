@@ -81,7 +81,7 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 
 - 2026-11-06 확산 재생 검증: 백엔드 120개 테스트 통과(실패·건너뜀 0). 추적 유무의 경로·상태 수 일치, 결정적 확장 순서, via-way·부분 간선·경로 없음·동일 지점, 최초 지점 샘플링을 검증했다. 서울 예제 8개의 추적 결과도 기존 데모의 경로 형상·거리·확장 상태 수와 일치한다. 데모·실시간 프론트 빌드 및 Playwright의 색상 렌더링·재생/일시정지/구간 이동·표시 토글·실패 재시도·늦은 응답 무시 검증 통과.
 
-- 공개 데모: https://lsk961215.github.io/routing-engine/ — 2026-11-06 확산 재생 버전 GitHub Actions 배포 성공 및 공개 주소에서 동일 Playwright 검증 통과. 저장소 README와 About 홈페이지 링크로 접근한다. 배포 이력: https://github.com/lsk961215/routing-engine/actions/runs/42051886666 .
+- 공개 데모: https://lsk961215.github.io/routing-engine/ — 2026-11-06 Route studies. 리디자인 버전 GitHub Actions 배포 성공 및 공개 주소에서 동일 Playwright 검증 통과. 저장소 README와 About 홈페이지 링크로 접근한다. 배포 이력: https://github.com/lsk961215/routing-engine/actions/runs/42059132779 .
 
 - 2026-11-05 Pages 데모 검증: 실제 서울 그래프로 기본 벤치마크(3 JVM × 워밍업 4회·측정 20회 × 8질의, 표본 960개)를 완료했다. `.runtime/benchmarks/pages-demo-20261105/`에 원시 보고서를 저장하고, 모든 표본의 거리·확장 상태와 API 결과를 대조한 뒤 공개 데이터로 추출했다. 데모·실시간 프론트 빌드 및 Playwright의 8예제·경로 토글·해시 링크·설명 링크·JSON 다운로드·모바일·지도 실패 시 결과 유지·API 호출 없음·Worker 200 검증 통과.
 
