@@ -116,9 +116,18 @@ Compose는 기존 수동 컨테이너와 다른 이름을 사용하며 기존 `r
 
 공개 주소: **https://lsk961215.github.io/routing-engine/**
 
-예제 8개의 경로, 알고리즘별 표시 토글, 시간 중앙값·p95·확장 상태 수·메모리 할당량, 구현 과정과 측정 조건을 제공한다.
-실제 엔진에서 추출한 결과를 번들에 포함하므로 `/api/`나 Java 서버를 호출하지 않는다. 배경 지도는 OpenFreeMap에서 불러온다.
+예제 8개의 경로와 실제 탐색 영역 확산, 알고리즘별 표시 토글, 시간 중앙값·p95·확장 상태 수·메모리 할당량, 구현 과정과 측정 조건을 제공한다.
+실제 엔진에서 추출한 결과를 정적 파일로 제공하므로 `/api/`나 Java 서버를 호출하지 않는다. 배경 지도는 OpenFreeMap에서 불러온다.
 지도 서버 연결에 실패해도 예제 선택과 측정 결과는 볼 수 있다. 선택한 예제는 URL 해시로 공유할 수 있고, 전체 예제 JSON을 내려받을 수 있다.
+
+**탐색 확산**은 한 지도에 Dijkstra를 파란 점, A*를 주황 점으로 겹쳐 표시한다. 기본 화면은 완료된 전체 영역이며,
+**처음부터 재생**·일시정지·슬라이더·처음/끝 버튼으로 실제 확장 순서를 살펴본다. 알고리즘별 체크박스는 영역과 경로를 함께 켜고 끈다.
+**탐색 영역 표시**를 끄면 최종 경로만 비교할 수 있다. 각 최종 경로는 해당 알고리즘의 확장이 끝날 때 나타난다.
+
+두 알고리즘에 같은 누적 확장 횟수를 적용하고, 초반 탐색을 보기 쉽도록 재생 위치의 세제곱에 비례해 횟수를 늘린다.
+재생 시간은 실제 실행 시간이 아니다. 약 120m 격자마다 처음 확장한 실제 노드 하나를 표시하며, 점 개수는 전체 확장 상태 수가 아니다.
+재생 기록은 성능 측정과 별도로 수집한다. 표의 시간·메모리는 기존 독립 JVM 벤치마크 결과를 유지한다.
+기록은 예제 선택 시 해당 JSON만 불러온다. 로딩 실패 시 재시도할 수 있고, 예제 변경 전의 늦은 응답은 무시한다.
 
 ```sh
 npm ci --prefix frontend
@@ -138,12 +147,18 @@ GitHub 저장소 Settings → Pages의 Source는 **GitHub Actions**로 설정한
 ```sh
 ./scripts/benchmark.sh -PbenchmarkReport=../.runtime/benchmarks/my-demo-run
 python3 scripts/export-demo.py .runtime/benchmarks/my-demo-run/report.json
+./backend/gradlew -p backend :routing-api:exportDemoTraces
 npm run build:demo --prefix frontend
 ```
 
 `export-demo.py`는 그래프·고정 질의 해시를 검사하고 `/api/compare`의 거리·확장 상태가 벤치마크 표본과 일치하는지 확인한다.
 출력 `frontend/src/demo-data.json`은 버전 관리한다. 경로 형상은 API에서, 시간·메모리 통계는 독립 JVM 반복 측정 보고서에서 가져온다.
 출처에 측정일·엔진 커밋·JVM 환경·그래프/질의 해시를 포함한다. API 주소를 바꾸려면 `--api-url http://...`를 지정한다.
+
+`exportDemoTraces`는 `CoordinateRouter.trace`로 각 확장 시점의 노드 좌표와 순서를 기록하고,
+모든 예제의 경로 형상·거리·확장 상태 수가 `demo-data.json`과 일치하는지 확인한 뒤 `frontend/demo/public/traces/`에 저장한다.
+그래프·질의 해시, 데모 JSON 해시, 기록 시각, 좌표/순서 필드와 격자 크기도 포함한다. 샘플링은 오프라인 내보내기에서 수행한다.
+이 파일들도 버전 관리하며, 데모 전용 정적 디렉터리를 사용하므로 실시간 앱의 배포 파일에는 포함되지 않는다.
 
 정적 빌드 미리보기 실행 후 브라우저 검증:
 
@@ -153,7 +168,7 @@ node scripts/browser-demo-check.cjs
 DEMO_URL=https://lsk961215.github.io/routing-engine/ node scripts/browser-demo-check.cjs
 ```
 
-예제 전환·표시 토글·해시 링크·JSON 내려받기·모바일·지도 연결 실패·API 요청 없음·Worker 응답을 확인한다.
+예제 전환·실제 렌더링된 확산 색상·재생/일시정지/구간 이동·표시 토글·늦은 응답 무시·기록 로딩 재시도·해시 링크·JSON 내려받기·모바일·지도 연결 실패·API 요청 없음·Worker 응답을 확인한다.
 스크린샷은 `.runtime/demo-check/`에 저장한다. Playwright 준비는 아래 [검증](#검증)을 따른다.
 
 ### 화면 사용

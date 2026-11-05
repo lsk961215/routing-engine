@@ -1,6 +1,6 @@
 # 진행 상태 · 세션 인계
 
-기준: 2026-11-05. 새 세션은 이 문서 → [실행·구조](README.md) → 필요한 소스 순서로 확인한다.
+기준: 2026-11-06. 새 세션은 이 문서 → [실행·구조](README.md) → 필요한 소스 순서로 확인한다.
 
 ## 프로젝트 방향과 사용자 선호
 
@@ -13,6 +13,8 @@
 - DevOps 학습을 병행한다. 서비스별 Dockerfile과 개별 컨테이너 실행을 확인한 뒤 Docker Compose 통합까지 완료했다.
 
 ## 현재 완료
+
+- 공개 데모의 탐색 확산 비교: 한 지도에 Dijkstra 파란 점·A* 주황 점을 겹쳐 표시한다. 실제 확장 순서를 약 120m 격자로 샘플링해 예제별 정적 JSON에 저장한다. 같은 확장 횟수로 재생·일시정지·구간 이동하며, 초반은 천천히 재생하고 실제 실행 시간과 구분한다. 최종 경로는 각 알고리즘의 탐색 완료 시 표시한다.
 
 - 서울 비교 그래프: 도로 173,755개, 노드 831,368개, 방향성 간선 1,664,236개.
 - 기존 과잉 제외 도로 3,857개 복원. 명시적 자동차 접근 금지 889개를 제외 지도에 표시.
@@ -51,6 +53,7 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 
 ## 이어서 수정할 핵심 코드
 
+- `frontend/src/demo-exploration.ts`와 `frontend/demo/public/traces/`: 확산 재생과 기록. `./backend/gradlew -p backend :routing-api:exportDemoTraces`로 기록을 갱신한다.
 - `frontend/src/demo.ts`, `demo.css`, `demo-data.json`, `frontend/demo/index.html`: 공개 예제 데모. `scripts/export-demo.py`로 벤치마크와 API 결과를 검증해 데이터를 갱신한다. `.github/workflows/pages.yml`은 정적 빌드만 배포한다.
 
 - `backend/routing-core/src/main/java/com/lsk/routing/core/graph/CoordinateRouter.java`: 좌표 연결·공유 공간 인덱스. 개별 API는 `search(..., RoutingAlgorithm)`, 비교 API는 `compare(...)`를 사용한다.
@@ -71,6 +74,8 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 `allocatedBytes`는 GC로 회수된 객체도 포함한 할당 누계의 추정값이며 현재·최대 점유량이 아니다. 좌표 연결·초기 적재·DTO/JSON 변환은 제외한다.
 
 ## 실행·검증·데이터
+
+- 2026-11-06 확산 재생 검증: 백엔드 120개 테스트 통과(실패·건너뜀 0). 추적 유무의 경로·상태 수 일치, 결정적 확장 순서, via-way·부분 간선·경로 없음·동일 지점, 최초 지점 샘플링을 검증했다. 서울 예제 8개의 추적 결과도 기존 데모의 경로 형상·거리·확장 상태 수와 일치한다. 데모·실시간 프론트 빌드 및 Playwright의 색상 렌더링·재생/일시정지/구간 이동·표시 토글·실패 재시도·늦은 응답 무시 검증 통과.
 
 - 공개 데모: https://lsk961215.github.io/routing-engine/ — 2026-11-05 GitHub Actions 배포 성공 및 공개 주소에서 동일 Playwright 검증 통과. 저장소 README와 About 홈페이지 링크로 접근한다. 배포 이력: https://github.com/lsk961215/routing-engine/actions/runs/42047167378 .
 

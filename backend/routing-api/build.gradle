@@ -58,3 +58,19 @@ tasks.register('benchmarkAlgorithms', JavaExec) {
         ]
     }
 }
+
+// Offline visualization export. Timing/allocation statistics remain from the untraced benchmark.
+tasks.register('exportDemoTraces', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lsk.routing.api.benchmark.ExportDemoTraces'
+    maxHeapSize = '2g'
+    doFirst {
+        args = [
+            rootProject.file('data/processed/seoul.rgraph').absolutePath,
+            rootProject.file('data/seoul-benchmark-queries.json').absolutePath,
+            rootProject.file('../frontend/src/demo-data.json').absolutePath,
+            rootProject.file('../frontend/demo/public/traces').absolutePath
+        ]
+    }
+}

@@ -71,6 +71,22 @@ public final class CoordinateRouter {
     }
 
     public record SearchResult(Optional<Route> route,RoutingAlgorithm algorithm,double snapMillis,double searchMillis,long expandedStates,Long allocatedBytes) {}
+    /** Offline visualization hook, called once for each expanded state, including repeated nodes. */
+    @FunctionalInterface public interface ExpansionObserver {
+        void expanded(double longitude,double latitude,long ordinal);
+    }
+    /** Traced runs deliberately expose no performance measurements: recording changes their cost. */
+    public record TraceResult(Optional<Route> route,RoutingAlgorithm algorithm,long expandedStates) {}
+    public TraceResult trace(double startLon,double startLat,double endLon,double endLat,
+                             RoutingAlgorithm algorithm,ExpansionObserver observer) {
+        Objects.requireNonNull(algorithm);Objects.requireNonNull(observer);
+        var allowed=EdgeAvailability.staticOnly(graph);
+        validate(startLon,startLat);validate(endLon,endLat);
+        Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
+        var metrics=new HistorySearch.Metrics((node,ordinal)->observer.expanded(graph.longitude(node),graph.latitude(node),ordinal));
+        var route=searchRoute(start,end,allowed,algorithm,metrics);
+        return new TraceResult(route,algorithm,metrics.expandedStates);
+    }
     public record ComparisonResult(Waypoint start,Waypoint end,double snapMillis,List<SearchResult> results) {
         public ComparisonResult { results=List.copyOf(results); }
     }
@@ -104,15 +120,17 @@ public final class CoordinateRouter {
         long allocatedBefore=ThreadAllocation.currentBytes();
         long begin=System.nanoTime();
         var metrics=new HistorySearch.Metrics();
-        int startNode=endpoint(start),endNode=endpoint(end);
-        Optional<Route> route;
-        if((startNode>=0 && startNode==endNode) || (startNode<0 && endNode<0
-                && start.segment.key.equals(end.segment.key) && Math.abs(start.fraction-end.fraction)<EPS))
-            route=Optional.of(result(start,end,0,List.of()));
-        else route=searchWithHistory(start,end,startNode,endNode,allowed,algorithm,metrics);
+        var route=searchRoute(start,end,allowed,algorithm,metrics);
         double searchMillis=(System.nanoTime()-begin)/1e6;
         Long allocatedBytes=ThreadAllocation.since(allocatedBefore);
         return new SearchResult(route,algorithm,snapMillis,searchMillis,metrics.expandedStates,allocatedBytes);
+    }
+    private Optional<Route> searchRoute(Snap start,Snap end,IntPredicate allowed,RoutingAlgorithm algorithm,HistorySearch.Metrics metrics) {
+        int startNode=endpoint(start),endNode=endpoint(end);
+        if((startNode>=0 && startNode==endNode) || (startNode<0 && endNode<0
+                && start.segment.key.equals(end.segment.key) && Math.abs(start.fraction-end.fraction)<EPS))
+            return Optional.of(result(start,end,0,List.of()));
+        return searchWithHistory(start,end,startNode,endNode,allowed,algorithm,metrics);
     }
 
     private record Label(int edge,double distance) {}

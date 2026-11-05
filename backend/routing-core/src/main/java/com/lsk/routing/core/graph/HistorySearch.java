@@ -10,7 +10,13 @@ final class HistorySearch {
     record Result(double distance,List<Integer> edges) {}
     private record State(int edge,int history) {}
     private record Label(State state,double cost,double priority) {}
-    static final class Metrics { long expandedStates; }
+    @FunctionalInterface interface ExpansionObserver { void expanded(int node,long ordinal); }
+    static final class Metrics {
+        long expandedStates;
+        final ExpansionObserver observer;
+        Metrics() { this(null); }
+        Metrics(ExpansionObserver observer) { this.observer=observer; }
+    }
     static Optional<Result> route(RoutingGraph graph,List<Seed> seeds,int endNode,
                                   Map<Integer,Double> partialEnds,double directDistance) {
         return route(graph,seeds,endNode,partialEnds,directDistance,EdgeAvailability.staticOnly(graph));
@@ -41,6 +47,7 @@ final class HistorySearch {
             if(label.priority>=winner)break;
             metrics.expandedStates++;
             int node=graph.target(state.edge);
+            if(metrics.observer!=null)metrics.observer.expanded(node,metrics.expandedStates);
             if(node==endNode){winner=label.cost;winnerLast=state;break;}
             for(int outgoing=graph.edgeStart(node);outgoing<graph.edgeEnd(node);outgoing++) {
                 if(!allowed.test(outgoing) || !graph.turnAllowed(state.edge,outgoing))continue;
