@@ -21,16 +21,26 @@ fs.mkdirSync(output, { recursive: true });
     await page.goto(base);
     await page.waitForFunction(() => document.querySelector('#fit-route')?.disabled === false, {}, { timeout: 60000 });
     const traceReady = async () => page.waitForFunction(() => document.querySelector('#trace-play')?.disabled === false, {}, { timeout: 60000 });
+    const checkAutoplay = async () => {
+      await traceReady();
+      assert.equal(await page.getAttribute('#trace-play', 'aria-pressed'), 'true');
+      assert.ok(Number(await page.inputValue('#trace-position')) < 250, 'New route must replay near the beginning');
+      const position = Number(await page.inputValue('#trace-position'));
+      await page.waitForFunction(before => Number(document.querySelector('#trace-position').value) > before, position);
+    };
     const checkCompleted = async example => {
       await traceReady();
+      await page.click('#trace-end');
       for (const route of example.routes) {
         const n = route.expandedStates.toLocaleString('ko-KR');
         assert.equal(await page.textContent(`#trace-${route.algorithm}-count`), `${n} / ${n} · 완료`);
       }
     };
+    await checkAutoplay();
     assert.equal(await page.locator('#example option').count(), 8);
     for (const example of data.examples) {
       await page.selectOption('#example', example.id);
+      await checkAutoplay();
       await checkCompleted(example);
       assert.equal(await page.textContent('#route-name'), example.name);
       assert.equal(new URL(page.url()).hash, '#' + example.id);
@@ -92,8 +102,6 @@ fs.mkdirSync(output, { recursive: true });
     await page.check('#show-astar');
     await page.click('#fit-route');
     await page.screenshot({ path: path.join(output, 'desktop.png'), fullPage: true });
-    await page.click('a[href="#how-it-works"]');
-    assert.equal(await page.inputValue('#example'), data.examples[2].id);
     await page.click('.methodology summary');
     const downloadPromise = page.waitForEvent('download');
     await page.click('#download-data');
@@ -118,6 +126,7 @@ fs.mkdirSync(output, { recursive: true });
     assert.equal(await page.textContent('#route-name'), data.examples[0].name);
     await page.unroute('**/traces/' + data.examples[0].id + '.json');
     await page.click('#trace-retry');
+    await checkAutoplay();
     await checkCompleted(data.examples[0]);
     // An old, delayed response cannot replace the currently selected trace.
     let release, started;
@@ -130,16 +139,22 @@ fs.mkdirSync(output, { recursive: true });
       await route.fulfill({json:trace}).catch(() => {});
     });
     await page.selectOption('#example', delayed.id); await seen;
+    assert.equal(await page.inputValue('#trace-position'), '0');
+    assert.equal(await page.isDisabled('#trace-play'), true);
     await page.selectOption('#example', data.examples[7].id);
+    await checkAutoplay();
     await checkCompleted(data.examples[7]); release();
     await page.waitForTimeout(200);
+    assert.equal(await page.getAttribute('#trace-play', 'aria-pressed'), 'false', 'Stale trace must not restart playback');
+    assert.equal(await page.inputValue('#trace-position'), '1000');
     await checkCompleted(data.examples[7]);
     await page.unroute('**/traces/' + delayed.id + '.json');
     await page.click('#trace-play');
     await page.waitForFunction(() => Number(document.querySelector('#trace-position').value) > 20);
     await page.selectOption('#example', data.examples[1].id);
+    await checkAutoplay();
+    await page.waitForFunction(() => document.querySelector('#trace-position').value === '1000' && document.querySelector('#trace-play').getAttribute('aria-pressed') === 'false', {}, {timeout: 20000});
     await checkCompleted(data.examples[1]);
-    assert.equal(await page.getAttribute('#trace-play', 'aria-pressed'), 'false');
     // Metrics and example selection still work if the external map is unavailable.
     await page.route('https://tiles.openfreemap.org/**', route => route.abort());
     await page.reload();
@@ -150,6 +165,6 @@ fs.mkdirSync(output, { recursive: true });
     assert.deepEqual(badAssets, []);
     assert.ok(workers.includes(200));
     assert.deepEqual(errors, []);
-    console.log('PASS: 8 examples, expansion colors, playback/pause/scrub, visibility, stale responses, retry, real metrics, links/download, mobile, map failure, no API, Worker 200');
+    console.log('PASS: 8 examples, automatic replay on selection, natural completion, expansion colors, playback/pause/scrub, visibility, stale responses, retry, real metrics, links/download, mobile, map failure, no API, Worker 200');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

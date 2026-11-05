@@ -46,7 +46,7 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
   let request: AbortController | null = null;
   let frame = 0;
   let playing = false;
-  let progress = 1;
+  let progress = 0;
   let maximum = 0;
   const play = $<HTMLButtonElement>("trace-play");
   const range = $<HTMLInputElement>("trace-position");
@@ -89,7 +89,10 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
     updateVisibility();
   }
   function clear() {
+    progress = 0;
     pause();
+    range.value = "0";
+    range.style.setProperty("--playback-position", "0%");
     data = null;
     for (const algorithm of algorithms) {
       const id = `exploration-${algorithm}`;
@@ -116,8 +119,8 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
       validate(loaded, example, graphSha256);
       data = loaded;
       maximum = Math.max(...data.traces.map(trace => trace.expandedStates));
-      progress = 1;
-      map.setGlobalStateProperty("exploration-step", maximum);
+      progress = 0;
+      map.setGlobalStateProperty("exploration-step", 0);
       for (const trace of data.traces) {
         const id = `exploration-${trace.algorithm}`;
         map.addSource(id, { type: "geojson", data: { type: "FeatureCollection", features: trace.points.map(([lon, lat, ordinal]) => ({ type: "Feature", properties: { ordinal }, geometry: { type: "Point", coordinates: [lon, lat] } })) } });
@@ -130,10 +133,10 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
         } }, "dijkstra");
       }
       [play, range, start, end, show].forEach(control => { control.disabled = false; });
-      status.textContent = "점은 약 120m 구역마다 처음 확장한 지점입니다. 색이 겹치면 하나씩 꺼서 비교해 보세요.";
+      status.textContent = "";
       render();
-      pause();
       fit();
+      startPlayback();
     } catch (error) {
       if (pending.signal.aborted || request !== pending) return;
       clear();
@@ -143,9 +146,9 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
       retry.hidden = false;
     }
   }
-  play.addEventListener("click", () => {
+  function startPlayback() {
     if (!data) return;
-    if (playing) { pause(); return; }
+    pause();
     if (progress >= 1) progress = 0;
     playing = true;
     play.textContent = "일시정지";
@@ -162,6 +165,10 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
       else frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
+  }
+  play.addEventListener("click", () => {
+    if (playing) pause();
+    else startPlayback();
   });
   range.addEventListener("input", () => { pause(); progress = Number(range.value) / 1000; render(); pause(); });
   start.addEventListener("click", () => { pause(); progress = 0; render(); pause(); });
