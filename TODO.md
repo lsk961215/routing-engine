@@ -72,6 +72,8 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 
 ## 실행·검증·데이터
 
+- 공개 데모: https://lsk961215.github.io/routing-engine/ — 2026-11-05 GitHub Actions 배포 성공 및 공개 주소에서 동일 Playwright 검증 통과. 저장소 README와 About 홈페이지 링크로 접근한다. 배포 이력: https://github.com/lsk961215/routing-engine/actions/runs/42047167378 .
+
 - 2026-11-05 Pages 데모 검증: 실제 서울 그래프로 기본 벤치마크(3 JVM × 워밍업 4회·측정 20회 × 8질의, 표본 960개)를 완료했다. `.runtime/benchmarks/pages-demo-20261105/`에 원시 보고서를 저장하고, 모든 표본의 거리·확장 상태와 API 결과를 대조한 뒤 공개 데이터로 추출했다. 데모·실시간 프론트 빌드 및 Playwright의 8예제·경로 토글·해시 링크·설명 링크·JSON 다운로드·모바일·지도 실패 시 결과 유지·API 호출 없음·Worker 200 검증 통과.
 
 - 2026-11-05 Compose 검증: `docker compose config`·두 이미지 빌드·`up --wait` 통과. 실제 서울 그래프로 두 컨테이너 healthy, 경로·비교·제외 도로 프록시 정상, 브라우저 지도 준비·Worker JavaScript 200·페이지 오류 없음 확인. 두 데이터 파일의 읽기 전용 마운트와 데이터 누락 시 빈 경로를 생성하지 않고 실패하는 동작을 확인했다. `docker compose restart routing-api` 후 프론트 재시작·정상 상태 복구도 검증했다. 애플리케이션 코드는 변경하지 않았으며 백엔드 전체 단위 테스트는 재실행하지 않았다.
