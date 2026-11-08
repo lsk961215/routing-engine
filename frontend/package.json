@@ -9,13 +9,22 @@
     "preview": "vite preview",
     "dev:demo": "vite --mode demo",
     "build:demo": "tsc && vite build --mode demo",
-    "preview:demo": "vite preview --mode demo"
+    "preview:demo": "vite preview --mode demo",
+    "astryx": "node node_modules/@astryxdesign/cli/clients/cli/bin/astryx.mjs"
   },
   "devDependencies": {
+    "@astryxdesign/cli": "^0.7.11",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
   },
   "dependencies": {
-    "maplibre-gl": "^6.1.0"
+    "@astryxdesign/core": "^0.7.11",
+    "@astryxdesign/theme-neutral": "^0.7.11",
+    "@stylexjs/stylex": "^0.19.1",
+    "maplibre-gl": "^6.1.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }

@@ -125,7 +125,7 @@ Compose는 기존 수동 컨테이너와 다른 이름을 사용하며 기존 `r
 **탐색 영역 표시**를 끄면 최종 경로만 비교할 수 있다. 각 최종 경로는 해당 알고리즘의 확장이 끝날 때 나타난다.
 
 두 알고리즘에 같은 누적 확장 횟수를 적용하고, 초반 탐색을 보기 쉽도록 재생 위치의 세제곱에 비례해 횟수를 늘린다.
-재생 시간은 실제 실행 시간이 아니다. 약 120m 격자마다 처음 확장한 실제 노드 하나를 표시하며, 점 개수는 전체 확장 상태 수가 아니다.
+재생 시간은 실제 실행 시간이 아니다. 약 120m 격자마다 처음 확장한 실제 노드 하나를 표시하며, 점 개수는 전체 확장 상태 수가 아니다. 점은 지도 축척에 따라 크기를 조절하며 두 알고리즘에 같은 반경을 사용한다. 진한 점은 최근 확장한 위치, 옅은 점은 누적 탐색이다. 도로 연결과 통행 규칙을 따르므로 확산이 원형이거나 연속된 면일 필요는 없다.
 재생 기록은 성능 측정과 별도로 수집한다. 표의 시간과 JSON의 상세 측정값은 기존 독립 JVM 벤치마크 결과를 유지한다.
 기록은 예제 선택 시 해당 JSON만 불러온다. 로딩 실패 시 재시도할 수 있고, 예제 변경 전의 늦은 응답은 무시한다.
 
@@ -136,8 +136,10 @@ npm run preview:demo --prefix frontend
 # http://localhost:4173/routing-engine/
 ```
 
-데모는 `frontend/demo/index.html`·`frontend/src/demo.ts`·`demo.css`를 진입점으로 사용한다.
-화면은 경로 선택 → 지도 → 재생 → 핵심 비교 결과 순서다. 큰 소개 문구와 구현 과정 섹션을 덜어내고, 측정 조건은 접어 두었다.
+데모는 `frontend/demo/index.html`·`frontend/src/demo.tsx`·`demo.css`를 진입점으로 사용한다.
+데모 UI는 React 19와 [Astryx](https://github.com/meta/astryx)의 Neutral 테마를 사용한다. 경로 선택은 Selector, 표시 토글은 Switch, 재생 조작은 IconButton·Slider 컴포넌트다. 처음·재생/일시정지·끝 이동을 아이콘 그룹으로 묶고, 버튼의 툴팁과 접근 가능한 이름을 제공한다. 데스크톱에서는 지도 옆에 알고리즘별 시간·거리·확장 상태 카드를, 모바일에서는 지도 아래에 나란히 배치한다. 터치 화면의 경로 메뉴는 하단 시트로 열린다. 측정 조건은 접어 두었다.
+`demo-map.ts`는 지도 수명과 경로 표시를, `demo-exploration.ts`는 요청 취소·확산 재생과 상태 통지를 담당한다. React가 컨트롤 상태를 관리하며 재생 코드가 화면 DOM을 직접 수정하지 않는다.
+Astryx API 문서는 `npm run astryx --prefix frontend -- component Selector Slider Button Switch`로 확인한다. 패키지가 제공하는 CSS와 테마를 사용하므로 별도 StyleX 빌드 플러그인은 필요하지 않다.
 배경 지도는 OpenFreeMap Positron이다. 화면에 사용하는 IBM Plex Sans KR 글꼴은 `frontend/src/fonts/`에서 직접 제공하며, OFL 라이선스는 `frontend/demo/public/fonts/`에 포함한다.
 `--mode demo`일 때만 `/routing-engine/` 경로와 `frontend/dist-demo/` 출력을 사용하며, 기존 `npm run build`와 Docker 프론트는 실시간 탐색 화면을 유지한다.
 GitHub 저장소 Settings → Pages의 Source는 **GitHub Actions**로 설정한다.
@@ -170,7 +172,7 @@ node scripts/browser-demo-check.cjs
 DEMO_URL=https://lsk961215.github.io/routing-engine/ node scripts/browser-demo-check.cjs
 ```
 
-예제 전환·실제 렌더링된 확산 색상·재생/일시정지/구간 이동·표시 토글·늦은 응답 무시·기록 로딩 재시도·해시 링크·JSON 내려받기·모바일·지도 연결 실패·API 요청 없음·Worker 응답을 확인한다.
+Astryx 경로 메뉴·키보드 슬라이더·터치 하단 시트·예제 전환·실제 렌더링된 확산 색상·재생/일시정지/구간 이동·표시 토글·늦은 응답 무시·기록 로딩 재시도·해시 링크·JSON 내려받기·모바일·지도 연결 실패·API 요청 없음·Worker 응답을 확인한다.
 스크린샷은 `.runtime/demo-check/`에 저장한다. Playwright 준비는 아래 [검증](#검증)을 따른다.
 
 ### 화면 사용

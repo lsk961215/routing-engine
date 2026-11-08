@@ -1,6 +1,6 @@
 # 진행 상태 · 세션 인계
 
-기준: 2026-11-06. 새 세션은 이 문서 → [실행·구조](README.md) → 필요한 소스 순서로 확인한다.
+기준: 2026-11-08. 새 세션은 이 문서 → [실행·구조](README.md) → 필요한 소스 순서로 확인한다.
 
 ## 프로젝트 방향과 사용자 선호
 
@@ -13,6 +13,10 @@
 - DevOps 학습을 병행한다. 서비스별 Dockerfile과 개별 컨테이너 실행을 확인한 뒤 Docker Compose 통합까지 완료했다.
 
 ## 현재 완료
+
+- 확산 위치·순서 표시 개선: 고정 픽셀 반경 때문에 축소 지도에서 탐색 영역이 과장되던 표시를 축척별 작은 점으로 바꿨다. 두 알고리즘에 동일 반경을 적용하고 최근 확장 지점을 진하게 표시하며 재생 갱신을 약 30fps로 조정했다. 8예제의 기록 해시·시작 위치·확장 순서·상태 수를 대조했고 원본 좌표와 순서는 유지했다. 실제 기록의 두 지점(12,009·524,441번째 확장)을 격리해 픽셀로 확인했으며, 뒤 지점은 해당 순서 전까지 표시되지 않았다.
+
+- Astryx 데모 UI 적용: React 19 + Astryx Neutral 테마, Selector·Switch·Button·IconButton·Slider를 적용했다. 재생 버튼은 처음·재생/일시정지·끝 아이콘 그룹으로 정리했다. 지도 중심 배치, 알고리즘별 수치 카드와 확장 상태 비교 막대, 모바일 터치 메뉴를 제공한다. 자동 재생·표시 토글·해시 링크·JSON 다운로드를 유지하며 지도/재생 로직과 React 화면 상태를 분리했다. 데모·실시간 앱 빌드와 Playwright 8예제 회귀 검증, 키보드 슬라이더·터치 하단 시트·320/390/768px 레이아웃 검증을 통과했다. Orca의 `Astryx 데모 미리보기` 터미널이 4173 포트에서 로컬 정적 빌드를 제공한다.
 
 - 데모 UI 간소화와 자동 재생: 소개·구현 과정·대형 비교 패널을 제거하고, 경로 선택·지도·재생·핵심 수치만 기본 화면에 둔다. 첫 화면과 경로 선택 시 처음부터 자동 재생하며, 이전 재생과 요청은 취소한다. 상세 측정 조건과 JSON 다운로드는 접힌 설명에 유지한다. 데모·실시간 프론트 빌드와 Playwright 검증(8예제 자동 재생·완료·일시정지·구간 이동·늦은 응답·재시도·모바일)을 통과했다.
 
@@ -58,7 +62,7 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 ## 이어서 수정할 핵심 코드
 
 - `frontend/src/demo-exploration.ts`와 `frontend/demo/public/traces/`: 확산 재생과 기록. `./backend/gradlew -p backend :routing-api:exportDemoTraces`로 기록을 갱신한다.
-- `frontend/src/demo.ts`, `demo.css`, `demo-data.json`, `frontend/demo/index.html`: 공개 예제 데모. `scripts/export-demo.py`로 벤치마크와 API 결과를 검증해 데이터를 갱신한다. `.github/workflows/pages.yml`은 정적 빌드만 배포한다.
+- `frontend/src/demo.tsx`, `demo-map.ts`, `demo.css`, `demo-data.json`, `frontend/demo/index.html`: 공개 예제 데모. `scripts/export-demo.py`로 벤치마크와 API 결과를 검증해 데이터를 갱신한다. `.github/workflows/pages.yml`은 정적 빌드만 배포한다.
 
 - `backend/routing-core/src/main/java/com/lsk/routing/core/graph/CoordinateRouter.java`: 좌표 연결·공유 공간 인덱스. 개별 API는 `search(..., RoutingAlgorithm)`, 비교 API는 `compare(...)`를 사용한다.
 - 같은 디렉터리의 `HistorySearch.java`: `(진입 간선, 회전 이력)` 상태 탐색. Dijkstra와 A*가 전이 로직을 공유한다.
@@ -83,7 +87,7 @@ OSM 오류 조사·정밀 통행 규칙 복원, 시간 조건 API, 시간 비용
 
 - 2026-11-06 확산 재생 검증: 백엔드 120개 테스트 통과(실패·건너뜀 0). 추적 유무의 경로·상태 수 일치, 결정적 확장 순서, via-way·부분 간선·경로 없음·동일 지점, 최초 지점 샘플링을 검증했다. 서울 예제 8개의 추적 결과도 기존 데모의 경로 형상·거리·확장 상태 수와 일치한다. 데모·실시간 프론트 빌드 및 Playwright의 색상 렌더링·재생/일시정지/구간 이동·표시 토글·실패 재시도·늦은 응답 무시 검증 통과.
 
-- 공개 데모: https://lsk961215.github.io/routing-engine/ — 2026-11-06 Route studies. 리디자인 버전 GitHub Actions 배포 성공 및 공개 주소에서 동일 Playwright 검증 통과. 저장소 README와 About 홈페이지 링크로 접근한다. 배포 이력: https://github.com/lsk961215/routing-engine/actions/runs/42059132779 .
+- 공개 데모: https://lsk961215.github.io/routing-engine/ — 2026-11-06 UI 간소화·경로 선택 시 자동 재생 버전(`fc95337`) GitHub Actions 배포 성공. 저장소 README와 About 홈페이지 링크로 접근한다. 배포 이력: https://github.com/lsk961215/routing-engine/actions/runs/42068443701 .
 
 - 2026-11-05 Pages 데모 검증: 실제 서울 그래프로 기본 벤치마크(3 JVM × 워밍업 4회·측정 20회 × 8질의, 표본 960개)를 완료했다. `.runtime/benchmarks/pages-demo-20261105/`에 원시 보고서를 저장하고, 모든 표본의 거리·확장 상태와 API 결과를 대조한 뒤 공개 데이터로 추출했다. 데모·실시간 프론트 빌드 및 Playwright의 8예제·경로 토글·해시 링크·설명 링크·JSON 다운로드·모바일·지도 실패 시 결과 유지·API 호출 없음·Worker 200 검증 통과.
 
