@@ -10,6 +10,7 @@
   --color-background-body: #f6f7f9;
   --blue: #2563eb;
   --orange: #c65d21;
+  --green: #15803d;
   --muted: #637084;
   --line: #e2e7ed;
 }
@@ -32,14 +33,15 @@ h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spac
 .workspace { background: white; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 3px 16px #26334805; }
 .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 24px; }
 .example-control { max-width: 310px; min-width: 0; }
-.visibility-controls { display: flex; align-items: center; gap: 24px; padding-top: 22px; }
+.visibility-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding-top: 22px; }
 .algorithm-toggle { display: inline-flex; }
 .algorithm-toggle.blue { --color-accent: #2563eb; --color-text-accent: #2563eb; }
+.algorithm-toggle.green { --color-accent: #15803d; --color-text-accent: #15803d; }
 .algorithm-toggle.orange { --color-accent: #c65d21; --color-text-accent: #c65d21; }
 .area-toggle { border-left: 1px solid var(--line); padding-left: 24px; }
 .experiment-grid { display: grid; grid-template-columns: minmax(0, 1fr) 274px; border-top: 1px solid var(--line); }
-.map-workspace { min-width: 0; }
-.map-panel { position: relative; height: clamp(390px, 53vh, 570px); background: #e9edf0; border-bottom: 1px solid var(--line); }
+.map-workspace { min-width: 0; display: flex; flex-direction: column; }
+.map-panel { flex-grow: 1; position: relative; height: clamp(390px, 53vh, 570px); background: #e9edf0; border-bottom: 1px solid var(--line); }
 #demo-map { position: absolute; inset: 0; }
 .map-fit { position: absolute; left: 14px; top: 14px; }
 .map-fit .astryx-button { background: white; }
@@ -63,11 +65,13 @@ h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spac
 .results-heading h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .results-heading > span { font-size: 10px; color: var(--muted); }
 .algorithm-card { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: white; --algorithm: var(--blue); }
+.algorithm-card.alt { --algorithm: var(--green); }
 .algorithm-card.astar { --algorithm: var(--orange); }
 .algorithm-heading h3 { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; margin: 0; }
 .algorithm-heading > span { display: block; margin-top: 3px; font-size: 11px; color: var(--muted); }
 .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .legend-dot.blue { background: var(--blue); }
+.legend-dot.green { background: var(--green); }
 .legend-dot.orange { background: var(--orange); }
 .time-metric { display: flex; align-items: baseline; gap: 6px; margin-top: 16px; font-variant-numeric: tabular-nums; }
 .time-metric strong { font-size: 30px; font-weight: 500; letter-spacing: -1px; line-height: 1.15; }
@@ -96,7 +100,7 @@ footer { display: flex; justify-content: space-between; gap: 16px; margin: 18px 
   .visibility-controls { gap: 14px; }
   .area-toggle { padding-left: 14px; }
   .experiment-grid { grid-template-columns: minmax(0, 1fr); }
-  .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; }
+  .results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; }
   .results-heading, .comparison-note { grid-column: 1 / -1; }
   .comparison-note > span { display: inline; margin-left: 10px; }
   .map-panel { height: 440px; }
@@ -112,7 +116,7 @@ footer { display: flex; justify-content: space-between; gap: 16px; margin: 18px 
   .site-header .astryx-button { font-size: 11px; }
   .toolbar { display: block; padding: 16px; }
   .example-control { max-width: none; }
-  .visibility-controls { padding-top: 16px; justify-content: space-between; gap: 8px; }
+  .visibility-controls { padding-top: 16px; justify-content: flex-start; gap: 8px; }
   .visibility-controls .astryx-switch-label { font-size: 12px; }
   .area-toggle { padding-left: 8px; }
   .map-panel { height: 360px; height: clamp(320px, 43svh, 400px); }
@@ -120,7 +124,7 @@ footer { display: flex; justify-content: space-between; gap: 16px; margin: 18px 
   .replay-timeline { gap: 14px; }
   .replay-caption { font-size: 10px; }
   .replay-note { font-size: 10px; }
-  .results { padding: 16px 12px; gap: 10px; }
+  .results { grid-template-columns: minmax(0, 1fr); padding: 16px 12px; gap: 10px; }
   .algorithm-card { padding: 12px; }
   .time-metric strong { font-size: 27px; }
   .secondary-metrics { font-size: 11px; }

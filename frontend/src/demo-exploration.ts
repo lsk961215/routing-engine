@@ -1,6 +1,7 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 
-export type Algorithm = "dijkstra" | "astar";
+import { algorithms, algorithmInfo, type Algorithm } from "./demo-algorithms";
+export type { Algorithm } from "./demo-algorithms";
 interface Trace {
   algorithm: Algorithm;
   expandedStates: number;
@@ -18,7 +19,6 @@ interface Example {
   id: string;
   routes: { algorithm: Algorithm; expandedStates: number }[];
 }
-const algorithms: Algorithm[] = ["dijkstra", "astar"];
 export interface PlaybackState {
   status: "loading" | "ready" | "error";
   playing: boolean;
@@ -28,11 +28,11 @@ export interface PlaybackState {
   message: string;
 }
 export const initialPlayback: PlaybackState = { status: "loading", playing: false, progress: 0, step: 0, counts: {}, message: "지도 준비 중" };
-export interface Visibility { dijkstra: boolean; astar: boolean; exploration: boolean }
+export type Visibility = Record<Algorithm, boolean> & { exploration: boolean };
 
 
 function validate(data: TraceData, example: Example, graphSha256: string) {
-  if (data.version !== 1 || data.exampleId !== example.id || data.graphSha256 !== graphSha256 || data.traces.length !== 2 || data.cellMetres !== 120)
+  if (data.version !== 2 || data.exampleId !== example.id || data.graphSha256 !== graphSha256 || data.traces.length !== algorithms.length || data.cellMetres !== 120)
     throw new Error("예제와 탐색 기록이 일치하지 않습니다.");
   for (const algorithm of algorithms) {
     const trace = data.traces.find(item => item.algorithm === algorithm);
@@ -60,7 +60,7 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
   let disposed = false;
   let status: PlaybackState["status"] = "loading";
   let message = "";
-  let visibility: Visibility = { dijkstra: true, astar: true, exploration: true };
+  let visibility: Visibility = { dijkstra: true, astar: true, alt: true, exploration: true };
 
   // A shared counter, eased to keep short A* searches visible; never elapsed compute time.
   function step() { return Math.floor(maximum * progress ** 3); }
@@ -126,8 +126,8 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
         const id = `exploration-${trace.algorithm}`;
         map.addSource(id, { type: "geojson", data: { type: "FeatureCollection", features: trace.points.map(([lon, lat, ordinal]) => ({ type: "Feature", properties: { ordinal }, geometry: { type: "Point", coordinates: [lon, lat] } })) } });
         map.addLayer({ id, type: "circle", source: id, paint: {
-          "circle-color": trace.algorithm === "dijkstra" ? "#2563eb" : "#ed772c",
-          // Both algorithms use the same footprint. At a city-wide zoom, a fixed
+          "circle-color": algorithmInfo[trace.algorithm].pointColor,
+          // All algorithms use the same footprint. At a city-wide zoom, a fixed
           // 4.5px radius covered hundreds of metres around a 120m sample cell.
           "circle-radius": ["interpolate", ["exponential", 2], ["zoom"], 8, 0.8, 10, 1.2, 12, 2.4, 14, 3.2, 16, 4],
           "circle-opacity": ["case",

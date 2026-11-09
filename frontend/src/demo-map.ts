@@ -1,4 +1,5 @@
 import { Map, Marker, NavigationControl, LngLatBounds, setWorkerUrl } from "maplibre-gl";
+import { algorithms, algorithmInfo } from "./demo-algorithms";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { setupExploration, type Algorithm, type PlaybackState } from "./demo-exploration";
 
@@ -36,13 +37,13 @@ export function createDemoMap(container: HTMLElement, initial: Example, graphSha
   }
   function draw() {
     if (!ready) return;
-    for (const algorithm of ["dijkstra", "astar"] as const) {
+    for (const algorithm of algorithms) {
       if (map.getLayer(algorithm)) map.removeLayer(algorithm);
       if (map.getSource(algorithm)) map.removeSource(algorithm);
       const route = selected.routes.find(r => r.algorithm === algorithm)!;
       map.addSource(algorithm, { type: "geojson", data: { type: "Feature", properties: {}, geometry: route.geometry } });
       map.addLayer({ id: algorithm, type: "line", source: algorithm, layout: { "line-join": "round", "line-cap": "round", visibility: "none" }, paint: {
-        "line-color": algorithm === "dijkstra" ? "#2563eb" : "#c65d21", "line-width": algorithm === "dijkstra" ? 7 : 3.5,
+        "line-color": algorithmInfo[algorithm].color, "line-width": algorithmInfo[algorithm].width,
         ...(algorithm === "astar" ? { "line-dasharray": [2, 2] } : {}),
       } });
     }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export real route geometries and matching repeated benchmark summaries for Pages."""
+"""Export three real algorithm routes with separately attributed paired benchmarks for Pages."""
 import argparse
 import hashlib
 import json
@@ -9,48 +9,115 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('report', type=Path)
-parser.add_argument('--api-url', default='http://127.0.0.1:8080')
-args = parser.parse_args()
-report = json.loads(args.report.read_text())
-if report['version'] != 2:
-    raise SystemExit('A version 2 benchmark report with allocation metrics is required.')
-graph_hash = hashlib.sha256((ROOT / 'backend/data/processed/seoul.rgraph').read_bytes()).hexdigest()
-queries_hash = hashlib.sha256((ROOT / 'backend/data/seoul-benchmark-queries.json').read_bytes()).hexdigest()
-assert all(f['graphSha256'] == graph_hash and f['queriesSha256'] == queries_hash for f in report['forks']), 'Benchmark inputs differ from local inputs'
-summaries = {(s['queryId'], s['algorithm']): s for s in report['summaries']}
-examples = []
-for query in report['querySet']['queries']:
-    params = {k: query[k] for k in ('startLon', 'startLat', 'endLon', 'endLat')}
-    with urlopen(args.api_url.rstrip('/') + '/api/compare?' + urlencode(params), timeout=60) as response:
-        pair = json.load(response)
-    routes = []
-    assert [r['algorithm'] for r in pair['results']] == ['dijkstra', 'astar']
-    for result in pair['results']:
-        assert result['code'] == 'Ok', query['id']
-        route = result['routes'][0]
-        summary = summaries[(query['id'], result['algorithm'])]
-        samples = [s for fork in report['forks'] for s in fork['samples'] if s['queryId'] == query['id'] and s['algorithm'] == result['algorithm']]
-        assert len(samples) == report['settings']['forks'] * report['settings']['measuredRounds']
-        assert all(s['code'] == 'Ok' and abs(s['distanceMetres'] - route['distance']) < 1e-6 and s['expandedStates'] == result['metrics']['expandedStates'] for s in samples), 'API and benchmark results differ'
-        assert route['geometry']['type'] == 'LineString' and len(route['geometry']['coordinates']) >= 2
-        routes.append({
-            'algorithm': result['algorithm'], 'distance': route['distance'], 'geometry': route['geometry'],
-            'searchMillis': summary['searchMillis'], 'expandedStates': summary['expandedStates']['median'],
-            'allocatedBytes': summary['allocatedBytes'],
-        })
-    assert abs(routes[0]['distance'] - routes[1]['distance']) < 1e-6
-    examples.append({'id': query['id'], 'name': query['name'], 'start': [query['startLon'], query['startLat']], 'end': [query['endLon'], query['endLat']], 'routes': routes})
-output = {
-    'version': 1, 'generatedAt': datetime.now(timezone.utc).isoformat(),
-    'source': {
-        'gitRevision': report['gitRevision'], 'benchmarkAt': report['generatedAt'],
-        'graphSha256': graph_hash, 'queriesSha256': queries_hash,
+
+
+def validate_report(report, graph_hash, queries_hash, algorithms):
+    if report['version'] != 2:
+        raise ValueError('A version 2 benchmark report with allocation metrics is required.')
+    if len(report['forks']) != report['settings']['forks'] or not report['forks']:
+        raise ValueError('Incomplete benchmark forks')
+    if not all(f['graphSha256'] == graph_hash and f['queriesSha256'] == queries_hash for f in report['forks']):
+        raise ValueError('Benchmark inputs differ from local inputs')
+    expected = {(q['id'], algorithm) for q in report['querySet']['queries'] for algorithm in algorithms}
+    actual = [(s['queryId'], s['algorithm']) for s in report['summaries']]
+    if set(actual) != expected or len(actual) != len(expected):
+        raise ValueError('Benchmark must contain exactly the expected queries and algorithms')
+
+
+def measured_route(report, query_id, result):
+    if result['code'] != 'Ok':
+        raise ValueError(f'No route for {query_id}: {result["algorithm"]}')
+    route = result['routes'][0]
+    summary = next(s for s in report['summaries'] if (s['queryId'], s['algorithm']) == (query_id, result['algorithm']))
+    samples = [s for fork in report['forks'] for s in fork['samples'] if s['queryId'] == query_id and s['algorithm'] == result['algorithm']]
+    expected_count = report['settings']['forks'] * report['settings']['measuredRounds']
+    if len(samples) != expected_count or summary['searchMillis']['count'] != expected_count:
+        raise ValueError('Incomplete measured samples')
+    if not all(s['code'] == 'Ok' and abs(s['distanceMetres'] - route['distance']) < 1e-6
+               and s['expandedStates'] == result['metrics']['expandedStates'] for s in samples):
+        raise ValueError('API and benchmark results differ')
+    if summary['expandedStates']['median'] != result['metrics']['expandedStates']:
+        raise ValueError('Summary and API expanded state counts differ')
+    if route['geometry']['type'] != 'LineString' or len(route['geometry']['coordinates']) < 2:
+        raise ValueError('Invalid route geometry')
+    return {
+        'algorithm': result['algorithm'], 'distance': route['distance'], 'geometry': route['geometry'],
+        'searchMillis': summary['searchMillis'], 'expandedStates': result['metrics']['expandedStates'],
+        'allocatedBytes': summary['allocatedBytes'],
+    }
+
+
+def provenance(report):
+    return {
+        'gitRevision': report['gitRevision'], 'gitDirty': bool(report['gitDirty']), 'benchmarkAt': report['generatedAt'],
         'settings': report['settings'], 'environment': report['forks'][0]['environment'],
-    },
-    'examples': examples,
-}
-target = ROOT / 'frontend/src/demo-data.json'
-target.write_text(json.dumps(output, ensure_ascii=False, separators=(',', ':'), allow_nan=False) + '\n')
-print(f'Exported {len(examples)} examples to {target.relative_to(ROOT)} ({target.stat().st_size:,} bytes)')
+    }
+
+
+def export(report, alt_report, graph_hash, queries_hash, fetch_pair):
+    validate_report(report, graph_hash, queries_hash, ['dijkstra', 'astar'])
+    validate_report(alt_report, graph_hash, queries_hash, ['dijkstra', 'alt'])
+    if (report['querySet'] != alt_report['querySet'] or report['settings'] != alt_report['settings']
+            or report['gitRevision'] != alt_report['gitRevision']):
+        raise ValueError('Paired benchmark query sets, settings and base revision must match')
+    environments = [f['environment'] for r in [report, alt_report] for f in r['forks']]
+    if any(env != environments[0] for env in environments):
+        raise ValueError('Benchmark environments must match')
+    landmarks = [f.get('landmarks') for f in alt_report['forks']]
+    if any(not item or item['count'] <= 0 or item['distanceTableBytes'] <= 0 or item['preprocessingMillis'] < 0 for item in landmarks):
+        raise ValueError('ALT preprocessing metadata is missing')
+    if len({(item['count'], item['distanceTableBytes']) for item in landmarks}) != 1:
+        raise ValueError('ALT landmark configurations differ between forks')
+    examples = []
+    for query in report['querySet']['queries']:
+        pair = fetch_pair(query, 'astar')
+        alt_pair = fetch_pair(query, 'alt')
+        if ([r['algorithm'] for r in pair['results']] != ['dijkstra', 'astar']
+                or [r['algorithm'] for r in alt_pair['results']] != ['dijkstra', 'alt']
+                or pair['waypoints'] != alt_pair['waypoints']):
+            raise ValueError('Unexpected algorithms or inconsistent snapped waypoints')
+        routes = [measured_route(report, query['id'], result) for result in pair['results']]
+        # Validate the second run's baseline too, without mixing its timing samples into the first run.
+        alt_baseline = measured_route(alt_report, query['id'], alt_pair['results'][0])
+        if (alt_baseline['geometry'] != routes[0]['geometry'] or alt_baseline['expandedStates'] != routes[0]['expandedStates']
+                or abs(alt_baseline['distance'] - routes[0]['distance']) >= 1e-6):
+            raise ValueError('Dijkstra baseline differs between paired runs')
+        routes.append(measured_route(alt_report, query['id'], alt_pair['results'][1]))
+        if any(abs(r['distance'] - routes[0]['distance']) >= 1e-6 for r in routes[1:]):
+            raise ValueError('Algorithms disagree on shortest distance')
+        examples.append({'id': query['id'], 'name': query['name'], 'start': [query['startLon'], query['startLat']],
+                         'end': [query['endLon'], query['endLat']], 'routes': routes})
+    return {
+        'version': 2, 'generatedAt': datetime.now(timezone.utc).isoformat(),
+        'source': {**provenance(report), 'graphSha256': graph_hash, 'queriesSha256': queries_hash,
+                   'altBenchmark': {**provenance(alt_report), 'landmarks': landmarks}},
+        'examples': examples,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('report', type=Path, help='Dijkstra/A* paired benchmark report')
+    parser.add_argument('--alt-report', type=Path, required=True, help='Matching Dijkstra/ALT paired benchmark report')
+    parser.add_argument('--api-url', default='http://127.0.0.1:8080')
+    args = parser.parse_args()
+    graph_hash = hashlib.sha256((ROOT / 'backend/data/processed/seoul.rgraph').read_bytes()).hexdigest()
+    queries_hash = hashlib.sha256((ROOT / 'backend/data/seoul-benchmark-queries.json').read_bytes()).hexdigest()
+
+    def fetch_pair(query, algorithm):
+        params = {k: query[k] for k in ('startLon', 'startLat', 'endLon', 'endLat')}
+        params['algorithm'] = algorithm
+        with urlopen(args.api_url.rstrip('/') + '/api/compare?' + urlencode(params), timeout=60) as response:
+            return json.load(response)
+
+    output = export(json.loads(args.report.read_text()), json.loads(args.alt_report.read_text()), graph_hash, queries_hash, fetch_pair)
+    target = ROOT / 'frontend/src/demo-data.json'
+    # Validate every query before replacing the previous dataset.
+    temporary = target.with_suffix('.json.tmp')
+    temporary.write_text(json.dumps(output, ensure_ascii=False, separators=(',', ':'), allow_nan=False) + '\n')
+    temporary.replace(target)
+    print(f'Exported {len(output["examples"])} examples to {target.relative_to(ROOT)} ({target.stat().st_size:,} bytes)')
+
+
+if __name__ == '__main__':
+    main()
