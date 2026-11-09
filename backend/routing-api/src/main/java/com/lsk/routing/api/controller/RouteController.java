@@ -19,8 +19,9 @@ public class RouteController {
             @RequestParam double startLon,
             @RequestParam double startLat,
             @RequestParam double endLon,
-            @RequestParam double endLat) {
-        return routingService.compare(startLon,startLat,endLon,endLat);
+            @RequestParam double endLat,
+            @RequestParam(defaultValue = "astar") String algorithm) {
+        return routingService.compare(startLon,startLat,endLon,endLat,algorithm);
     }
 
     @GetMapping({"/route", "/api/route"})

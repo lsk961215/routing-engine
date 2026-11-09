@@ -68,6 +68,14 @@ const { chromium } = require('playwright');
     const count = async () => Number(await page.locator('#rows tr').first().locator('td').nth(2).textContent());
     assert.equal(await count(), measuredRounds*forks);
     assert.equal(await page.locator('#chart rect').count(), 4);
+    if (report.summaries.some(s => s.algorithm === 'alt')) {
+      assert.ok((await page.locator('#chart').textContent()).includes('랜드마크 A* (ALT)'));
+      assert.ok((await page.locator('#environment').textContent()).includes('랜드마크 전처리'));
+      for (const fork of report.forks) {
+        assert.ok(fork.landmarks.count > 0 && fork.landmarks.preprocessingMillis >= 0);
+        assert.ok(fork.landmarks.distanceTableBytes > 0);
+      }
+    }
     await page.screenshot({path:'/tmp/routing-benchmark-report.png',fullPage:true});
     await page.selectOption('#position','first');
     assert.equal(await count(), measuredRounds*forks/2);

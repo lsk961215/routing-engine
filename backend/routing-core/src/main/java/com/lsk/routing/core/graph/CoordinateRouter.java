@@ -9,6 +9,26 @@ public final class CoordinateRouter {
     private static final double EPS = 1e-10;
     private final RoutingGraph graph;
     private final double heuristicScale;
+    private final int landmarkCount;
+    private volatile LandmarkIndex landmarks;
+    public record LandmarkMetrics(int count,long distanceTableBytes,double preprocessingMillis) {}
+
+    /** Build once, outside query timing/allocation measurements. Safe for concurrent first use. */
+    public LandmarkMetrics prepareLandmarks() {
+        var index=landmarkIndex();
+        return new LandmarkMetrics(index.count(),index.distanceTableBytes(),index.preprocessingMillis());
+    }
+    private LandmarkIndex landmarkIndex() {
+        var prepared=landmarks;
+        if(prepared==null)synchronized(this) {
+            prepared=landmarks;
+            if(prepared==null)landmarks=prepared=new LandmarkIndex(graph,landmarkCount);
+        }
+        return prepared;
+    }
+    private void prepare(RoutingAlgorithm algorithm) {
+        if(algorithm==RoutingAlgorithm.ALT)landmarkIndex();
+    }
     private final int[] sources;
     private final Segment[] edgeSegments;
     private final Box index;
@@ -31,7 +51,10 @@ public final class CoordinateRouter {
         public OutsideGraphException() { super("No road segment within 50 metres"); }
     }
 
-    public CoordinateRouter(RoutingGraph graph) {
+    public CoordinateRouter(RoutingGraph graph) { this(graph,8); }
+    public CoordinateRouter(RoutingGraph graph,int landmarkCount) {
+        if(landmarkCount<1 || landmarkCount>32)throw new IllegalArgumentException("Landmark count must be between 1 and 32");
+        this.landmarkCount=landmarkCount;
         this.graph=Objects.requireNonNull(graph);
         sources=new int[graph.edgeCount()];edgeSegments=new Segment[graph.edgeCount()];
         var segments=new LinkedHashMap<Key,Segment>();
@@ -83,6 +106,7 @@ public final class CoordinateRouter {
         var allowed=EdgeAvailability.staticOnly(graph);
         validate(startLon,startLat);validate(endLon,endLat);
         Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
+        prepare(algorithm);
         var metrics=new HistorySearch.Metrics((node,ordinal)->observer.expanded(graph.longitude(node),graph.latitude(node),ordinal));
         var route=searchRoute(start,end,allowed,algorithm,metrics);
         return new TraceResult(route,algorithm,metrics.expandedStates);
@@ -96,13 +120,20 @@ public final class CoordinateRouter {
     }
     /** The benchmark alternates the first strategy to expose execution-order effects. */
     public ComparisonResult compare(double startLon,double startLat,double endLon,double endLat,RoutingAlgorithm first) {
-        Objects.requireNonNull(first);
+        return compare(startLon,startLat,endLon,endLat,first,
+                first==RoutingAlgorithm.DIJKSTRA?RoutingAlgorithm.ASTAR:RoutingAlgorithm.DIJKSTRA);
+    }
+    /** Compare an explicit pair, preserving its execution order and shared snapped endpoints. */
+    public ComparisonResult compare(double startLon,double startLat,double endLon,double endLat,
+                                    RoutingAlgorithm first,RoutingAlgorithm second) {
+        Objects.requireNonNull(first);Objects.requireNonNull(second);
+        if(first==second)throw new IllegalArgumentException("Comparison requires distinct algorithms");
         var allowed=EdgeAvailability.staticOnly(graph);
         validate(startLon,startLat);validate(endLon,endLat);
         long begin=System.nanoTime();
         Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
         double snapMillis=(System.nanoTime()-begin)/1e6;
-        var second=first==RoutingAlgorithm.DIJKSTRA?RoutingAlgorithm.ASTAR:RoutingAlgorithm.DIJKSTRA;
+        prepare(first);prepare(second);
         var results=List.of(
                 search(start,end,allowed,first,snapMillis),
                 search(start,end,allowed,second,snapMillis));
@@ -114,7 +145,9 @@ public final class CoordinateRouter {
         validate(startLon,startLat);validate(endLon,endLat);
         long begin=System.nanoTime();
         Snap start=snap(startLon,startLat),end=snap(endLon,endLat);
-        return search(start,end,allowed,algorithm,(System.nanoTime()-begin)/1e6);
+        double snapMillis=(System.nanoTime()-begin)/1e6;
+        prepare(algorithm);
+        return search(start,end,allowed,algorithm,snapMillis);
     }
     private SearchResult search(Snap start,Snap end,IntPredicate allowed,RoutingAlgorithm algorithm,double snapMillis) {
         long allocatedBefore=ThreadAllocation.currentBytes();
@@ -216,17 +249,19 @@ public final class CoordinateRouter {
         if(endNode<0)for(int edge:segmentEdges.get(end.segment.key))partial.put(edge,graph.distanceMetres(edge)*fractionAlong(end,edge));
         // Bound distance to a virtual destination through its incoming edge's source.
         // This also remains admissible when partial edge costs use linear interpolation.
+        var landmark=algorithm==RoutingAlgorithm.ALT?landmarkIndex():null;
         java.util.function.IntToDoubleFunction estimate=node->{
             if(algorithm==RoutingAlgorithm.DIJKSTRA)return 0;
-            if(endNode>=0)return lowerBound(node,endNode);
+            if(endNode>=0)return lowerBound(node,endNode,landmark);
             double bound=Double.POSITIVE_INFINITY;
-            for(var terminal:partial.entrySet())bound=Math.min(bound,lowerBound(node,sources[terminal.getKey()])+terminal.getValue());
+            for(var terminal:partial.entrySet())bound=Math.min(bound,lowerBound(node,sources[terminal.getKey()],landmark)+terminal.getValue());
             return bound;
         };
         return HistorySearch.route(graph,seeds,endNode,partial,direct,allowed,estimate,metrics).map(path->result(start,end,path.distance(),path.edges()));
     }
-    private double lowerBound(int from,int to) {
-        return heuristicScale*metres(graph.longitude(from),graph.latitude(from),graph.longitude(to),graph.latitude(to));
+    private double lowerBound(int from,int to,LandmarkIndex landmark) {
+        double geographic=heuristicScale*metres(graph.longitude(from),graph.latitude(from),graph.longitude(to),graph.latitude(to));
+        return landmark==null?geographic:Math.max(geographic,landmark.lowerBound(from,to));
     }
     private Route result(Snap start,Snap end,double distance,List<Integer> fullEdges) {
         var geometry=new ArrayList<Point>();geometry.add(start.point);

@@ -96,6 +96,27 @@ class AlgorithmBenchmarkTest {
         assertThrows(FileAlreadyExistsException.class,()->AlgorithmBenchmark.main(
                 new String[]{graph.toString(),queries.toString(),output.toString(),"1","2","1","123"}));
     }
+    @Test void altForkReportsPreprocessingSeparatelyAndBalancesBothOrders() throws Exception {
+        var graph=directory.resolve("alt.rgraph");
+        new RoutingGraph(new long[]{1,2,3},new double[]{37,37.001,37.002},new double[]{127,127,127},new int[]{0,1,2,2},
+                new int[]{1,2},new long[]{1,2},new double[]{111,111},new long[0]).write(graph);
+        var mapper=new ObjectMapper();var queries=directory.resolve("queries-alt.json");
+        mapper.writeValue(queries.toFile(),new AlgorithmBenchmark.QuerySet("alt",List.of(new AlgorithmBenchmark.Query("q","q",127,37,127,37.002))));
+        var output=directory.resolve("alt-report");
+        AlgorithmBenchmark.main(new String[]{graph.toString(),queries.toString(),output.toString(),"1","2","1","123","alt"});
+        var report=mapper.readValue(output.resolve("report.json").toFile(),AlgorithmBenchmark.Report.class);
+        assertEquals(List.of("dijkstra","alt"),report.summaries().stream().map(AlgorithmBenchmark.Summary::algorithm).toList());
+        var fork=report.forks().getFirst();
+        assertEquals(3,fork.landmarks().count());assertEquals(2L*3*3*8,fork.landmarks().distanceTableBytes());
+        assertTrue(fork.landmarks().preprocessingMillis()>=0);
+        for(var summary:report.summaries()) {
+            assertEquals(1,summary.firstMillis().count());assertEquals(1,summary.secondMillis().count());
+        }
+        assertEquals(4,fork.samples().size());
+        assertTrue(fork.samples().stream().allMatch(sample->sample.distanceMetres()==222));
+        assertFalse(Files.readString(output.resolve("report.html")).contains("__REPORT_JSON__"));
+        assertTrue(report.methodology().get("scope").contains("landmark preprocessing"));
+    }
     @Test void allocationStatisticsKeepZeroAndExcludeUnavailableSamplesWithAccurateCounts() {
         var samples=new ArrayList<AlgorithmBenchmark.Sample>();
         for(var algorithm:List.of("dijkstra","astar"))for(int i=0;i<4;i++)

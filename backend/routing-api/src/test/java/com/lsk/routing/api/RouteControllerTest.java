@@ -46,6 +46,21 @@ class RouteControllerTest {
         api().perform(get("/api/compare?startLon=128&startLat=38&endLon=127&endLat=37"))
                 .andExpect(status().isUnprocessableContent());
     }
+    @Test void altCanBeSelectedAndComparedWithoutChangingTheDefaultPair() throws Exception {
+        var mvc=api();var query="?startLon=127&startLat=37&endLon=127&endLat=37.001&algorithm=alt";
+        mvc.perform(get("/api/route"+query)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.metrics.algorithm").value("alt"))
+                .andExpect(jsonPath("$.routes[0].distance").value(111));
+        mvc.perform(get("/api/compare"+query)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.results.length()").value(2))
+                .andExpect(jsonPath("$.results[0].algorithm").value("dijkstra"))
+                .andExpect(jsonPath("$.results[1].algorithm").value("alt"))
+                .andExpect(jsonPath("$.results[1].routes[0].distance").value(111))
+                .andExpect(jsonPath("$.results[1].metrics.allocatedBytes").isNumber());
+        mvc.perform(get("/api/compare"+query.replace("algorithm=alt","algorithm=dijkstra"))).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/route"+query.replace("startLat=37&", "startLat=37.001&").replace("endLat=37.001&", "endLat=37&")))
+                .andExpect(status().isNotFound());
+    }
     @Test void singleRouteIncludesAllocationAndVirtualThreadSerializesUnavailableAsNull() throws Exception {
         var path="/api/route?startLon=127&startLat=37&endLon=127&endLat=37.001";
         var mvc=api();

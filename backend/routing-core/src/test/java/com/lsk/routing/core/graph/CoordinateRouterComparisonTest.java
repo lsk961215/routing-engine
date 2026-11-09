@@ -15,6 +15,9 @@ class CoordinateRouterComparisonTest {
             double[] end=RoutingTestGraphs.point(graph,b,i%7==0?1:.2+random.nextDouble()*.6);
             var actual=optimized.route(start[0],start[1],end[0],end[1]);
             var expected=legacy.route(start[0],start[1],end[0],end[1]);
+            var alt=optimized.search(start[0],start[1],end[0],end[1],RoutingAlgorithm.ALT).route();
+            assertEquals(expected.isPresent(),alt.isPresent(),"ALT reachability case "+i);
+            if(expected.isPresent())assertEquals(expected.get().distanceMetres(),alt.orElseThrow().distanceMetres(),1e-7,"ALT distance case "+i);
             assertEquals(expected.isPresent(),actual.isPresent(),"reachability case "+i);
             if(actual.isPresent()) {
                 assertEquals(expected.get().distanceMetres(),actual.get().distanceMetres(),1e-7,"distance case "+i);
@@ -30,10 +33,13 @@ class CoordinateRouterComparisonTest {
         var route=new CoordinateRouter(graph).route(127.0075,37,127.0025,37).orElseThrow();
         assertEquals(250,route.distanceMetres(),1e-7);
         assertEquals(5,route.geometry().size());
+        var alt=new CoordinateRouter(graph).search(127.0075,37,127.0025,37,RoutingAlgorithm.ALT).route().orElseThrow();
+        assertEquals(route,alt);
         var blocked=new RoutingGraph(new long[]{1,2,3},new double[]{37,37,37.01},
                 new double[]{127,127.01,127},new int[]{0,1,2,3},new int[]{1,2,0},
                 new long[]{10,20,30},new double[]{100,100,100},new long[]{RoutingGraph.turnKey(2,0)});
         assertTrue(new CoordinateRouter(blocked).route(127.0075,37,127.0025,37).isEmpty());
+        assertTrue(new CoordinateRouter(blocked).search(127.0075,37,127.0025,37,RoutingAlgorithm.ALT).route().isEmpty());
     }
     @Test void handlesZeroCostCycleAndDestinationEndpoint() {
         var graph=new RoutingGraph(new long[]{1,2,3},new double[]{37,37,37.01},
@@ -41,5 +47,7 @@ class CoordinateRouterComparisonTest {
                 new long[]{10,20,30},new double[]{0,0,0},new long[0]);
         assertEquals(0,new CoordinateRouter(graph).route(127.0075,37,127.0025,37).orElseThrow().distanceMetres());
         assertEquals(0,new CoordinateRouter(graph).route(127.0075,37,127,37.01).orElseThrow().distanceMetres());
+        assertEquals(0,new CoordinateRouter(graph).search(127.0075,37,127.0025,37,RoutingAlgorithm.ALT).route().orElseThrow().distanceMetres());
+        assertEquals(0,new CoordinateRouter(graph).search(127.0075,37,127,37.01,RoutingAlgorithm.ALT).route().orElseThrow().distanceMetres());
     }
 }

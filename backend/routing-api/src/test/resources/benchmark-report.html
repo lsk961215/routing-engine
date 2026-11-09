@@ -16,7 +16,7 @@
     table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;white-space:nowrap}
     th,td{padding:12px 10px;border-bottom:1px solid #e2e8f0;text-align:right}th{font-size:12px;color:#64748b;background:#f8fafc}
     th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}td:nth-child(2){font-weight:600}
-    .dijkstra{color:#2563eb}.astar{color:#c2410c}.query-end td{border-bottom:2px solid #cbd5e1}
+    .dijkstra{color:#2563eb}.astar{color:#c2410c}.alt{color:#15803d}.query-end td{border-bottom:2px solid #cbd5e1}
     #chart{width:100%;max-height:200px;margin:16px 0}code{overflow-wrap:anywhere;font-size:12px}
     dl{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;margin-bottom:0}dt{color:#64748b}dd{margin:0;overflow-wrap:anywhere}
     summary{cursor:pointer;font-weight:600}details p{margin-bottom:0}.note{font-size:12px}.badge{border-radius:5px;background:#eff6ff;padding:4px 8px}
@@ -25,7 +25,7 @@
 </head>
 <body><main>
   <header><div class="eyebrow">ROUTING ENGINE</div><h1>반복 성능 비교</h1><p id="overview"></p>
-    <p class="muted">탐색·경로 복원의 시간과 메모리 할당량을 비교합니다. 좌표 연결·초기 적재·HTTP·워밍업은 제외합니다.</p>
+    <p class="muted">탐색·경로 복원의 시간과 메모리 할당량을 비교합니다. 좌표 연결·초기 적재·랜드마크 전처리·HTTP·워밍업은 제외합니다.</p>
     <a href="report.json" download>원시 측정값·실행 환경 JSON</a>
   </header>
   <section class="card" aria-label="측정 결과">
@@ -57,6 +57,9 @@
 <script>
 const report=JSON.parse(document.getElementById('report-data').textContent);
 const $=id=>document.getElementById(id);
+const algorithms=['dijkstra','astar','alt'].filter(a=>report.summaries.some(s=>s.algorithm===a));
+const names={dijkstra:'Dijkstra',astar:'A*',alt:'랜드마크 A* (ALT)'};
+const colors={dijkstra:'#2563eb',astar:'#c2410c',alt:'#15803d'};
 const number=value=>value.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2});
 $('overview').textContent=`${report.querySet.id} · ${report.querySet.queries.length}개 질의 · ${report.settings.forks}개 독립 JVM · 질의별 워밍업 ${report.settings.warmupRounds}회 + 측정 ${report.settings.measuredRounds}회/JVM`;
 for(const fork of report.forks){const option=new Option(`JVM ${fork.fork}`,String(fork.fork));$('fork').add(option);}
@@ -73,24 +76,24 @@ function render(){
   $('allocation-note').hidden=!allocation;
   document.querySelector('table').setAttribute('aria-label',label);
   $('rows').replaceChildren();
-  for(const query of report.querySet.queries)for(const algorithm of ['dijkstra','astar']){
+  for(const query of report.querySet.queries)for(const algorithm of algorithms){
     const summary=summaries.find(s=>s.queryId===query.id&&s.algorithm===algorithm),stats=summary[field];
-    const row=document.createElement('tr');if(algorithm==='astar')row.className='query-end';
+    const row=document.createElement('tr');if(algorithm===algorithms.at(-1))row.className='query-end';
     const count=allocation?`${stats?.count??0} / ${summary[timeField].count}`:stats.count;
-    for(const [index,value] of [query.name,algorithm==='astar'?'A*':'Dijkstra',count,...['median','p95','min','max','mean','standardDeviation'].map(key=>stats?format(stats[key]):'측정 불가')].entries()){
+    for(const [index,value] of [query.name,names[algorithm],count,...['median','p95','min','max','mean','standardDeviation'].map(key=>stats?format(stats[key]):'측정 불가')].entries()){
       const cell=document.createElement('td');cell.textContent=String(value);if(index===1)cell.className=algorithm;row.append(cell);
     }
     $('rows').append(row);
   }
-  const selected=['dijkstra','astar'].map(algorithm=>summaries.find(s=>s.queryId===$('query').value&&s.algorithm===algorithm));
+  const selected=algorithms.map(algorithm=>summaries.find(s=>s.queryId===$('query').value&&s.algorithm===algorithm));
   const width=Math.max(280,$('chart').clientWidth);
   $('chart').setAttribute('viewBox',`0 0 ${width} 150`);
   const max=Math.max(...selected.map(s=>s[field]?.p95??0),.001),scale=width/max;
   $('chart').setAttribute('aria-label',`${label} 중앙값과 p95`);
   // Only numeric statistics and fixed algorithm labels are interpolated into SVG.
   $('chart').innerHTML=selected.map((s,index)=>{
-    const stats=s[field],y=22+index*70,color=index?'#c2410c':'#2563eb';
-    const heading=`<text x="0" y="${y}" fill="${color}" font-size="13">${index?'A*':'Dijkstra'}</text>`;
+    const stats=s[field],y=22+index*70,color=colors[s.algorithm];
+    const heading=`<text x="0" y="${y}" fill="${color}" font-size="13">${names[s.algorithm]}</text>`;
     if(!stats)return `${heading}<text x="${width}" y="${y}" text-anchor="end" fill="#64748b" font-size="13">측정 불가</text>`;
     return `${heading}<text x="${width}" y="${y}" text-anchor="end" fill="#172334" font-size="13">${format(stats.median)} / ${format(stats.p95)} ${unit}</text><rect x="0" y="${y+10}" width="${stats.p95*scale}" height="22" fill="${color}" opacity=".16" rx="3"/><rect x="0" y="${y+10}" width="${stats.median*scale}" height="22" fill="${color}" rx="3"/>`;
   }).join('');
@@ -104,6 +107,7 @@ function render(){
     ['측정 중 GC',(fork?[fork]:report.forks).map(f=>`JVM ${f.fork}: ${f.measuredGc.collections}회 / ${f.measuredGc.millis} ms`).join(' · ')],
     ['초기 적재',(fork?[fork]:report.forks).map(f=>`JVM ${f.fork}: ${number(f.initializationMillis)} ms (측정 제외)`).join(' · ')]
   ];
+  if(report.forks.some(f=>f.landmarks))entries.push(['랜드마크 전처리',(fork?[fork]:report.forks).map(f=>f.landmarks?`JVM ${f.fork}: ${f.landmarks.count}개 · ${number(f.landmarks.preprocessingMillis)} ms · 거리 테이블 ${number(f.landmarks.distanceTableBytes/1048576)} MiB (객체 부가 비용·임시 메모리 제외)`:'사용 안 함').join(' · ')]);
   $('environment').replaceChildren();
   for(const [label,value] of entries){const term=document.createElement('dt'),definition=document.createElement('dd');term.textContent=label;definition.textContent=value;$('environment').append(term,definition);}
 }

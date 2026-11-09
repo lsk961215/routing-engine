@@ -25,6 +25,7 @@ public class RoutingService {
         RoutingAlgorithm strategy=switch(algorithm) {
             case "dijkstra" -> RoutingAlgorithm.DIJKSTRA;
             case "astar" -> RoutingAlgorithm.ASTAR;
+            case "alt" -> RoutingAlgorithm.ALT;
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unknown routing algorithm");
         };
         validate(startLon,startLat);validate(endLon,endLat);
@@ -41,12 +42,21 @@ public class RoutingService {
         }
     }
     public ComparisonResponse compare(double startLon,double startLat,double endLon,double endLat) {
+        return compare(startLon,startLat,endLon,endLat,"astar");
+    }
+    /** Dijkstra remains the baseline; callers can choose the A* variant to compare. */
+    public ComparisonResponse compare(double startLon,double startLat,double endLon,double endLat,String algorithm) {
+        var challenger=switch(algorithm) {
+            case "astar" -> RoutingAlgorithm.ASTAR;
+            case "alt" -> RoutingAlgorithm.ALT;
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Comparison algorithm must be astar or alt");
+        };
         validate(startLon,startLat);validate(endLon,endLat);
         if(router==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"Graph not configured");
         try {
-            var comparison=router.compare(startLon,startLat,endLon,endLat);
+            var comparison=router.compare(startLon,startLat,endLon,endLat,RoutingAlgorithm.DIJKSTRA,challenger);
             var results=comparison.results().stream().map(search->new ComparisonResponse.Result(
-                    search.algorithm()==RoutingAlgorithm.DIJKSTRA?"dijkstra":"astar",
+                    search.algorithm().name().toLowerCase(java.util.Locale.ROOT),
                     search.route().isPresent()?"Ok":"NoRoute",
                     search.route().map(result->List.of(routeData(result))).orElseGet(List::of),
                     new ComparisonResponse.Metrics(search.searchMillis(),search.expandedStates(),search.allocatedBytes()))).toList();

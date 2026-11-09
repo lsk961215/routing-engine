@@ -44,7 +44,7 @@ public final class AlgorithmBenchmark {
     public record Environment(String javaVersion,String vm,String os,String arch,int availableProcessors,
                               long maxHeapBytes,List<String> jvmArguments,List<String> garbageCollectors) {}
     public record ForkResult(int fork,String startedAt,String graphSha256,String queriesSha256,Environment environment,
-                             double initializationMillis,Gc measuredGc,List<Summary> summaries,List<Sample> samples) {}
+                             double initializationMillis,CoordinateRouter.LandmarkMetrics landmarks,Gc measuredGc,List<Summary> summaries,List<Sample> samples) {}
     public record Report(int version,String generatedAt,String gitRevision,String gitDirty,Settings settings,
                          QuerySet querySet,Map<String,String> methodology,List<ForkResult> forks,List<Summary> summaries) {}
     @FunctionalInterface interface PairRunner {
@@ -52,12 +52,13 @@ public final class AlgorithmBenchmark {
     }
 
     public static void main(String[] args) throws Exception {
-        if(args.length==8 && args[0].equals("--worker")) {
+        if((args.length==8 || args.length==9) && args[0].equals("--worker")) {
             worker(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),
-                    new Settings(Integer.parseInt(args[4]),Integer.parseInt(args[5]),1,Long.parseLong(args[7])),Integer.parseInt(args[6]));
+                    new Settings(Integer.parseInt(args[4]),Integer.parseInt(args[5]),1,Long.parseLong(args[7])),Integer.parseInt(args[6]),challenger(args.length==9?args[8]:"astar"));
             return;
         }
-        if(args.length!=7)throw new IllegalArgumentException("graph queries output warmupRounds measuredRounds forks seed");
+        if(args.length!=7 && args.length!=8)throw new IllegalArgumentException("graph queries output warmupRounds measuredRounds forks seed [astar|alt]");
+        var challenger=challenger(args.length==8?args[7]:"astar");
         var graph=Path.of(args[0]).toAbsolutePath();var queries=Path.of(args[1]).toAbsolutePath();
         var output=Path.of(args[2]).toAbsolutePath();
         var settings=new Settings(Integer.parseInt(args[3]),Integer.parseInt(args[4]),Integer.parseInt(args[5]),Long.parseLong(args[6]));
@@ -71,7 +72,7 @@ public final class AlgorithmBenchmark {
             var command=List.of(Path.of(System.getProperty("java.home"),"bin","java").toString(),
                     "-Xms1g","-Xmx2g","-XX:+UseG1GC","-cp",System.getProperty("java.class.path"),
                     AlgorithmBenchmark.class.getName(),"--worker",graph.toString(),queries.toString(),raw.toString(),
-                    String.valueOf(settings.warmupRounds()),String.valueOf(settings.measuredRounds()),String.valueOf(fork),String.valueOf(settings.seed()));
+                    String.valueOf(settings.warmupRounds()),String.valueOf(settings.measuredRounds()),String.valueOf(fork),String.valueOf(settings.seed()),name(challenger));
             System.out.printf("Fork %d/%d: fresh JVM, %d warmup + %d measured rounds × %d queries%n",
                     fork,settings.forks(),settings.warmupRounds(),settings.measuredRounds(),querySet.queries().size());
             var process=new ProcessBuilder(command).inheritIO().start();
@@ -89,7 +90,9 @@ public final class AlgorithmBenchmark {
         }
         var samples=forks.stream().flatMap(f->f.samples().stream()).toList();
         var report=new Report(2,Instant.now().toString(),git("rev-parse","HEAD"),git("status","--porcelain"),settings,querySet,
-                Map.of("scope","Search and path reconstruction; snapping, graph/index loading, JSON, HTTP and warmup excluded",
+                Map.of("algorithms","dijkstra + "+name(challenger),
+                        "landmarks","ALT: 8 deterministic farthest landmarks in the largest strongly connected component (weak component fallback for acyclic graphs); forward/reverse distances on the turn-relaxed directed graph; table payload and preprocessing time reported separately, not peak memory",
+                        "scope","Search and path reconstruction; snapping, graph/index loading, landmark preprocessing, JSON, HTTP and warmup excluded",
                         "order","Sequential paired runs, first algorithm alternates per query each round; query order shuffled with seed + fork",
                         "statistics","Median: midpoint for even N; p95: nearest rank ceil(0.95*N); population standard deviation; no outlier removal",
                         "aggregation","Per query only, equal measured sample count per fork; first/second positions also reported",
@@ -108,15 +111,17 @@ public final class AlgorithmBenchmark {
         System.out.println("Raw samples + environment: "+output.resolve("report.json"));
     }
 
-    private static void worker(Path graphPath,Path queriesPath,Path output,Settings settings,int fork) throws Exception {
+    private static void worker(Path graphPath,Path queriesPath,Path output,Settings settings,int fork,RoutingAlgorithm challenger) throws Exception {
         var started=Instant.now().toString();
         var graphHash=sha256(graphPath);var queryHash=sha256(queriesPath);
         var queries=readQueries(queriesPath);
         long begin=System.nanoTime();
         var router=new CoordinateRouter(RoutingGraph.read(graphPath));
         double initMillis=(System.nanoTime()-begin)/1e6;
-        var measurement=measure(queries,settings,fork,(query,first)->router.compare(
-                query.startLon(),query.startLat(),query.endLon(),query.endLat(),first));
+        var landmarks=challenger==RoutingAlgorithm.ALT?router.prepareLandmarks():null;
+        var measurement=measure(queries,settings,fork,challenger,(query,first)->router.compare(
+                query.startLon(),query.startLat(),query.endLon(),query.endLat(),first,
+                first==RoutingAlgorithm.DIJKSTRA?challenger:RoutingAlgorithm.DIJKSTRA));
         var environment=new Environment(System.getProperty("java.version"),System.getProperty("java.vm.name"),
                 System.getProperty("os.name")+" "+System.getProperty("os.version"),System.getProperty("os.arch"),
                 Runtime.getRuntime().availableProcessors(),Runtime.getRuntime().maxMemory(),
@@ -125,18 +130,22 @@ public final class AlgorithmBenchmark {
         if(!graphHash.equals(sha256(graphPath)) || !queryHash.equals(sha256(queriesPath)))
             throw new IllegalStateException("Input files changed during measurement");
         JSON.writerWithDefaultPrettyPrinter().writeValue(output.toFile(),new ForkResult(fork,started,graphHash,queryHash,
-                environment,initMillis,measurement.measuredGc(),summarize(measurement.samples()),measurement.samples()));
+                environment,initMillis,landmarks,measurement.measuredGc(),summarize(measurement.samples()),measurement.samples()));
     }
 
     static Measurement measure(QuerySet queries,Settings settings,int fork,PairRunner runner) {
+        return measure(queries,settings,fork,RoutingAlgorithm.ASTAR,runner);
+    }
+    static Measurement measure(QuerySet queries,Settings settings,int fork,RoutingAlgorithm challenger,PairRunner runner) {
+        if(challenger!=RoutingAlgorithm.ASTAR && challenger!=RoutingAlgorithm.ALT)throw new IllegalArgumentException("A* challenger required");
         validateQueries(queries);
         var samples=new ArrayList<Sample>();
-        runRounds(queries,settings.warmupRounds(),fork,settings.seed(),runner,null);
+        runRounds(queries,settings.warmupRounds(),fork,settings.seed(),challenger,runner,null);
         var gc=Gc.now();
-        runRounds(queries,settings.measuredRounds(),fork,settings.seed(),runner,samples);
+        runRounds(queries,settings.measuredRounds(),fork,settings.seed(),challenger,runner,samples);
         return new Measurement(List.copyOf(samples),Gc.now().since(gc));
     }
-    private static void runRounds(QuerySet queries,int rounds,int fork,long seed,PairRunner runner,List<Sample> samples) {
+    private static void runRounds(QuerySet queries,int rounds,int fork,long seed,RoutingAlgorithm challenger,PairRunner runner,List<Sample> samples) {
         var order=new ArrayList<Integer>();
         for(int i=0;i<queries.queries().size();i++)order.add(i);
         var random=new Random(seed+fork);
@@ -145,9 +154,9 @@ public final class AlgorithmBenchmark {
             for(int position=0;position<order.size();position++) {
                 int queryIndex=order.get(position);
                 var query=queries.queries().get(queryIndex);
-                var first=(round+queryIndex+fork)%2==0?RoutingAlgorithm.DIJKSTRA:RoutingAlgorithm.ASTAR;
+                var first=(round+queryIndex+fork)%2==0?RoutingAlgorithm.DIJKSTRA:challenger;
                 var pair=runner.run(query,first);
-                validatePair(pair,first);
+                validatePair(pair,first,first==RoutingAlgorithm.DIJKSTRA?challenger:RoutingAlgorithm.DIJKSTRA);
                 if(samples!=null)for(int algorithmPosition=0;algorithmPosition<2;algorithmPosition++) {
                     var result=pair.results().get(algorithmPosition);
                     samples.add(new Sample(fork,round+1,position+1,query.id(),name(result.algorithm()),algorithmPosition+1,
@@ -159,7 +168,10 @@ public final class AlgorithmBenchmark {
         }
     }
     static void validatePair(CoordinateRouter.ComparisonResult pair,RoutingAlgorithm first) {
-        if(pair.results().size()!=2 || pair.results().get(0).algorithm()!=first || pair.results().get(1).algorithm()==first)
+        validatePair(pair,first,first==RoutingAlgorithm.DIJKSTRA?RoutingAlgorithm.ASTAR:RoutingAlgorithm.DIJKSTRA);
+    }
+    private static void validatePair(CoordinateRouter.ComparisonResult pair,RoutingAlgorithm first,RoutingAlgorithm second) {
+        if(pair.results().size()!=2 || pair.results().get(0).algorithm()!=first || pair.results().get(1).algorithm()!=second)
             throw new IllegalStateException("Invalid algorithm execution order");
         var a=pair.results().get(0).route();var b=pair.results().get(1).route();
         if(a.isPresent()!=b.isPresent())throw new IllegalStateException("Algorithms disagree on reachability");
@@ -190,8 +202,9 @@ public final class AlgorithmBenchmark {
     static List<Summary> summarize(List<Sample> samples) {
         var summaries=new ArrayList<Summary>();
         for(var query:samples.stream().map(Sample::queryId).distinct().sorted().toList()) {
-            for(var algorithm:List.of("dijkstra","astar")) {
+            for(var algorithm:List.of("dijkstra","astar","alt")) {
                 var selected=samples.stream().filter(s->s.queryId().equals(query) && s.algorithm().equals(algorithm)).toList();
+                if(selected.isEmpty())continue;
                 summaries.add(new Summary(query,algorithm,distribution(selected.stream().mapToDouble(Sample::searchMillis).toArray()),
                         distribution(selected.stream().filter(s->s.position()==1).mapToDouble(Sample::searchMillis).toArray()),
                         distribution(selected.stream().filter(s->s.position()==2).mapToDouble(Sample::searchMillis).toArray()),
@@ -215,7 +228,14 @@ public final class AlgorithmBenchmark {
                 .map(Sample::allocatedBytes).filter(Objects::nonNull).mapToDouble(Long::doubleValue).toArray();
         return values.length==0?null:distribution(values);
     }
-    private static String name(RoutingAlgorithm algorithm) { return algorithm==RoutingAlgorithm.DIJKSTRA?"dijkstra":"astar"; }
+    private static String name(RoutingAlgorithm algorithm) { return algorithm.name().toLowerCase(Locale.ROOT); }
+    private static RoutingAlgorithm challenger(String name) {
+        return switch(name) {
+            case "astar" -> RoutingAlgorithm.ASTAR;
+            case "alt" -> RoutingAlgorithm.ALT;
+            default -> throw new IllegalArgumentException("Benchmark algorithm must be astar or alt");
+        };
+    }
     private static String sha256(Path path) throws Exception {
         var digest=MessageDigest.getInstance("SHA-256");
         try(var input=Files.newInputStream(path)) {

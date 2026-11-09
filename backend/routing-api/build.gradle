@@ -54,7 +54,8 @@ tasks.register('benchmarkAlgorithms', JavaExec) {
             providers.gradleProperty('warmupRounds').getOrElse('4'),
             providers.gradleProperty('measuredRounds').getOrElse('20'),
             providers.gradleProperty('forks').getOrElse('3'),
-            providers.gradleProperty('seed').getOrElse('20260926')
+            providers.gradleProperty('seed').getOrElse('20260926'),
+            providers.gradleProperty('benchmarkAlgorithm').getOrElse('astar')
         ]
     }
 }
