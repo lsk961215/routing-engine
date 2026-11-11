@@ -134,12 +134,29 @@ fs.mkdirSync(output, { recursive: true });
     await page.click('#fit-route');
     await page.waitForTimeout(700);
     await page.screenshot({ path: path.join(output, 'desktop.png'), fullPage: true });
+    // Opening metrics must preserve the map dimensions and the user's zoomed view.
+    await page.click('.maplibregl-ctrl-zoom-in');
+    await page.waitForTimeout(700);
+    const mapView = () => page.evaluate(() => {
+      const map = document.querySelector('#demo-map');
+      const canvas = map.querySelector('canvas');
+      return { width: map.clientWidth, height: map.clientHeight, canvasWidth: canvas.width, canvasHeight: canvas.height,
+        markers: [...map.querySelectorAll('.endpoint')].map(marker => marker.style.transform) };
+    });
+    const beforeMetrics = await mapView();
     for (const algorithm of ['dijkstra', 'astar', 'alt']) {
       await page.click(`.${algorithm} .work-metrics summary`);
       assert.ok(await page.locator(`#${algorithm}-edges`).isVisible());
       assert.ok(await page.locator(`#${algorithm}-queue`).isVisible());
+      await page.waitForTimeout(150);
+      assert.deepEqual(await mapView(), beforeMetrics, `${algorithm}: opening metrics changed the map`);
     }
     await page.screenshot({ path: path.join(output, 'work-metrics.png'), fullPage: true });
+    for (const algorithm of ['dijkstra', 'astar', 'alt']) {
+      await page.click(`.${algorithm} .work-metrics summary`);
+      await page.waitForTimeout(150);
+      assert.deepEqual(await mapView(), beforeMetrics, `${algorithm}: closing metrics changed the map`);
+    }
     await page.click('.methodology summary');
     assert.match(await page.textContent('#landmark-method'), /전처리를 제외/);
     assert.match(await page.textContent('#alt-method-settings'), /별도 실행/);

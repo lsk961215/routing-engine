@@ -40,8 +40,8 @@ h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spac
 .algorithm-toggle.orange { --color-accent: #c65d21; --color-text-accent: #c65d21; }
 .area-toggle { border-left: 1px solid var(--line); padding-left: 24px; }
 .experiment-grid { display: grid; grid-template-columns: minmax(0, 1fr) 274px; border-top: 1px solid var(--line); }
-.map-workspace { min-width: 0; display: flex; flex-direction: column; }
-.map-panel { flex-grow: 1; position: relative; height: clamp(390px, 53vh, 570px); background: #e9edf0; border-bottom: 1px solid var(--line); }
+.map-workspace { min-width: 0; align-self: start; display: flex; flex-direction: column; }
+.map-panel { flex: none; position: relative; height: clamp(390px, 53vh, 570px); background: #e9edf0; border-bottom: 1px solid var(--line); }
 #demo-map { position: absolute; inset: 0; }
 .map-fit { position: absolute; left: 14px; top: 14px; }
 .map-fit .astryx-button { background: white; }
