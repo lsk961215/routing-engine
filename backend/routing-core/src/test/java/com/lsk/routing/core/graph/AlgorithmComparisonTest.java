@@ -19,6 +19,8 @@ class AlgorithmComparisonTest {
             var together=pair.results().stream().filter(r->r.algorithm()==algorithm).findFirst().orElseThrow();
             assertEquals(measured.route(),together.route());
             assertEquals(measured.expandedStates(),together.expandedStates());
+            assertEquals(measured.inspectedEdges(),together.inspectedEdges());
+            assertEquals(measured.maxQueueSize(),together.maxQueueSize());
             assertEquals(pair.snapMillis(),together.snapMillis());
             assertTrue(together.searchMillis()>=0);
             assertTrue(together.allocatedBytes()==null || together.allocatedBytes()>=0);

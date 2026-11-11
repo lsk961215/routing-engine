@@ -15,6 +15,8 @@ const { chromium } = require('playwright');
     for (const summary of summaries) {
       const selected = samples.filter(s => s.queryId === summary.queryId && s.algorithm === summary.algorithm);
       for (const [key, source, predicate] of [
+        ['expandedStates', 'expandedStates', () => true],
+        ...(report.version >= 3 ? [['inspectedEdges', 'inspectedEdges', () => true], ['maxQueueSize', 'maxQueueSize', () => true]] : []),
         ['searchMillis', 'searchMillis', () => true], ['firstMillis', 'searchMillis', s => s.position === 1], ['secondMillis', 'searchMillis', s => s.position === 2],
         ...(report.version >= 2 ? [
           ['allocatedBytes', 'allocatedBytes', () => true], ['firstAllocatedBytes', 'allocatedBytes', s => s.position === 1], ['secondAllocatedBytes', 'allocatedBytes', s => s.position === 2],
@@ -111,6 +113,45 @@ const { chromium } = require('playwright');
       assert.equal(await page.locator('#chart rect').count(),0);
       await page.selectOption('#fork','all');
       await page.selectOption('#position','all');
+    }
+    if (report.version >= 3) {
+      const format = value => value.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      for (const metric of ['time','expandedStates','inspectedEdges','maxQueueSize']) {
+        await page.selectOption('#metric',metric);
+        for (const forkValue of ['all',String(report.forks[0].fork)]) {
+          await page.selectOption('#fork',forkValue);
+          for (const position of ['all','first','second']) {
+            await page.selectOption('#position',position);
+            const samples=(forkValue==='all'?report.forks:[report.forks[0]]).flatMap(f=>f.samples)
+              .filter(s=>s.queryId===report.querySet.queries[0].id&&(position==='all'||s.position===(position==='first'?1:2)));
+            const key=metric==='time'?'searchMillis':metric;
+            const medians=[];
+            for (const [index,algorithm] of ['dijkstra',report.summaries[1].algorithm].entries()) {
+              const values=samples.filter(s=>s.algorithm===algorithm).map(s=>s[key]).sort((a,b)=>a-b);
+              const median=values.length%2?values[(values.length-1)/2]:(values[values.length/2-1]+values[values.length/2])/2;
+              medians.push(median);
+              const cells=page.locator('#rows tr').nth(index).locator('td');
+              assert.equal(await cells.nth(2).textContent(),String(values.length));
+              assert.equal(await cells.nth(3).textContent(),format(median));
+            }
+            const value=metric==='time'?medians[0]/medians[1]:(1-medians[1]/medians[0])*100;
+            const expected=medians[0]<=0||(metric==='time'&&medians[1]<=0)?'계산 불가':`${format(value)}${metric==='time'?'×':'%'}`;
+            assert.equal(await page.locator('#rows tr').nth(1).locator('td').nth(9).textContent(),expected);
+          }
+        }
+      }
+      // Explicit zero baseline, then a regression: never clamp an increase to zero.
+      await page.selectOption('#metric','inspectedEdges');
+      await page.evaluate(() => {
+        for (const s of report.forks[0].samples) s.inspectedEdges=s.algorithm==='dijkstra'?0:3;
+        render();
+      });
+      assert.equal(await page.locator('#rows tr').nth(1).locator('td').nth(9).textContent(),'계산 불가');
+      await page.evaluate(() => {
+        for (const s of report.forks[0].samples) s.inspectedEdges=s.algorithm==='dijkstra'?2:3;
+        render();
+      });
+      assert.equal(await page.locator('#rows tr').nth(1).locator('td').nth(9).textContent(),'-50.00%');
     }
     await page.setViewportSize({width:390,height:844});
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));

@@ -55,6 +55,9 @@ fs.mkdirSync(output, { recursive: true });
       assert.equal(new URL(page.url()).hash, '#' + example.id);
       assert.equal(await page.locator('.endpoint').count(), 2);
       for (const result of example.routes) {
+        assert.equal(await page.textContent(`#${result.algorithm}-edges`),result.inspectedEdges.toLocaleString('ko-KR'));
+        assert.equal(await page.textContent(`#${result.algorithm}-queue`),result.maxQueueSize.toLocaleString('ko-KR'));
+        if(result.algorithm !== 'dijkstra') assert.equal(await page.textContent(`#${result.algorithm}-speedup`),`${(result.baselineSearchMillis.median/result.searchMillis.median).toFixed(2)}×`);
         assert.equal(await page.textContent(`#${result.algorithm}-time`), result.searchMillis.median.toLocaleString('ko-KR', { maximumFractionDigits: 2 }));
       }
     }
@@ -131,6 +134,12 @@ fs.mkdirSync(output, { recursive: true });
     await page.click('#fit-route');
     await page.waitForTimeout(700);
     await page.screenshot({ path: path.join(output, 'desktop.png'), fullPage: true });
+    for (const algorithm of ['dijkstra', 'astar', 'alt']) {
+      await page.click(`.${algorithm} .work-metrics summary`);
+      assert.ok(await page.locator(`#${algorithm}-edges`).isVisible());
+      assert.ok(await page.locator(`#${algorithm}-queue`).isVisible());
+    }
+    await page.screenshot({ path: path.join(output, 'work-metrics.png'), fullPage: true });
     await page.click('.methodology summary');
     assert.match(await page.textContent('#landmark-method'), /전처리를 제외/);
     assert.match(await page.textContent('#alt-method-settings'), /별도 실행/);
@@ -221,6 +230,7 @@ fs.mkdirSync(output, { recursive: true });
     await phone.getByRole('switch', {name: 'ALT', exact: true}).check();
     for (const width of [390, 320, 768]) {
       await phone.setViewportSize({width, height: 844});
+      await phone.locator('.work-metrics').evaluateAll(items => items.forEach(item => { item.open = true; }));
       await phone.waitForTimeout(400);
       assert.ok(await phone.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Layout overflow at ${width}px`);
     }

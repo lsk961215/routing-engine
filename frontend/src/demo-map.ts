@@ -10,6 +10,9 @@ export interface DemoRoute {
   geometry: { type: "LineString"; coordinates: [number, number][] };
   searchMillis: Distribution;
   expandedStates: number;
+  inspectedEdges: number;
+  maxQueueSize: number;
+  baselineSearchMillis: Distribution;
   allocatedBytes: Distribution | null;
 }
 export interface Example { id: string; name: string; start: [number, number]; end: [number, number]; routes: DemoRoute[] }

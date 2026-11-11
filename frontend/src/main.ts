@@ -1,3 +1,4 @@
+import { speedup, reduction, formatSpeedup, formatReduction } from "./comparison-metrics";
 import "./style.css";
 import { setupCoverage } from "./coverage";
 import { setupExcludedRoads } from "./excluded-roads";
@@ -38,7 +39,7 @@ interface OsrmResponse {
   code: string;
   routes: OsrmRoute[];
   waypoints: OsrmWaypoint[];
-  metrics: { algorithm: string; snapMillis: number; searchMillis: number; expandedStates: number; allocatedBytes: number | null };
+  metrics: { algorithm: string; snapMillis: number; searchMillis: number; expandedStates: number; allocatedBytes: number | null; inspectedEdges: number; maxQueueSize: number };
 }
 
 type Algorithm = "dijkstra" | "astar";
@@ -50,7 +51,7 @@ interface ComparisonResponse {
     algorithm: Algorithm;
     code: "Ok" | "NoRoute";
     routes: OsrmRoute[];
-    metrics: { searchMillis: number; expandedStates: number; allocatedBytes: number | null };
+    metrics: { searchMillis: number; expandedStates: number; allocatedBytes: number | null; inspectedEdges: number; maxQueueSize: number };
   }[];
 }
 
@@ -78,7 +79,7 @@ mapElement.innerHTML = `
     </fieldset>
     <div class="search-actions"><button id="search-route" class="primary" disabled>경로 탐색</button><button id="cancel-route" hidden>취소</button></div>
     <p id="routing-status" class="status" role="status" aria-live="polite">지도를 불러오는 중입니다.</p>
-    <section id="route-info" class="route-info hidden" aria-label="탐색 결과"><div><span>총 거리</span><strong id="route-distance">-</strong></div><div><span>예상 시간</span><strong id="route-duration">제공 예정</strong></div><div><span>알고리즘</span><strong id="result-algorithm">-</strong></div><div><span>탐색·경로 복원</span><strong id="search-time">-</strong></div><div><span>확장 상태 수</span><strong id="expanded-states">-</strong></div><div title="탐색·경로 복원 중 할당한 힙 메모리의 추정 누계. 현재 또는 최대 점유량과 다릅니다."><span>메모리 할당량</span><strong id="allocated-bytes">-</strong></div><small id="snap-time"></small></section>
+    <section id="route-info" class="route-info hidden" aria-label="탐색 결과"><div><span>총 거리</span><strong id="route-distance">-</strong></div><div><span>예상 시간</span><strong id="route-duration">제공 예정</strong></div><div><span>알고리즘</span><strong id="result-algorithm">-</strong></div><div><span>탐색·경로 복원</span><strong id="search-time">-</strong></div><div><span>확장 상태 수</span><strong id="expanded-states">-</strong></div><div title="탐색·경로 복원 중 할당한 힙 메모리의 추정 누계. 현재 또는 최대 점유량과 다릅니다."><span>메모리 할당량</span><strong id="allocated-bytes">-</strong></div><div><span>간선 검사 횟수</span><strong id="inspected-edges">-</strong></div><div title="오래된 항목을 포함한 큐 항목 수의 최댓값"><span>최대 큐 크기</span><strong id="max-queue-size">-</strong></div><small id="snap-time"></small></section>
     <section id="comparison-info" class="comparison-info hidden" aria-label="알고리즘 비교 결과">
       <table>
         <caption>탐색 결과 비교</caption>
@@ -89,11 +90,15 @@ mapElement.innerHTML = `
           <tr><th scope="row">탐색·복원<br><small>ms</small></th><td id="dijkstra-time">-</td><td id="astar-time">-</td></tr>
           <tr><th scope="row">확장 상태</th><td id="dijkstra-states">-</td><td id="astar-states">-</td></tr>
           <tr title="탐색·경로 복원 중 할당한 힙 메모리의 추정 누계. 현재 또는 최대 점유량과 다릅니다."><th scope="row">메모리 할당량</th><td id="dijkstra-allocation">-</td><td id="astar-allocation">-</td></tr>
+          <tr><th scope="row">간선 검사</th><td id="dijkstra-edges">-</td><td id="astar-edges">-</td></tr>
+          <tr><th scope="row">최대 큐 크기</th><td id="dijkstra-queue">-</td><td id="astar-queue">-</td></tr>
+          <tr><th scope="row">시간 배율</th><td id="dijkstra-speedup">-</td><td id="astar-speedup">-</td></tr>
+          <tr><th scope="row">간선 검사 감소율</th><td id="dijkstra-reduction">-</td><td id="astar-reduction">-</td></tr>
           <tr><th scope="row">지도 경로</th><td><label><input id="show-dijkstra" type="checkbox" checked aria-label="Dijkstra 경로 표시">표시</label></td><td><label><input id="show-astar" type="checkbox" checked aria-label="A* 경로 표시">표시</label></td></tr>
         </tbody>
       </table>
       <p id="comparison-snap"></p>
-      <small>이번 요청의 측정값 · Dijkstra → A* 순서</small>
+      <small>이번 요청의 측정값 · Dijkstra → A* 순서<br>배율·감소율은 Dijkstra 기준. 1× 미만 또는 음수는 성능 저하입니다.</small>
     </section>
     <section class="exclusion-toolbar" aria-labelledby="map-options-title">
       <h2 id="map-options-title">지도 표시</h2>
@@ -352,6 +357,8 @@ function formatAllocation(bytes: number | null | undefined) {
 }
 
 function showComparison(data: ComparisonResponse) {
+  const baseline = data.results.find(item => item.algorithm === "dijkstra")?.metrics;
+  if (!baseline) throw new Error("Dijkstra 기준값이 없습니다.");
   for (const algorithm of ["dijkstra", "astar"] as const) {
     const result = data.results.find(item => item.algorithm === algorithm);
     if (!result) throw new Error("비교 결과가 완전하지 않습니다. 다시 시도해 주세요.");
@@ -362,6 +369,10 @@ function showComparison(data: ComparisonResponse) {
     text("distance", found ? `${route.distance.toLocaleString(undefined, { maximumFractionDigits: 1 })} m` : "—");
     text("time", result.metrics.searchMillis.toFixed(2));
     text("states", result.metrics.expandedStates.toLocaleString());
+    text("edges", result.metrics.inspectedEdges?.toLocaleString() ?? "측정 불가");
+    text("queue", result.metrics.maxQueueSize?.toLocaleString() ?? "측정 불가");
+    text("speedup", algorithm === "dijkstra" ? "기준" : formatSpeedup(speedup(baseline.searchMillis, result.metrics.searchMillis)));
+    text("reduction", algorithm === "dijkstra" ? "기준" : formatReduction(reduction(baseline.inspectedEdges, result.metrics.inspectedEdges)));
     text("allocation", formatAllocation(result.metrics.allocatedBytes));
     const toggle = document.querySelector<HTMLInputElement>(`#show-${algorithm}`)!;
     toggle.checked = found; toggle.disabled = !found;
@@ -402,6 +413,8 @@ function showRouteInfo(data: OsrmResponse) {
   document.querySelector("#result-algorithm")!.textContent = data.metrics.algorithm === "astar" ? "A*" : "Dijkstra";
   document.querySelector("#search-time")!.textContent = `${data.metrics.searchMillis.toFixed(2)} ms`;
   document.querySelector("#expanded-states")!.textContent = data.metrics.expandedStates.toLocaleString();
+  document.querySelector("#inspected-edges")!.textContent = data.metrics.inspectedEdges?.toLocaleString() ?? "측정 불가";
+  document.querySelector("#max-queue-size")!.textContent = data.metrics.maxQueueSize?.toLocaleString() ?? "측정 불가";
   document.querySelector("#allocated-bytes")!.textContent = formatAllocation(data.metrics.allocatedBytes);
   document.querySelector("#snap-time")!.textContent = `좌표 연결 ${data.metrics.snapMillis.toFixed(2)} ms · 단일 요청 측정`;
   routeInfo.classList.remove("hidden");

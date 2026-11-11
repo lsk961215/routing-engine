@@ -28,6 +28,8 @@ class RouteControllerTest {
                 .andExpect(jsonPath("$.results[1].algorithm").value("astar"))
                 .andExpect(jsonPath("$.results[1].routes[0].distance").value(111))
                 .andExpect(jsonPath("$.results[1].metrics.expandedStates").isNumber())
+                .andExpect(jsonPath("$.results[0].metrics.inspectedEdges").isNumber())
+                .andExpect(jsonPath("$.results[1].metrics.maxQueueSize").isNumber())
                 .andExpect(jsonPath("$.results[0].metrics.allocatedBytes").isNumber())
                 .andExpect(jsonPath("$.results[1].metrics.allocatedBytes").isNumber());
     }
@@ -65,7 +67,9 @@ class RouteControllerTest {
         var path="/api/route?startLon=127&startLat=37&endLon=127&endLat=37.001";
         var mvc=api();
         mvc.perform(get(path)).andExpect(status().isOk())
-                .andExpect(jsonPath("$.metrics.allocatedBytes").isNumber());
+                .andExpect(jsonPath("$.metrics.allocatedBytes").isNumber())
+                .andExpect(jsonPath("$.metrics.inspectedEdges").isNumber())
+                .andExpect(jsonPath("$.metrics.maxQueueSize").isNumber());
         try(var executor=java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()) {
             executor.submit(()->mvc.perform(get(path)).andExpect(status().isOk())
                     .andExpect(jsonPath("$.metrics.allocatedBytes").value(org.hamcrest.Matchers.nullValue()))

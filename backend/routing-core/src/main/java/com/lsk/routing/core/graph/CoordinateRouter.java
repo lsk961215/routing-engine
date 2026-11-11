@@ -93,7 +93,7 @@ public final class CoordinateRouter {
         return search(start,end,allowed);
     }
 
-    public record SearchResult(Optional<Route> route,RoutingAlgorithm algorithm,double snapMillis,double searchMillis,long expandedStates,Long allocatedBytes) {}
+    public record SearchResult(Optional<Route> route,RoutingAlgorithm algorithm,double snapMillis,double searchMillis,long expandedStates,Long allocatedBytes,long inspectedEdges,long maxQueueSize) {}
     /** Offline visualization hook, called once for each expanded state, including repeated nodes. */
     @FunctionalInterface public interface ExpansionObserver {
         void expanded(double longitude,double latitude,long ordinal);
@@ -156,7 +156,7 @@ public final class CoordinateRouter {
         var route=searchRoute(start,end,allowed,algorithm,metrics);
         double searchMillis=(System.nanoTime()-begin)/1e6;
         Long allocatedBytes=ThreadAllocation.since(allocatedBefore);
-        return new SearchResult(route,algorithm,snapMillis,searchMillis,metrics.expandedStates,allocatedBytes);
+        return new SearchResult(route,algorithm,snapMillis,searchMillis,metrics.expandedStates,allocatedBytes,metrics.inspectedEdges,metrics.maxQueueSize);
     }
     private Optional<Route> searchRoute(Snap start,Snap end,IntPredicate allowed,RoutingAlgorithm algorithm,HistorySearch.Metrics metrics) {
         int startNode=endpoint(start),endNode=endpoint(end);

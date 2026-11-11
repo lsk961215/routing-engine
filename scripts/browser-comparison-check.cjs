@@ -37,9 +37,13 @@ const assert = require('node:assert/strict');
       const geometry = await page.evaluate(async id => (await window.__routeTestMap.getSource(id).getData()).geometry, `route-${result.algorithm}`);
       assert.deepEqual(geometry,result.routes[0].geometry);
       assert.equal(await page.textContent(`#${result.algorithm}-time`),result.metrics.searchMillis.toFixed(2));
+      assert.equal(await page.textContent(`#${result.algorithm}-edges`),result.metrics.inspectedEdges.toLocaleString('en-US'));
+      assert.equal(await page.textContent(`#${result.algorithm}-queue`),result.metrics.maxQueueSize.toLocaleString('en-US'));
       assert.ok(Number.isInteger(result.metrics.allocatedBytes) && result.metrics.allocatedBytes >= 0);
       assert.match(await page.textContent(`#${result.algorithm}-allocation`),/ (B|KiB|MiB)$/);
     }
+    assert.equal(await page.textContent('#astar-speedup'),`${(data.results[0].metrics.searchMillis/data.results[1].metrics.searchMillis).toFixed(2)}×`);
+    assert.equal(await page.textContent('#astar-reduction'),`${((1-data.results[1].metrics.inspectedEdges/data.results[0].metrics.inspectedEdges)*100).toFixed(1)}%`);
     assert.match(await page.textContent('#comparison-snap'),/공통 좌표 연결 .* ms/);
     await page.uncheck('#show-astar');
     assert.equal(await page.evaluate(() => window.__routeTestMap.getLayoutProperty('route-astar','visibility')),'none');

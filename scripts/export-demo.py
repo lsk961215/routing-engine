@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def validate_report(report, graph_hash, queries_hash, algorithms):
-    if report['version'] != 2:
-        raise ValueError('A version 2 benchmark report with allocation metrics is required.')
+    if report['version'] != 3:
+        raise ValueError('A version 3 benchmark report with work metrics is required.')
     if len(report['forks']) != report['settings']['forks'] or not report['forks']:
         raise ValueError('Incomplete benchmark forks')
     if not all(f['graphSha256'] == graph_hash and f['queriesSha256'] == queries_hash for f in report['forks']):
@@ -38,12 +38,24 @@ def measured_route(report, query_id, result):
         raise ValueError('API and benchmark results differ')
     if summary['expandedStates']['median'] != result['metrics']['expandedStates']:
         raise ValueError('Summary and API expanded state counts differ')
+    for key in ('inspectedEdges', 'maxQueueSize'):
+        value = result['metrics'].get(key)
+        if type(value) is not int or value < 0:
+            raise ValueError('Missing or invalid API work metrics')
+        if any(type(s.get(key)) is not int or s[key] != value for s in samples):
+            raise ValueError('API and benchmark work metrics differ')
+        stats = summary.get(key)
+        if not stats or stats.get('count') != expected_count or any(stats.get(k) != value for k in ('min', 'median', 'max')):
+            raise ValueError('Summary and API work metrics differ')
+    baseline = next(s for s in report['summaries'] if s['queryId'] == query_id and s['algorithm'] == 'dijkstra')
     if route['geometry']['type'] != 'LineString' or len(route['geometry']['coordinates']) < 2:
         raise ValueError('Invalid route geometry')
     return {
         'algorithm': result['algorithm'], 'distance': route['distance'], 'geometry': route['geometry'],
         'searchMillis': summary['searchMillis'], 'expandedStates': result['metrics']['expandedStates'],
         'allocatedBytes': summary['allocatedBytes'],
+        'inspectedEdges': result['metrics']['inspectedEdges'], 'maxQueueSize': result['metrics']['maxQueueSize'],
+        'baselineSearchMillis': baseline['searchMillis'],
     }
 
 
@@ -80,6 +92,7 @@ def export(report, alt_report, graph_hash, queries_hash, fetch_pair):
         # Validate the second run's baseline too, without mixing its timing samples into the first run.
         alt_baseline = measured_route(alt_report, query['id'], alt_pair['results'][0])
         if (alt_baseline['geometry'] != routes[0]['geometry'] or alt_baseline['expandedStates'] != routes[0]['expandedStates']
+                or any(alt_baseline[key] != routes[0][key] for key in ('inspectedEdges', 'maxQueueSize'))
                 or abs(alt_baseline['distance'] - routes[0]['distance']) >= 1e-6):
             raise ValueError('Dijkstra baseline differs between paired runs')
         routes.append(measured_route(alt_report, query['id'], alt_pair['results'][1]))

@@ -15,6 +15,8 @@ assert.match(await page.textContent('#search-time'),/ms/);assert.ok(a.metrics.ex
 assert.ok(Number.isInteger(a.metrics.allocatedBytes) && a.metrics.allocatedBytes>=0);
 assert.ok(Number.isInteger(d.metrics.allocatedBytes) && d.metrics.allocatedBytes>=0);
 assert.match(await page.textContent('#allocated-bytes'),/ (B|KiB|MiB)$/);
+assert.equal(await page.textContent('#inspected-edges'),a.metrics.inspectedEdges.toLocaleString('en-US'));
+assert.equal(await page.textContent('#max-queue-size'),a.metrics.maxQueueSize.toLocaleString('en-US'));
 await page.click('#coverage-overview');
 await page.waitForFunction(()=>window.__routeTestMap.queryRenderedFeatures({layers:['coverage-boundary']}).length>0);
 assert.equal(await page.evaluate(()=>window.__routeTestMap.getSource('coverage-boundary').serialize().data.geometry.coordinates[0][0]),126.70);

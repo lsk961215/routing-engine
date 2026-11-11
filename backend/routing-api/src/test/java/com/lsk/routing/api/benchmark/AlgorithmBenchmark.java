@@ -25,11 +25,11 @@ public final class AlgorithmBenchmark {
         }
     }
     public record Sample(int fork,int round,int queryPosition,String queryId,String algorithm,int position,
-                         String code,Double distanceMetres,double snapMillis,double searchMillis,long expandedStates,Long allocatedBytes) {}
+                         String code,Double distanceMetres,double snapMillis,double searchMillis,long expandedStates,Long allocatedBytes,long inspectedEdges,long maxQueueSize) {}
     public record Distribution(int count,double min,double median,double p95,double max,double mean,double standardDeviation) {}
     public record Summary(String queryId,String algorithm,Distribution searchMillis,Distribution firstMillis,
                           Distribution secondMillis,Distribution expandedStates,Distribution allocatedBytes,
-                          Distribution firstAllocatedBytes,Distribution secondAllocatedBytes) {}
+                          Distribution firstAllocatedBytes,Distribution secondAllocatedBytes,Distribution inspectedEdges,Distribution maxQueueSize) {}
     public record Gc(long collections,long millis) {
         static Gc now() {
             long count=0,time=0;
@@ -89,7 +89,7 @@ public final class AlgorithmBenchmark {
             forks.add(result);
         }
         var samples=forks.stream().flatMap(f->f.samples().stream()).toList();
-        var report=new Report(2,Instant.now().toString(),git("rev-parse","HEAD"),git("status","--porcelain"),settings,querySet,
+        var report=new Report(3,Instant.now().toString(),git("rev-parse","HEAD"),git("status","--porcelain"),settings,querySet,
                 Map.of("algorithms","dijkstra + "+name(challenger),
                         "landmarks","ALT: 8 deterministic farthest landmarks in the largest strongly connected component (weak component fallback for acyclic graphs); forward/reverse distances on the turn-relaxed directed graph; table payload and preprocessing time reported separately, not peak memory",
                         "scope","Search and path reconstruction; snapping, graph/index loading, landmark preprocessing, JSON, HTTP and warmup excluded",
@@ -98,6 +98,7 @@ public final class AlgorithmBenchmark {
                         "aggregation","Per query only, equal measured sample count per fork; first/second positions also reported",
                         "gc","Natural GC included in timings; no forced GC; measured-phase GC deltas recorded per fork",
                         "allocation","Current-thread heap bytes allocated during search and path reconstruction via ThreadMXBean; approximate, not retained or peak memory; null when unavailable; null samples excluded from allocation distributions, whose counts show availability",
+                        "work","inspectedEdges: outgoing candidates visited before restrictions, excluding seeds; maxQueueSize: peak physical priority queue entries including seeds and obsolete labels, not bytes; improvements compare per-query medians with Dijkstra under the same filters, undefined for a zero denominator",
                         "limits","Local wall-clock measurements; fixed warmup does not prove JIT convergence; OS activity and thermal effects remain"),
                 forks,summarize(samples));
         JSON.writerWithDefaultPrettyPrinter().writeValue(output.resolve("report.json").toFile(),report);
@@ -161,7 +162,7 @@ public final class AlgorithmBenchmark {
                     var result=pair.results().get(algorithmPosition);
                     samples.add(new Sample(fork,round+1,position+1,query.id(),name(result.algorithm()),algorithmPosition+1,
                             result.route().isPresent()?"Ok":"NoRoute",result.route().map(CoordinateRouter.Route::distanceMetres).orElse(null),
-                            pair.snapMillis(),result.searchMillis(),result.expandedStates(),result.allocatedBytes()));
+                            pair.snapMillis(),result.searchMillis(),result.expandedStates(),result.allocatedBytes(),result.inspectedEdges(),result.maxQueueSize()));
                 }
             }
             System.out.printf("  fork %d %s %d/%d%n",fork,samples==null?"warmup":"measure",round+1,rounds);
@@ -209,7 +210,9 @@ public final class AlgorithmBenchmark {
                         distribution(selected.stream().filter(s->s.position()==1).mapToDouble(Sample::searchMillis).toArray()),
                         distribution(selected.stream().filter(s->s.position()==2).mapToDouble(Sample::searchMillis).toArray()),
                         distribution(selected.stream().mapToDouble(Sample::expandedStates).toArray()),
-                        allocationDistribution(selected,0),allocationDistribution(selected,1),allocationDistribution(selected,2)));
+                        allocationDistribution(selected,0),allocationDistribution(selected,1),allocationDistribution(selected,2),
+                        distribution(selected.stream().mapToDouble(Sample::inspectedEdges).toArray()),
+                        distribution(selected.stream().mapToDouble(Sample::maxQueueSize).toArray())));
             }
         }
         return List.copyOf(summaries);

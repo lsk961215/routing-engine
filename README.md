@@ -157,7 +157,8 @@ python3 scripts/export-demo.py .runtime/benchmarks/my-demo-run/report.json \
 npm run build:demo --prefix frontend
 ```
 
-`export-demo.py`는 두 보고서의 그래프·고정 질의 해시, 질의 집합·설정·환경·기준 커밋을 검사한다. `/api/compare`의 기본 비교와 `algorithm=alt` 비교에서 거리·확장 상태·연결 좌표가 벤치마크와 일치하는지 확인한 후 세 알고리즘 데이터를 한 번에 교체한다. 측정 횟수를 바꿀 때는 두 보고서에 같은 설정을 사용한다.
+`export-demo.py`는 작업량 계측이 있는 v3 보고서 두 개를 요구한다. 모든 표본의 간선 검사·최대 큐 크기와 분포를 실제 API 결과에 대조하며 누락되거나 맞지 않으면 기존 데이터를 교체하지 않는다.
+두 보고서의 그래프·고정 질의 해시, 질의 집합·설정·환경·기준 커밋을 검사한다. `/api/compare`의 기본 비교와 `algorithm=alt` 비교에서 거리·확장 상태·연결 좌표가 벤치마크와 일치하는지 확인한 후 세 알고리즘 데이터를 한 번에 교체한다. 측정 횟수를 바꿀 때는 두 보고서에 같은 설정을 사용한다.
 출력 `frontend/src/demo-data.json`은 버전 관리한다. 경로 형상은 API에서, 시간·메모리 통계는 독립 JVM 반복 측정 보고서에서 가져온다.
 출처에 측정일·엔진 커밋·JVM 환경·그래프/질의 해시를 포함한다. API 주소를 바꾸려면 `--api-url http://...`를 지정한다.
 
@@ -206,6 +207,13 @@ A*는 구면거리 하한으로 평가한다. 하한은 간선 비용에 맞춰 
 `allocatedBytes`는 탐색·경로 복원 동안 현재 스레드에 할당한 힙 메모리의 추정 누계다. 좌표 연결·그래프/인덱스 적재·응답 DTO/JSON 변환은 제외한다.
 [JDK ThreadMXBean](https://docs.oracle.com/en/java/javase/21/docs/api/jdk.management/com/sun/management/ThreadMXBean.html#getCurrentThreadAllocatedBytes())의 카운터 차이를 사용하므로 다른 요청 스레드의 할당과 섞이지 않는다.
 GC로 회수된 객체도 할당 누계에 포함하며 현재·최대 점유량이나 프로세스 메모리 사용량을 뜻하지 않는다. 지원 JVM에서는 카운터를 초기화 시 활성화하며, 미지원·비활성·권한 제한·가상 스레드는 `null`(화면에는 **측정 불가**)로 표시한다. 실제 0바이트와 구분한다.
+`inspectedEdges`는 확장한 상태에서 나가는 후보 간선을 검사한 횟수다. 통행·회전·via-way 제한으로 제외되는 후보도 포함하고 초기 출발 후보는 제외한다. 같은 간선을 다른 상태에서 다시 검사하면 다시 센다.
+`maxQueueSize`는 우선순위 큐에 동시에 들어 있던 항목 수의 최댓값이다. 초기 출발 후보와 아직 꺼내지 않은 오래된 항목도 포함한다. 고유 상태 수나 메모리 바이트가 아니다. 동일 좌표의 조기 반환은 두 지표 모두 0이며, 같은 간선의 직행 후보로 확장이 없어도 큐 초기화 때문에 최대 큐 크기는 양수일 수 있다.
+두 지표는 Dijkstra·A*·ALT의 공통 탐색에서 요청별로 계측한다. 경로가 없는 비교 결과에도 유지한다.
+
+시간 배율은 `Dijkstra 시간 / 비교 알고리즘 시간`이며 1 미만이면 느리다. 감소율은 `(1 - 비교값 / Dijkstra 값) × 100%`이며 음수이면 작업량이 늘었다. 기준값이 0이거나 시간 배율의 분모가 0이면 계산 불가로 표시한다.
+실시간 화면은 해당 요청의 값, 벤치마크는 동일 질의·JVM·실행 위치 필터의 중앙값으로 계산한다. 공개 데모는 각 알고리즘과 함께 측정한 Dijkstra의 시간 분포를 `baselineSearchMillis`에 보관하므로 ALT의 배율에도 Dijkstra/ALT 실행의 기준값을 사용한다. 배율은 중앙값의 비율이며 개별 표본 배율의 중앙값이 아니다.
+
 비교 API는 좌표를 한 번 연결한 뒤 Dijkstra → A* 순서로 실행하며 각 탐색 상태는 독립적이다.
 공통 좌표 연결 시간은 한 번만 표시한다. 워밍업·반복 측정을 적용한 벤치마크는 아니므로 단일 요청의 시간만으로 성능을 단정하지 않는다.
 
@@ -221,7 +229,7 @@ v3는 조건부 방향을 추가한다. 서울 시험 그래프는 v2이며 파�
   — `algorithm=dijkstra|astar|alt`(기본 Dijkstra). 경로·거리·연결 좌표·`metrics` 반환. `/route`도 지원한다.
 - `GET /api/compare?startLon=...&startLat=...&endLon=...&endLat=...`
   — 공통 `waypoints`·`snapMillis`와 `results`(Dijkstra, A* 순서)를 반환한다. `&algorithm=alt`를 추가하면 Dijkstra와 ALT를 비교한다. 비교 알고리즘은 `astar|alt`만 허용한다.
-  각 결과에는 `algorithm`, `code=Ok|NoRoute`, `routes`, `metrics.searchMillis`, `metrics.expandedStates`, `metrics.allocatedBytes`가 있다. 개별 경로 API도 같은 할당량 지표를 반환한다.
+  각 결과에는 `algorithm`, `code=Ok|NoRoute`, `routes`, `metrics.searchMillis`, `metrics.expandedStates`, `metrics.allocatedBytes`, `metrics.inspectedEdges`, `metrics.maxQueueSize`가 있다. 개별 경로 API도 같은 지표를 반환한다.
   경로가 없어도 HTTP 200으로 `NoRoute`·빈 `routes`·측정값을 반환한다. 좌표 오류·영역 밖·그래프 미설정은 400·422·503이다.
 - `GET /api/excluded-roads?west=...&south=...&east=...&north=...`
   — 현재 영역과 경계 상자가 겹치는 제외 도로·사유 반환.
@@ -273,7 +281,8 @@ JVM은 순차 실행하며 각 JVM의 힙은 `-Xms1g -Xmx2g`, GC는 G1이다. �
 거리·경로 유무·연결 좌표가 두 알고리즘에서 일치하는지 매 쌍 검증하며 불일치하면 중단한다.
 자연 발생한 GC와 이상값은 제거하지 않는다. 중앙값은 짝수 표본의 가운데 두 값 평균, p95는 nearest-rank 방식이다.
 서로 다른 질의는 하나의 분포로 합치지 않는다. JVM별 편차를 함께 확인하며, 고정 워밍업만으로 JIT 안정화나 통계적 유의성을 보장하지는 않는다.
-보고서 형식은 v2이며 원시 표본의 `allocatedBytes`, 요약의 `allocatedBytes`·`firstAllocatedBytes`·`secondAllocatedBytes` 분포를 추가한다. 시간과 할당량의 측정 구간은 동일하며 카운터 조회는 시간 측정 바깥에서 수행한다. 계측이 추가된 실행과 이전 실행의 시간 차이를 알고리즘 개선으로 해석하지 않는다.
+보고서 형식은 v3이며 `inspectedEdges`·`maxQueueSize` 원시 표본과 분포를 추가한다. 비교 지표에서 확장 상태 수·간선 검사 횟수·최대 큐 크기를 선택할 수 있고 모든 지표에 같은 JVM/실행 위치 필터와 Dijkstra 대비 배율 또는 감소율을 적용한다.
+기존 원시 표본의 `allocatedBytes`와 요약의 `allocatedBytes`·`firstAllocatedBytes`·`secondAllocatedBytes` 분포도 유지한다. 시간과 할당량의 측정 구간은 동일하며 카운터 조회는 시간 측정 바깥에서 수행한다. 계측이 추가된 실행과 이전 실행의 시간 차이를 알고리즘 개선으로 해석하지 않는다.
 
 설정 변경 예시(경로는 `backend/` 기준):
 
@@ -296,6 +305,8 @@ npm run browsers:install
 ```sh
 ./backend/gradlew -p backend test
 npm run build --prefix frontend
+node scripts/test-comparison-metrics.mjs
+python3 scripts/test-export-demo.py
 python3 scripts/test-excluded-export.py
 python3 scripts/test-server-lock.py
 # 서울 서버 실행 후

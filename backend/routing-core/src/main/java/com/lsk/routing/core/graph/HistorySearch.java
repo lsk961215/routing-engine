@@ -13,6 +13,10 @@ final class HistorySearch {
     @FunctionalInterface interface ExpansionObserver { void expanded(int node,long ordinal); }
     static final class Metrics {
         long expandedStates;
+        // Outgoing candidates visited after expansion, before any restriction checks; seeds excluded.
+        long inspectedEdges;
+        // Physical queue entries, including seeds and obsolete labels awaiting removal.
+        long maxQueueSize;
         final ExpansionObserver observer;
         Metrics() { this(null); }
         Metrics(ExpansionObserver observer) { this.observer=observer; }
@@ -38,6 +42,7 @@ final class HistorySearch {
             var state=new State(seed.edge,history);
             if(seed.cost<best.getOrDefault(state,Double.POSITIVE_INFINITY)) {
                 best.put(state,seed.cost);queue.add(new Label(state,seed.cost,seed.cost+estimate.applyAsDouble(graph.target(seed.edge))));
+                metrics.maxQueueSize=Math.max(metrics.maxQueueSize,queue.size());
             }
         }
         double winner=directDistance;State winnerLast=null;
@@ -50,6 +55,7 @@ final class HistorySearch {
             if(metrics.observer!=null)metrics.observer.expanded(node,metrics.expandedStates);
             if(node==endNode){winner=label.cost;winnerLast=state;break;}
             for(int outgoing=graph.edgeStart(node);outgoing<graph.edgeEnd(node);outgoing++) {
+                metrics.inspectedEdges++;
                 if(!allowed.test(outgoing) || !graph.turnAllowed(state.edge,outgoing))continue;
                 int history=graph.restrictionState(state.history,outgoing);
                 if(history<0)continue;
@@ -62,6 +68,7 @@ final class HistorySearch {
                 var next=new State(outgoing,history);
                 if(cost>=winner || cost>=best.getOrDefault(next,Double.POSITIVE_INFINITY))continue;
                 best.put(next,cost);previous.put(next,state);queue.add(new Label(next,cost,cost+estimate.applyAsDouble(graph.target(outgoing))));
+                metrics.maxQueueSize=Math.max(metrics.maxQueueSize,queue.size());
             }
         }
         if(!Double.isFinite(winner))return Optional.empty();
