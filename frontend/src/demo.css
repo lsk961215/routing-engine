@@ -136,7 +136,12 @@ footer { display: flex; justify-content: space-between; gap: 16px; margin: 18px 
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0s !important; transition-duration: 0s !important; } }
 
-.work-metrics { margin-top: 10px; border-top: 1px solid var(--line, #e5e7eb); padding-top: 8px; }
-.work-metrics summary { cursor: pointer; font-size: 12px; }
+.work-metrics, .algorithm-explanation { margin-top: 10px; border-top: 1px solid var(--line, #e5e7eb); padding-top: 8px; }
+.work-metrics summary, .algorithm-explanation summary { cursor: pointer; font-size: 12px; }
 .work-metrics .secondary-metrics { margin-top: 12px; }
 .work-metrics .metric-label { margin-top: 10px; }
+.algorithm-explanation dl, .algorithm-explanation p { margin: 12px 0 0; font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
+.algorithm-explanation dl > div + div { margin-top: 12px; }
+.algorithm-explanation dt { font-weight: 600; }
+.algorithm-explanation dd { margin: 4px 0 0; color: var(--muted); }
+.algorithm-explanation p { color: var(--muted); }

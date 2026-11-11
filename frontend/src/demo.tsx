@@ -152,6 +152,15 @@ function Demo() {
                     </dl>
                     <p className="metric-label">Dijkstra 기준 · 1× 미만 또는 음수는 성능 저하</p>
                   </details>
+                  <details className="algorithm-explanation">
+                    <summary aria-label={`${name} 알고리즘 설명`}>알고리즘 설명</summary>
+                    <dl>
+                      <div><dt>작은 값부터 탐색</dt><dd>{info.priority}</dd></div>
+                      <div><dt>동작 방식</dt><dd>{info.explanation}</dd></div>
+                      <div><dt>특징과 비용</dt><dd>{info.tradeoff}</dd></div>
+                    </dl>
+                    <p>이 데모의 비용은 거리입니다. 세 알고리즘 모두 같은 도로·통행 규칙에서 최단 거리를 구하며, 거리가 같아도 경로 모양은 다를 수 있습니다.</p>
+                  </details>
                 </section>;
               })}
               <p className="comparison-note">{reduction === 0 ? "A*와 ALT의 확장 상태 수가 같습니다." : <>ALT는 A*보다 확장 상태가 <strong>{number(Math.abs(reduction), 1)}% {reduction > 0 ? "적습니다" : "많습니다"}.</strong></>}<span>막대 길이는 최종 확장 상태 수입니다.</span></p>
