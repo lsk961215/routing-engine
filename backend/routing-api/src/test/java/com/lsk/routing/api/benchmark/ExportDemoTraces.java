@@ -63,7 +63,7 @@ public final class ExportDemoTraces {
                 traces.add(new Trace(expected.algorithm,result.expandedStates(),sampler.points,sampler.bounds()));
                 System.out.printf("%s %s: %,d expanded states → %,d sampled locations%n",example.id,expected.algorithm,result.expandedStates(),sampler.points.size());
             }
-            outputs.put(example.id,new Output(2,example.id,Instant.now().toString(),graphHash,demoHash,CELL_METRES,
+            outputs.put(example.id,new Output(3,example.id,Instant.now().toString(),graphHash,demoHash,CELL_METRES,
                     List.of("longitude","latitude","expansionOrdinal"),traces));
         }
         // Only write after all route geometries, distances and counts agree with the published examples.

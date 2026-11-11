@@ -120,6 +120,24 @@ class AlgorithmBenchmarkTest {
         assertFalse(Files.readString(output.resolve("report.html")).contains("__REPORT_JSON__"));
         assertTrue(report.methodology().get("scope").contains("landmark preprocessing"));
     }
+    @Test void bidirectionalForkReportsReverseIndexAndBalancesBothOrders() throws Exception {
+        var graph=directory.resolve("bidirectional.rgraph");
+        new RoutingGraph(new long[]{1,2,3},new double[]{37,37.001,37.002},new double[]{127,127,127},new int[]{0,1,2,2},
+                new int[]{1,2},new long[]{1,2},new double[]{111,111},new long[0]).write(graph);
+        var mapper=new ObjectMapper();var queries=directory.resolve("queries-bidirectional.json");
+        mapper.writeValue(queries.toFile(),new AlgorithmBenchmark.QuerySet("bidirectional",List.of(new AlgorithmBenchmark.Query("q","q",127,37,127,37.002))));
+        var output=directory.resolve("bidirectional-report");
+        AlgorithmBenchmark.main(new String[]{graph.toString(),queries.toString(),output.toString(),"1","2","1","123","bidirectional"});
+        var report=mapper.readValue(output.resolve("report.json").toFile(),AlgorithmBenchmark.Report.class);
+        assertEquals(List.of("dijkstra","bidirectional"),report.summaries().stream().map(AlgorithmBenchmark.Summary::algorithm).toList());
+        var fork=report.forks().getFirst();
+        assertNull(fork.landmarks());assertEquals(24,fork.bidirectional().arrayPayloadBytes());
+        assertTrue(fork.bidirectional().preprocessingMillis()>=0);
+        assertTrue(fork.samples().stream().allMatch(sample->sample.distanceMetres()==222));
+        for(var summary:report.summaries()) {
+            assertEquals(1,summary.firstMillis().count());assertEquals(1,summary.secondMillis().count());
+        }
+    }
     @Test void allocationStatisticsKeepZeroAndExcludeUnavailableSamplesWithAccurateCounts() {
         var samples=new ArrayList<AlgorithmBenchmark.Sample>();
         for(var algorithm:List.of("dijkstra","astar"))for(int i=0;i<4;i++)

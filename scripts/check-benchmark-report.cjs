@@ -78,6 +78,13 @@ const { chromium } = require('playwright');
         assert.ok(fork.landmarks.distanceTableBytes > 0);
       }
     }
+    if (report.summaries.some(s => s.algorithm === 'bidirectional')) {
+      for (const fork of report.forks) {
+        assert.ok(fork.bidirectional.arrayPayloadBytes>0 && fork.bidirectional.preprocessingMillis>=0);
+        assert.equal(fork.landmarks,null);
+      }
+      assert.ok((await page.locator('#environment').textContent()).includes('역방향 인덱스'));
+    }
     await page.screenshot({path:'/tmp/routing-benchmark-report.png',fullPage:true});
     await page.selectOption('#position','first');
     assert.equal(await count(), measuredRounds*forks/2);

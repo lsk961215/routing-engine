@@ -30,6 +30,8 @@ const settings = source.settings;
 const altSource = source.altBenchmark;
 const altSettings = altSource.settings;
 const landmarkRuns = altSource.landmarks;
+const bidirectionalSource = source.bidirectionalBenchmark;
+const reverseRuns = bidirectionalSource.reverseIndexes;
 
 function PlaybackIcon({ kind }: { kind: "play" | "pause" | "replay" | "start" | "end" }) {
   return <svg className="playback-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -53,7 +55,7 @@ function AlgorithmHelp({ algorithm }: { algorithm: Algorithm }) {
         <div><dt>동작 방식</dt><dd>{info.explanation}</dd></div>
         <div><dt>특징과 비용</dt><dd>{info.tradeoff}</dd></div>
       </dl>
-      <p>이 데모의 비용은 거리입니다. 세 알고리즘 모두 같은 도로·통행 규칙에서 최단 거리를 구하며, 거리가 같아도 경로 모양은 다를 수 있습니다.</p>
+      <p>이 데모의 비용은 거리입니다. 네 알고리즘 모두 같은 도로·통행 규칙에서 최단 거리를 구하며, 거리가 같아도 경로 모양은 다를 수 있습니다.</p>
     </div>}>
     {trigger => <button {...trigger} type="button" className="algorithm-help" aria-label={`${info.name} 알고리즘 설명`}>
       <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" /><path d="M10 9v5" /><circle cx="10" cy="6" r=".8" className="info-dot" /></svg>
@@ -66,7 +68,7 @@ function Demo() {
   const [ready, setReady] = useState(false);
   const [mapStatus, setMapStatus] = useState("지도를 불러오는 중입니다.");
   const [playback, setPlayback] = useState(initialPlayback);
-  const [visibility, setVisibility] = useState<Visibility>({ dijkstra: true, astar: true, alt: true, exploration: true });
+  const [visibility, setVisibility] = useState<Visibility>({ dijkstra: true, astar: true, alt: true, bidirectional: true, exploration: true });
   const [downloadUrl, setDownloadUrl] = useState("");
   const mapElement = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof createDemoMap> | null>(null);
@@ -114,7 +116,7 @@ function Demo() {
     <div className="demo-shell">
       <a className="skip-link" href="#explore">탐색 실험으로 바로 가기</a>
       <header className="site-header">
-        <div className="brand"><span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 17V7h7v10h7V7"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="7" r="2"/></svg></span><div><h1>경로 탐색 비교</h1><p>서울 도로 위에서 배우는 Dijkstra · A* · ALT</p></div></div>
+        <div className="brand"><span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 17V7h7v10h7V7"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="7" r="2"/></svg></span><div><h1>경로 탐색 비교</h1><p>서울 도로 위에서 배우는 Dijkstra · A* · ALT · 양방향 Dijkstra</p></div></div>
         <Button label="GitHub" href={repo} variant="ghost" size="sm" endContent={<Icon icon="externalLink" />} />
       </header>
       <main id="explore" tabIndex={-1}>
@@ -161,7 +163,7 @@ function Demo() {
                 return <section key={route.algorithm} className={`algorithm-card ${route.algorithm}`} aria-label={`${name} 측정 결과`}>
                   <div className="algorithm-heading"><h3><i className={`legend-dot ${info.colorClass}`} />{name}</h3><span>{info.description}</span></div>
                   <div className="time-metric"><strong id={`${route.algorithm}-time`}>{number(route.searchMillis.median, 2)}</strong><span>ms</span></div>
-                  <p className="metric-label">탐색 시간 · 중앙값{route.algorithm === "alt" ? " · 전처리 제외" : ""}</p>
+                  <p className="metric-label">탐색 시간 · 중앙값{route.algorithm === "alt" || route.algorithm === "bidirectional" ? " · 준비 비용 제외" : ""}</p>
                   <dl className="secondary-metrics"><div><dt>거리</dt><dd><span id={`${route.algorithm}-distance`}>{number(route.distance / 1000, 2)}</span> <small>km</small></dd></div><div><dt>확장 상태</dt><dd id={`${route.algorithm}-states`}>{number(route.expandedStates)}</dd></div></dl>
                   <div className="expansion-bar" aria-hidden="true"><i style={{ width: `${route.expandedStates / maxStates * 100}%` }} /></div>
                   <output id={`trace-${route.algorithm}-count`} className="trace-count">{count ? `${number(count.current)} / ${number(count.total)}${count.current === count.total ? " · 완료" : ""}` : "—"}</output>
@@ -182,7 +184,7 @@ function Demo() {
         </section>
 
         {/* Measurement details stay available without competing with the experiment. */}
-        <section className="methodology"><details><summary><span className="method-title">측정 조건과 데이터 출처</span></summary><div className="method-content"><p className="comparison-note">시간 배율은 각 알고리즘과 함께 측정한 Dijkstra 중앙값을 기준으로 계산합니다. 간선 검사는 제한으로 제외된 후보를 포함하며 초기 출발 후보는 제외합니다. 최대 큐 크기는 오래된 항목을 포함한 큐 항목 수로, 메모리 바이트가 아닙니다.</p><p id="method-settings">측정일 {source.benchmarkAt.slice(0, 10)} · 독립 JVM {settings.forks}개 × 질의별 워밍업 {settings.warmupRounds}회 + 측정 {settings.measuredRounds}회. Dijkstra/A*는 예제·알고리즘당 {settings.forks * settings.measuredRounds}개 표본이며, 시간은 중앙값입니다.</p><p id="alt-method-settings">ALT 측정일 {altSource.benchmarkAt.slice(0, 10)} · 독립 JVM {altSettings.forks}개 × 워밍업 {altSettings.warmupRounds}회 + 측정 {altSettings.measuredRounds}회, 예제당 {altSettings.forks * altSettings.measuredRounds}개 표본입니다. Dijkstra/A*와 Dijkstra/ALT는 같은 그래프·질의·설정으로 별도 실행한 비교이며, 화면의 Dijkstra 값은 Dijkstra/A* 실행에서 가져왔습니다. 실행 시점 차이가 있어 시간 차이를 알고리즘 효과만으로 단정할 수 없습니다.</p><p id="landmark-method">ALT는 기준점까지의 거리를 미리 계산해 탐색에 활용합니다. 랜드마크 {landmarkRuns[0]!.count}개 · 거리 테이블 {number(landmarkRuns[0]!.distanceTableBytes / 1048576, 1)}MiB · JVM별 전처리 {number(Math.min(...landmarkRuns.map(run => run.preprocessingMillis)) / 1000, 2)}–{number(Math.max(...landmarkRuns.map(run => run.preprocessingMillis)) / 1000, 2)}초입니다. 표의 ALT 탐색 시간·할당량은 전처리를 제외합니다. 거리 테이블 크기는 객체 부가 비용·임시 메모리를 제외한 값입니다.</p><p>탐색 시간은 탐색과 경로 복원을 포함합니다. 그래프 적재·좌표 연결·HTTP·JSON 변환은 제외합니다. 내려받는 JSON에는 p95와 메모리 할당량도 포함합니다. p95는 측정값의 95%가 이 값 이하인 지점입니다. 메모리는 탐색 중 할당한 힙의 누계이며, 현재·최대 점유량이 아닙니다. 측정 불가 표본은 0으로 바꾸지 않습니다.</p><p>탐색 확산은 성능 측정과 별도로 기록한 실제 상태 확장 순서입니다. 약 120m 격자마다 처음 확장한 실제 노드 하나를 표시하므로 점의 수는 전체 상태 수와 다릅니다. 점 크기는 지도 축척에 맞추며 세 알고리즘에 같은 크기를 적용합니다. 진한 점은 최근 확장한 위치이고, 완료된 탐색은 누적 영역만 표시합니다. 도로 연결과 통행 규칙을 따라 탐색하므로 원형으로 퍼지거나 모든 점이 이어져 보이지는 않습니다. 세 알고리즘에 같은 누적 확장 횟수를 적용하고, 초반 과정을 볼 수 있도록 재생 위치의 세제곱에 비례해 횟수를 늘립니다. 재생 시간은 실행 속도 비교에 사용할 수 없습니다. 최종 경로는 각 알고리즘의 탐색이 완료되면 나타납니다.</p><p>알고리즘의 실행 순서를 교대하고 질의 순서를 섞었습니다. 자연 발생한 GC와 이상값은 포함합니다. 고정 워밍업만으로 JIT 안정화를 보장하지 않으며, 장비와 실행 환경에 따라 시간은 달라집니다.</p><p id="method-environment">Java {source.environment.javaVersion} · {source.environment.os} · {source.environment.arch} · {source.environment.jvmArguments.join(" ")} · 엔진 기준 커밋 {source.gitRevision.slice(0, 7)}{source.gitDirty || altSource.gitDirty ? " · 커밋되지 않은 엔진 변경 포함" : ""}</p><p>도로 데이터 © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap 기여자 · ODbL</a>. 배경 지도는 <a href="https://openfreemap.org/">OpenFreeMap</a>을 사용하며 인터넷 연결이 필요합니다. 실제 내비게이션을 위한 서비스가 아닌 알고리즘 학습 프로젝트입니다.</p><div className="method-links"><a href={downloadUrl} id="download-data" download="routing-demo-data.json">예제 경로·측정값 JSON 내려받기 ↓</a><a href={`${repo}/blob/main/scripts/benchmark.sh`}>반복 측정 코드 ↗</a></div></div></details></section>
+        <section className="methodology"><details><summary><span className="method-title">측정 조건과 데이터 출처</span></summary><div className="method-content"><p className="comparison-note">시간 배율은 각 알고리즘과 함께 측정한 Dijkstra 중앙값을 기준으로 계산합니다. 간선 검사는 제한으로 제외된 후보를 포함하며 초기 출발 후보는 제외합니다. 최대 큐 크기는 오래된 항목을 포함한 큐 항목 수로, 메모리 바이트가 아닙니다.</p><p id="method-settings">측정일 {source.benchmarkAt.slice(0, 10)} · 독립 JVM {settings.forks}개 × 질의별 워밍업 {settings.warmupRounds}회 + 측정 {settings.measuredRounds}회. Dijkstra/A*는 예제·알고리즘당 {settings.forks * settings.measuredRounds}개 표본이며, 시간은 중앙값입니다.</p><p id="alt-method-settings">ALT 측정일 {altSource.benchmarkAt.slice(0, 10)} · 독립 JVM {altSettings.forks}개 × 워밍업 {altSettings.warmupRounds}회 + 측정 {altSettings.measuredRounds}회, 예제당 {altSettings.forks * altSettings.measuredRounds}개 표본입니다. Dijkstra/A*와 Dijkstra/ALT는 같은 그래프·질의·설정으로 별도 실행한 비교이며, 화면의 Dijkstra 값은 Dijkstra/A* 실행에서 가져왔습니다. 실행 시점 차이가 있어 시간 차이를 알고리즘 효과만으로 단정할 수 없습니다.</p><p id="bidirectional-method">양방향 Dijkstra 측정일 {bidirectionalSource.benchmarkAt.slice(0, 10)} · 독립 JVM {bidirectionalSource.settings.forks}개 × 워밍업 {bidirectionalSource.settings.warmupRounds}회 + 측정 {bidirectionalSource.settings.measuredRounds}회입니다. 별도 실행에서 함께 측정한 Dijkstra를 시간 배율의 기준으로 사용합니다. 역방향 연결 인덱스 준비 {number(Math.min(...reverseRuns.map(run => run.preprocessingMillis)), 1)}–{number(Math.max(...reverseRuns.map(run => run.preprocessingMillis)), 1)}ms · 배열 {number(reverseRuns[0]!.arrayPayloadBytes / 1048576, 1)}MiB이며 객체·Map·임시 메모리는 제외합니다. 인덱스 준비는 질의 시간·할당량에 포함하지 않습니다. 확장·간선 검사 횟수는 양쪽 합계, 최대 큐 크기는 두 큐에 동시에 저장된 항목 수의 합계입니다.</p><p id="landmark-method">ALT는 기준점까지의 거리를 미리 계산해 탐색에 활용합니다. 랜드마크 {landmarkRuns[0]!.count}개 · 거리 테이블 {number(landmarkRuns[0]!.distanceTableBytes / 1048576, 1)}MiB · JVM별 전처리 {number(Math.min(...landmarkRuns.map(run => run.preprocessingMillis)) / 1000, 2)}–{number(Math.max(...landmarkRuns.map(run => run.preprocessingMillis)) / 1000, 2)}초입니다. 표의 ALT 탐색 시간·할당량은 전처리를 제외합니다. 거리 테이블 크기는 객체 부가 비용·임시 메모리를 제외한 값입니다.</p><p>탐색 시간은 탐색과 경로 복원을 포함합니다. 그래프 적재·좌표 연결·HTTP·JSON 변환은 제외합니다. 내려받는 JSON에는 p95와 메모리 할당량도 포함합니다. p95는 측정값의 95%가 이 값 이하인 지점입니다. 메모리는 탐색 중 할당한 힙의 누계이며, 현재·최대 점유량이 아닙니다. 측정 불가 표본은 0으로 바꾸지 않습니다.</p><p>탐색 확산은 성능 측정과 별도로 기록한 실제 상태 확장 순서입니다. 약 120m 격자마다 처음 확장한 실제 노드 하나를 표시하므로 점의 수는 전체 상태 수와 다릅니다. 점 크기는 지도 축척에 맞추며 네 알고리즘에 같은 크기를 적용합니다. 진한 점은 최근 확장한 위치이고, 완료된 탐색은 누적 영역만 표시합니다. 도로 연결과 통행 규칙을 따라 탐색하므로 원형으로 퍼지거나 모든 점이 이어져 보이지는 않습니다. 네 알고리즘에 같은 누적 확장 횟수를 적용하고, 초반 과정을 볼 수 있도록 재생 위치의 세제곱에 비례해 횟수를 늘립니다. 재생 시간은 실행 속도 비교에 사용할 수 없습니다. 최종 경로는 각 알고리즘의 탐색이 완료되면 나타납니다.</p><p>알고리즘의 실행 순서를 교대하고 질의 순서를 섞었습니다. 자연 발생한 GC와 이상값은 포함합니다. 고정 워밍업만으로 JIT 안정화를 보장하지 않으며, 장비와 실행 환경에 따라 시간은 달라집니다.</p><p id="method-environment">Java {source.environment.javaVersion} · {source.environment.os} · {source.environment.arch} · {source.environment.jvmArguments.join(" ")} · 엔진 기준 커밋 {source.gitRevision.slice(0, 7)}{source.gitDirty || altSource.gitDirty || bidirectionalSource.gitDirty ? " · 커밋되지 않은 엔진 변경 포함" : ""}</p><p>도로 데이터 © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap 기여자 · ODbL</a>. 배경 지도는 <a href="https://openfreemap.org/">OpenFreeMap</a>을 사용하며 인터넷 연결이 필요합니다. 실제 내비게이션을 위한 서비스가 아닌 알고리즘 학습 프로젝트입니다.</p><div className="method-links"><a href={downloadUrl} id="download-data" download="routing-demo-data.json">예제 경로·측정값 JSON 내려받기 ↓</a><a href={`${repo}/blob/main/scripts/benchmark.sh`}>반복 측정 코드 ↗</a></div></div></details></section>
       </main>
       <footer><span>Routing Engine · 서울 경로 {examples.length}개</span><span>같은 도로, 같은 통행 규칙으로 비교합니다.</span></footer>
     </div>

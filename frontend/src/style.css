@@ -54,6 +54,8 @@ body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sa
 .algorithm-options legend, .exclusion-toolbar h2 { display: block; font-size: 13px; font-weight: 600; margin: 0 0 8px; }
  .algorithm-options { min-width: 0; border: 0; padding: 0; margin: 0 0 16px; }
 .algorithm-options legend { padding: 0; }
+.comparison-choice { display: grid; gap: 6px; margin-top: 10px; font-size: 12px; }
+.comparison-choice select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; color: inherit; font: inherit; }
 .algorithm-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .algorithm-buttons .compare-option { grid-column: 1 / -1; }
 .algorithm-buttons .compare-option > span { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 10px; }

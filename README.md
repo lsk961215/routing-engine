@@ -1,10 +1,10 @@
 # Routing Engine
 
 같은 서울 도로 그래프에서 경로 탐색 알고리즘별 결과·실행 비용을 비교하는 프로젝트.
-엔진과 API는 Dijkstra·A*·랜드마크 A*(ALT)를 지원한다. 현재 패널에서는 Dijkstra·A*를 개별 선택하거나 **함께 비교**할 수 있다.
+엔진·API·화면은 Dijkstra·A*·랜드마크 A*(ALT)·양방향 Dijkstra를 지원한다. 패널에서 개별 알고리즘을 선택하거나 **함께 비교**에서 Dijkstra 대비 비교 알고리즘을 고른다.
 Java 21·Spring Boot 백엔드와 TypeScript·Vite·MapLibre 프론트로 구성한다.
 
-**[예제 데모 바로 보기](https://lsk961215.github.io/routing-engine/)** — 설치 없이 서울 경로 8개의 지도와 Dijkstra·A* 반복 측정 결과를 비교한다. 저장된 결과를 보여주는 정적 데모이며 실시간 경로 계산은 하지 않는다.
+**[예제 데모 바로 보기](https://lsk961215.github.io/routing-engine/)** — 설치 없이 서울 경로 8개의 지도와 네 알고리즘의 반복 측정 결과를 비교한다. 저장된 결과를 보여주는 정적 데모이며 실시간 경로 계산은 하지 않는다.
 
 ## 실행
 
@@ -116,7 +116,7 @@ Compose는 기존 수동 컨테이너와 다른 이름을 사용하며 기존 `r
 
 공개 주소: **https://lsk961215.github.io/routing-engine/**
 
-간결한 지도 화면에서 예제 8개의 Dijkstra·A*·랜드마크 A*(ALT) 경로와 실제 탐색 영역 확산, 알고리즘별 표시 토글, 거리·시간 중앙값·확장 상태 수를 비교한다. 측정 조건은 접힌 설명에서, p95·메모리 할당량을 포함한 전체 측정값은 JSON 다운로드로 확인한다.
+간결한 지도 화면에서 예제 8개의 Dijkstra·A*·랜드마크 A*(ALT)·양방향 Dijkstra 경로와 실제 탐색 영역 확산, 알고리즘별 표시 토글, 거리·시간 중앙값·확장 상태 수를 비교한다. 측정 조건은 접힌 설명에서, p95·메모리 할당량을 포함한 전체 측정값은 JSON 다운로드로 확인한다.
 실제 엔진에서 추출한 결과를 정적 파일로 제공하므로 `/api/`나 Java 서버를 호출하지 않는다. 배경 지도는 OpenFreeMap에서 불러온다.
 지도 서버 연결에 실패해도 예제 선택과 측정 결과는 볼 수 있다. 선택한 예제는 URL 해시로 공유할 수 있고, 전체 예제 JSON을 내려받을 수 있다.
 
@@ -124,9 +124,9 @@ Compose는 기존 수동 컨테이너와 다른 이름을 사용하며 기존 `r
 **처음부터 재생**·일시정지·슬라이더·처음/끝 버튼으로 실제 확장 순서를 살펴본다. 알고리즘별 체크박스는 영역과 경로를 함께 켜고 끈다.
 **탐색 영역 표시**를 끄면 최종 경로만 비교할 수 있다. 각 최종 경로는 해당 알고리즘의 확장이 끝날 때 나타난다.
 
-세 알고리즘에 같은 누적 확장 횟수를 적용하고, 초반 탐색을 보기 쉽도록 재생 위치의 세제곱에 비례해 횟수를 늘린다.
-재생 시간은 실제 실행 시간이 아니다. 약 120m 격자마다 처음 확장한 실제 노드 하나를 표시하며, 점 개수는 전체 확장 상태 수가 아니다. 점은 지도 축척에 따라 크기를 조절하며 세 알고리즘에 같은 반경을 사용한다. 진한 점은 최근 확장한 위치, 옅은 점은 누적 탐색이다. 도로 연결과 통행 규칙을 따르므로 확산이 원형이거나 연속된 면일 필요는 없다.
-재생 기록은 성능 측정과 별도로 수집한다. Dijkstra/A*와 Dijkstra/ALT는 같은 그래프·질의·설정·환경에서 별도 실행한 반복 측정이며, 화면의 Dijkstra 수치는 Dijkstra/A* 실행에서 가져온다. 각 실행의 측정일·설정·환경과 ALT 전처리 개수·시간·거리 테이블 크기를 내려받는 JSON에 구분해 기록한다. ALT 카드의 탐색 시간은 전처리를 제외하며, 서로 다른 실행의 시간 차이를 알고리즘 효과만으로 단정하지 않는다.
+네 알고리즘에 같은 누적 확장 횟수를 적용하고, 초반 탐색을 보기 쉽도록 재생 위치의 세제곱에 비례해 횟수를 늘린다.
+재생 시간은 실제 실행 시간이 아니다. 약 120m 격자마다 처음 확장한 실제 노드 하나를 표시하며, 점 개수는 전체 확장 상태 수가 아니다. 점은 지도 축척에 따라 크기를 조절하며 네 알고리즘에 같은 반경을 사용한다. 진한 점은 최근 확장한 위치, 옅은 점은 누적 탐색이다. 도로 연결과 통행 규칙을 따르므로 확산이 원형이거나 연속된 면일 필요는 없다.
+재생 기록은 성능 측정과 별도로 수집한다. Dijkstra/A*·Dijkstra/ALT·Dijkstra/양방향은 같은 그래프·질의·설정·환경에서 별도 실행한 반복 측정이며, 화면의 Dijkstra 수치는 Dijkstra/A* 실행에서 가져온다. 각 알고리즘의 시간 배율은 함께 측정한 Dijkstra를 기준으로 계산한다. 각 실행의 측정일·설정·환경, ALT 랜드마크 개수·준비 시간·거리 테이블 크기, 양방향 역방향 인덱스 준비 시간·배열 크기를 내려받는 JSON에 구분해 기록한다. ALT·양방향 카드의 탐색 시간은 준비 비용을 제외하며, 서로 다른 실행의 시간 차이를 알고리즘 효과만으로 단정하지 않는다.
 기록은 예제 선택 시 해당 JSON만 불러온다. 로딩 실패 시 재시도할 수 있고, 예제 변경 전의 늦은 응답은 무시한다.
 
 ```sh
@@ -137,7 +137,7 @@ npm run preview:demo --prefix frontend
 ```
 
 데모는 `frontend/demo/index.html`·`frontend/src/demo.tsx`·`demo.css`를 진입점으로 사용한다.
-데모 UI는 React 19와 [Astryx](https://github.com/meta/astryx)의 Neutral 테마를 사용한다. 경로 선택은 Selector, 표시 토글은 Switch, 재생 조작은 IconButton·Slider 컴포넌트다. 처음·재생/일시정지·끝 이동을 아이콘 그룹으로 묶고, 버튼의 툴팁과 접근 가능한 이름을 제공한다. 데스크톱에서는 지도 옆에 알고리즘별 시간·거리·확장 상태 카드를, 태블릿에서는 지도 아래 세 열, 좁은 모바일에서는 한 열로 배치한다. 터치 화면의 경로 메뉴는 하단 시트로 열린다. 측정 조건은 접어 두었다.
+데모 UI는 React 19와 [Astryx](https://github.com/meta/astryx)의 Neutral 테마를 사용한다. 경로 선택은 Selector, 표시 토글은 Switch, 재생 조작은 IconButton·Slider 컴포넌트다. 처음·재생/일시정지·끝 이동을 아이콘 그룹으로 묶고, 버튼의 툴팁과 접근 가능한 이름을 제공한다. 데스크톱에서는 지도 옆에 알고리즘별 시간·거리·확장 상태 카드를, 태블릿에서는 지도 아래 두 열, 좁은 모바일에서는 한 열로 배치한다. 터치 화면의 경로 메뉴는 하단 시트로 열린다. 측정 조건은 접어 두었다.
 `demo-map.ts`는 지도 수명과 경로 표시를, `demo-exploration.ts`는 요청 취소·확산 재생과 상태 통지를 담당한다. React가 컨트롤 상태를 관리하며 재생 코드가 화면 DOM을 직접 수정하지 않는다.
 Astryx API 문서는 `npm run astryx --prefix frontend -- component Selector Slider Button Switch`로 확인한다. 패키지가 제공하는 CSS와 테마를 사용하므로 별도 StyleX 빌드 플러그인은 필요하지 않다.
 배경 지도는 OpenFreeMap Positron이다. 화면에 사용하는 IBM Plex Sans KR 글꼴은 `frontend/src/fonts/`에서 직접 제공하며, OFL 라이선스는 `frontend/demo/public/fonts/`에 포함한다.
@@ -151,21 +151,23 @@ GitHub 저장소 Settings → Pages의 Source는 **GitHub Actions**로 설정한
 ```sh
 ./scripts/benchmark.sh -PbenchmarkReport=../.runtime/benchmarks/my-demo-run
 ./scripts/benchmark.sh -PbenchmarkAlgorithm=alt -PbenchmarkReport=../.runtime/benchmarks/my-demo-alt-run
+./scripts/benchmark.sh -PbenchmarkAlgorithm=bidirectional -PbenchmarkReport=../.runtime/benchmarks/my-demo-bidirectional-run
 python3 scripts/export-demo.py .runtime/benchmarks/my-demo-run/report.json \
-  --alt-report .runtime/benchmarks/my-demo-alt-run/report.json
+  --alt-report .runtime/benchmarks/my-demo-alt-run/report.json \
+  --bidirectional-report .runtime/benchmarks/my-demo-bidirectional-run/report.json
 ./backend/gradlew -p backend :routing-api:exportDemoTraces
 npm run build:demo --prefix frontend
 ```
 
-`export-demo.py`는 작업량 계측이 있는 v3 보고서 두 개를 요구한다. 모든 표본의 간선 검사·최대 큐 크기와 분포를 실제 API 결과에 대조하며 누락되거나 맞지 않으면 기존 데이터를 교체하지 않는다.
-두 보고서의 그래프·고정 질의 해시, 질의 집합·설정·환경·기준 커밋을 검사한다. `/api/compare`의 기본 비교와 `algorithm=alt` 비교에서 거리·확장 상태·연결 좌표가 벤치마크와 일치하는지 확인한 후 세 알고리즘 데이터를 한 번에 교체한다. 측정 횟수를 바꿀 때는 두 보고서에 같은 설정을 사용한다.
+`export-demo.py`는 작업량 계측이 있는 v3 보고서 세 개를 요구한다. 모든 표본의 간선 검사·최대 큐 크기와 분포를 실제 API 결과에 대조하며 누락되거나 맞지 않으면 기존 데이터를 교체하지 않는다.
+세 보고서의 그래프·고정 질의 해시, 질의 집합·설정·환경·기준 커밋을 검사한다. `/api/compare`의 기본 비교와 `algorithm=alt|bidirectional` 비교에서 거리·확장 상태·연결 좌표가 벤치마크와 일치하는지 확인한 후 네 알고리즘 데이터를 한 번에 교체한다. 측정 횟수를 바꿀 때는 세 보고서에 같은 설정을 사용한다.
 출력 `frontend/src/demo-data.json`은 버전 관리한다. 경로 형상은 API에서, 시간·메모리 통계는 독립 JVM 반복 측정 보고서에서 가져온다.
 출처에 측정일·엔진 커밋·JVM 환경·그래프/질의 해시를 포함한다. API 주소를 바꾸려면 `--api-url http://...`를 지정한다.
 
 `exportDemoTraces`는 `CoordinateRouter.trace`로 각 확장 시점의 노드 좌표와 순서를 기록하고,
 모든 예제의 경로 형상·거리·확장 상태 수가 `demo-data.json`과 일치하는지 확인한 뒤 `frontend/demo/public/traces/`에 저장한다.
 그래프·질의 해시, 데모 JSON 해시, 기록 시각, 좌표/순서 필드와 격자 크기도 포함한다. 샘플링은 오프라인 내보내기에서 수행한다.
-데모 데이터·탐색 기록은 v2이며 예제마다 세 알고리즘을 포함한다. 브라우저는 예전 두 알고리즘 기록을 감지하면 오류와 재시도를 제공한다. 이 파일들도 버전 관리하며, 데모 전용 정적 디렉터리를 사용하므로 실시간 앱의 배포 파일에는 포함되지 않는다.
+데모 데이터·탐색 기록은 v3이며 예제마다 네 알고리즘을 포함한다. 브라우저는 예전 두·세 알고리즘 기록을 감지하면 오류와 재시도를 제공한다. 이 파일들도 버전 관리하며, 데모 전용 정적 디렉터리를 사용하므로 실시간 앱의 배포 파일에는 포함되지 않는다.
 
 정적 빌드 미리보기 실행 후 브라우저 검증:
 
@@ -176,7 +178,7 @@ node scripts/browser-demo-check.cjs
 DEMO_URL=https://lsk961215.github.io/routing-engine/ node scripts/browser-demo-check.cjs
 ```
 
-Astryx 경로 메뉴·키보드 슬라이더·터치 하단 시트·예제 전환·실제 렌더링된 세 알고리즘 확산 색상·ALT 완료 전 초록 점 표시·이전 v1 기록 거부·재생/일시정지/구간 이동·표시 토글·늦은 응답 무시·기록 로딩 재시도·해시 링크·JSON 내려받기·모바일·지도 연결 실패·API 요청 없음·Worker 응답을 확인한다.
+Astryx 경로 메뉴·키보드 슬라이더·터치 하단 시트·예제 전환·실제 렌더링된 네 알고리즘 확산 색상·ALT 완료 전 초록 점 표시·이전 v2 기록 거부·재생/일시정지/구간 이동·표시 토글·늦은 응답 무시·기록 로딩 재시도·해시 링크·JSON 내려받기·모바일·지도 연결 실패·API 요청 없음·Worker 응답을 확인한다.
 스크린샷은 `.runtime/demo-check/`에 저장한다. Playwright 준비는 아래 [검증](#검증)을 따른다.
 
 ### 화면 사용
@@ -209,7 +211,7 @@ A*는 구면거리 하한으로 평가한다. 하한은 간선 비용에 맞춰 
 GC로 회수된 객체도 할당 누계에 포함하며 현재·최대 점유량이나 프로세스 메모리 사용량을 뜻하지 않는다. 지원 JVM에서는 카운터를 초기화 시 활성화하며, 미지원·비활성·권한 제한·가상 스레드는 `null`(화면에는 **측정 불가**)로 표시한다. 실제 0바이트와 구분한다.
 `inspectedEdges`는 확장한 상태에서 나가는 후보 간선을 검사한 횟수다. 통행·회전·via-way 제한으로 제외되는 후보도 포함하고 초기 출발 후보는 제외한다. 같은 간선을 다른 상태에서 다시 검사하면 다시 센다.
 `maxQueueSize`는 우선순위 큐에 동시에 들어 있던 항목 수의 최댓값이다. 초기 출발 후보와 아직 꺼내지 않은 오래된 항목도 포함한다. 고유 상태 수나 메모리 바이트가 아니다. 동일 좌표의 조기 반환은 두 지표 모두 0이며, 같은 간선의 직행 후보로 확장이 없어도 큐 초기화 때문에 최대 큐 크기는 양수일 수 있다.
-두 지표는 Dijkstra·A*·ALT의 공통 탐색에서 요청별로 계측한다. 경로가 없는 비교 결과에도 유지한다.
+두 지표는 Dijkstra·A*·ALT와 양방향 탐색에서 요청별로 계측한다. 경로가 없는 비교 결과에도 유지한다.
 
 시간 배율은 `Dijkstra 시간 / 비교 알고리즘 시간`이며 1 미만이면 느리다. 감소율은 `(1 - 비교값 / Dijkstra 값) × 100%`이며 음수이면 작업량이 늘었다. 기준값이 0이거나 시간 배율의 분모가 0이면 계산 불가로 표시한다.
 실시간 화면은 해당 요청의 값, 벤치마크는 동일 질의·JVM·실행 위치 필터의 중앙값으로 계산한다. 공개 데모는 각 알고리즘과 함께 측정한 Dijkstra의 시간 분포를 `baselineSearchMillis`에 보관하므로 ALT의 배율에도 Dijkstra/ALT 실행의 기준값을 사용한다. 배율은 중앙값의 비율이며 개별 표본 배율의 중앙값이 아니다.
@@ -226,9 +228,9 @@ v3는 조건부 방향을 추가한다. 서울 시험 그래프는 v2이며 파�
 ## API와 한계
 
 - `GET /api/route?startLon=...&startLat=...&endLon=...&endLat=...&algorithm=dijkstra`
-  — `algorithm=dijkstra|astar|alt`(기본 Dijkstra). 경로·거리·연결 좌표·`metrics` 반환. `/route`도 지원한다.
+  — `algorithm=dijkstra|astar|alt|bidirectional`(기본 Dijkstra). 경로·거리·연결 좌표·`metrics` 반환. `/route`도 지원한다.
 - `GET /api/compare?startLon=...&startLat=...&endLon=...&endLat=...`
-  — 공통 `waypoints`·`snapMillis`와 `results`(Dijkstra, A* 순서)를 반환한다. `&algorithm=alt`를 추가하면 Dijkstra와 ALT를 비교한다. 비교 알고리즘은 `astar|alt`만 허용한다.
+  — 공통 `waypoints`·`snapMillis`와 `results`(Dijkstra, A* 순서)를 반환한다. `&algorithm=alt` 또는 `&algorithm=bidirectional`을 추가하면 Dijkstra와 해당 알고리즘을 비교한다. 비교 알고리즘은 `astar|alt|bidirectional`을 허용한다.
   각 결과에는 `algorithm`, `code=Ok|NoRoute`, `routes`, `metrics.searchMillis`, `metrics.expandedStates`, `metrics.allocatedBytes`, `metrics.inspectedEdges`, `metrics.maxQueueSize`가 있다. 개별 경로 API도 같은 지표를 반환한다.
   경로가 없어도 HTTP 200으로 `NoRoute`·빈 `routes`·측정값을 반환한다. 좌표 오류·영역 밖·그래프 미설정은 400·422·503이다.
 - `GET /api/excluded-roads?west=...&south=...&east=...&north=...`
@@ -254,6 +256,25 @@ v3는 조건부 방향을 추가한다. 서울 시험 그래프는 v2이며 파�
 ```sh
 curl 'http://127.0.0.1:8080/api/route?startLon=126.97721885&startLat=37.5690142&endLon=127.0276&endLat=37.4981&algorithm=alt'
 curl 'http://127.0.0.1:8080/api/compare?startLon=126.97721885&startLat=37.5690142&endLon=127.0276&endLat=37.4981&algorithm=alt'
+```
+
+## 양방향 Dijkstra
+
+`algorithm=bidirectional`은 출발지와 도착지 양쪽에서 Dijkstra 탐색을 수행한다. 도로 방향을 뒤집어 통행을 허용하는 것이 아니라, **같은 `(진입 간선, 회전 이력)` 상태 그래프의 전이를 역으로 조회**한다.
+
+- 정방향은 기존 회전·via-way 검사와 같은 전이를 따른다. 역방향은 현재 간선의 출발 노드로 들어오는 간선과 가능한 이전 회전 이력을 열거하고, 정방향 전이가 현재 이력으로 이어지는 경우만 허용한다. 여러 도로에 걸친 `only`/`no` 규칙을 단순히 역순으로 해석하지 않는다.
+- 이력 자동자의 0번 상태와 각 접두사 상태의 마지막 간선으로 후보를 제한한다. 전체 도로 × 전체 이력의 곱 그래프를 만들지 않는다. 일부 도달 불가능한 후보는 역방향에서 방문될 수 있지만 정방향과 같은 상태로 연결될 수 없으므로 경로에 들어가지 않는다.
+- 정방향 초기 비용은 출발 도로의 남은 부분이다. 역방향은 목적 노드에 들어온 상태의 비용 0, 또는 목적 도로 직전 상태의 부분 도로 비용에서 시작한다. 같은 도로의 직행 후보도 유지한다. 역전이 비용은 원래 정방향에서 진입하는 간선의 비용을 사용한다.
+- 만난 상태에서 얻은 경로는 최적 비용의 상한이다. 오래된 큐 항목을 제거한 뒤 **정방향 최소 비용 + 역방향 최소 비용 ≥ 현재 최선 비용**이면 종료한다. 이 조건은 [양방향 Dijkstra 강의 자료](https://www.cs.princeton.edu/courses/archive/spr06/cos423/Handouts/EPP%20shortest%20path%20algorithms.pdf)의 종료 조건을 이력 상태 그래프에 적용한 것이다. 더 작은 큐 키 쪽을 확장하고 동점이면 방향을 교대한다.
+- 양쪽 경로 연결을 불변 레이블로 보관해 이후 거리 갱신이 기존 후보의 복원을 바꾸지 않는다. 만난 간선을 두 번 붙이지 않으며 마지막 부분 간선은 기존 좌표 복원 규칙을 따른다.
+- 역방향 CSR와 희소 이력 후보를 라우터별로 한 번 준비하고 동시 요청이 공유한다. `prepareBidirectional()`은 준비 시간과 배열 용량을 반환한다. 메트릭은 객체·Map·공유 좌표 인덱스·임시 메모리를 제외한 배열 payload이며 최대 점유량이 아니다. 이 준비 비용은 API의 탐색 시간·할당량 및 벤치마크 질의 구간에서 제외하고 보고서 `forks[].bidirectional`에 별도 기록한다. ALT 같은 최단 거리표는 계산하지 않는다.
+- `expandedStates`·`inspectedEdges`는 양쪽 탐색 합계다. 역방향 간선 검사는 확장 상태마다 이전 간선 후보를 한 번 센다. 초기 후보 구성은 제외하며 한 간선에 대해 검사하는 여러 회전 이력은 별도 간선 검사로 세지 않는다. `maxQueueSize`는 두 큐에 **동시에** 저장된 항목 수의 합계 중 최댓값이다.
+
+공개 데모에서는 보라색 점과 짧은 점선 경로로 표시한다. 탐색 기록은 양쪽 확장을 실제 실행 순서대로 합친 것으로, 한 번의 확장마다 누적 번호를 증가시킨다. 두 방향이 같은 공간 격자를 방문하면 최초 방문만 지도에 표시한다. 시간 배율은 같은 실행의 Dijkstra 중앙값을 기준으로 하며, 양방향 탐색이 항상 빠르거나 확장 수가 적은 것은 아니다.
+
+```sh
+./scripts/benchmark.sh -PbenchmarkAlgorithm=bidirectional
+curl 'http://127.0.0.1:8080/api/compare?startLon=126.97721885&startLat=37.5690142&endLon=127.0276&endLat=37.4981&algorithm=bidirectional'
 ```
 
 ## 반복 성능 측정
@@ -291,7 +312,7 @@ JVM은 순차 실행하며 각 JVM의 힙은 `-Xms1g -Xmx2g`, GC는 G1이다. �
 ./scripts/benchmark.sh -Pqueries=data/seoul-benchmark-queries.json -PbenchmarkReport=../.runtime/benchmarks/my-run
 ```
 
-기존 `benchmarkRouting`은 이전/현재 구현을 비교하는 진단 도구다. Dijkstra·A* 또는 Dijkstra·ALT 반복 비교에는 위 스크립트를 사용한다. 공개 데모 데이터 갱신에는 기본 `astar` 보고서와 같은 설정의 `alt` 보고서를 함께 사용한다.
+기존 `benchmarkRouting`은 이전/현재 구현을 비교하는 진단 도구다. Dijkstra 대비 A*·ALT·양방향 Dijkstra 반복 비교에는 위 스크립트를 사용한다. 공개 데모 데이터 갱신에는 기본 `astar` 보고서와 같은 설정의 `alt`·`bidirectional` 보고서를 함께 사용한다.
 
 ## 검증
 

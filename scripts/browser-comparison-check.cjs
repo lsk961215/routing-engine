@@ -105,6 +105,30 @@ const assert = require('node:assert/strict');
       }
     }
     assert.equal(await page.locator('.maplibregl-marker').count(),0);
+    await selectMode('compare');
+    await selectTestRoute(page, {search:false});
+    for (const [algorithm,name] of [['alt','랜드마크 A* (ALT)'],['bidirectional','양방향 Dijkstra']]) {
+      await page.selectOption('#comparison-algorithm', algorithm);
+      const pendingPair=page.waitForResponse(r=>r.url().includes('/api/compare?'));
+      await page.click('#search-route');const pair=await (await pendingPair).json();await visible();
+      assert.deepEqual(pair.results.map(r=>r.algorithm),['dijkstra',algorithm]);
+      assert.equal(await page.textContent('#challenger-name'),name);
+      assert.ok(Math.abs(pair.results[0].routes[0].distance-pair.results[1].routes[0].distance)<1e-6);
+      assert.equal(await page.textContent('#astar-states'),pair.results[1].metrics.expandedStates.toLocaleString('en-US'));
+      assert.equal(await page.textContent('#astar-edges'),pair.results[1].metrics.inspectedEdges.toLocaleString('en-US'));
+      await page.uncheck('#show-astar');
+      assert.equal(await page.evaluate(()=>window.__routeTestMap.getLayoutProperty('route-astar','visibility')),'none');
+      await page.check('#show-astar');
+      await page.setViewportSize({width:390,height:844});
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+      await page.setViewportSize({width:1440,height:1000});
+    }
+    await selectMode('bidirectional');
+    const pendingSingle=page.waitForResponse(r=>r.url().includes('/api/route?'));
+    await page.click('#search-route');const single=await (await pendingSingle).json();
+    await page.waitForFunction(()=>document.querySelector('#result-algorithm').textContent==='양방향 Dijkstra');
+    assert.equal(single.metrics.algorithm,'bidirectional');
+    assert.equal(await page.textContent('#max-queue-size'),single.metrics.maxQueueSize.toLocaleString('en-US'));
     assert.deepEqual(errors,[]);
     console.log('Comparison PASS: shared results, both geometries, visibility, mobile, no route, errors, cancellation, stale responses');
   } finally { await browser.close(); }

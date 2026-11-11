@@ -26,6 +26,7 @@ public final class RoutingGraph {
     }
     public List<SequenceRestriction> sequenceRestrictions() { return sequences; }
     public int restrictionState(int state,int edge) { return automaton.advance(state,edge); }
+    Map<Integer,int[]> restrictionHistories() { return automaton.historiesByLastEdge(); }
 
 
     public RoutingGraph(long[] ids, double[] lat, double[] lon, int[] offsets,

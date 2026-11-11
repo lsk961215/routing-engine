@@ -26,6 +26,7 @@ public class RoutingService {
             case "dijkstra" -> RoutingAlgorithm.DIJKSTRA;
             case "astar" -> RoutingAlgorithm.ASTAR;
             case "alt" -> RoutingAlgorithm.ALT;
+            case "bidirectional" -> RoutingAlgorithm.BIDIRECTIONAL;
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unknown routing algorithm");
         };
         validate(startLon,startLat);validate(endLon,endLat);
@@ -44,12 +45,13 @@ public class RoutingService {
     public ComparisonResponse compare(double startLon,double startLat,double endLon,double endLat) {
         return compare(startLon,startLat,endLon,endLat,"astar");
     }
-    /** Dijkstra remains the baseline; callers can choose the A* variant to compare. */
+    /** Dijkstra remains the baseline; callers can choose the challenger to compare. */
     public ComparisonResponse compare(double startLon,double startLat,double endLon,double endLat,String algorithm) {
         var challenger=switch(algorithm) {
             case "astar" -> RoutingAlgorithm.ASTAR;
             case "alt" -> RoutingAlgorithm.ALT;
-            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Comparison algorithm must be astar or alt");
+            case "bidirectional" -> RoutingAlgorithm.BIDIRECTIONAL;
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Comparison algorithm must be astar, alt or bidirectional");
         };
         validate(startLon,startLat);validate(endLon,endLat);
         if(router==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"Graph not configured");

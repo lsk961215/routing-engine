@@ -44,7 +44,7 @@ public final class AlgorithmBenchmark {
     public record Environment(String javaVersion,String vm,String os,String arch,int availableProcessors,
                               long maxHeapBytes,List<String> jvmArguments,List<String> garbageCollectors) {}
     public record ForkResult(int fork,String startedAt,String graphSha256,String queriesSha256,Environment environment,
-                             double initializationMillis,CoordinateRouter.LandmarkMetrics landmarks,Gc measuredGc,List<Summary> summaries,List<Sample> samples) {}
+                             double initializationMillis,CoordinateRouter.LandmarkMetrics landmarks,CoordinateRouter.BidirectionalMetrics bidirectional,Gc measuredGc,List<Summary> summaries,List<Sample> samples) {}
     public record Report(int version,String generatedAt,String gitRevision,String gitDirty,Settings settings,
                          QuerySet querySet,Map<String,String> methodology,List<ForkResult> forks,List<Summary> summaries) {}
     @FunctionalInterface interface PairRunner {
@@ -57,7 +57,7 @@ public final class AlgorithmBenchmark {
                     new Settings(Integer.parseInt(args[4]),Integer.parseInt(args[5]),1,Long.parseLong(args[7])),Integer.parseInt(args[6]),challenger(args.length==9?args[8]:"astar"));
             return;
         }
-        if(args.length!=7 && args.length!=8)throw new IllegalArgumentException("graph queries output warmupRounds measuredRounds forks seed [astar|alt]");
+        if(args.length!=7 && args.length!=8)throw new IllegalArgumentException("graph queries output warmupRounds measuredRounds forks seed [astar|alt|bidirectional]");
         var challenger=challenger(args.length==8?args[7]:"astar");
         var graph=Path.of(args[0]).toAbsolutePath();var queries=Path.of(args[1]).toAbsolutePath();
         var output=Path.of(args[2]).toAbsolutePath();
@@ -91,14 +91,14 @@ public final class AlgorithmBenchmark {
         var samples=forks.stream().flatMap(f->f.samples().stream()).toList();
         var report=new Report(3,Instant.now().toString(),git("rev-parse","HEAD"),git("status","--porcelain"),settings,querySet,
                 Map.of("algorithms","dijkstra + "+name(challenger),
-                        "landmarks","ALT: 8 deterministic farthest landmarks in the largest strongly connected component (weak component fallback for acyclic graphs); forward/reverse distances on the turn-relaxed directed graph; table payload and preprocessing time reported separately, not peak memory",
-                        "scope","Search and path reconstruction; snapping, graph/index loading, landmark preprocessing, JSON, HTTP and warmup excluded",
+                        "landmarks","ALT: 8 deterministic farthest landmarks in the largest strongly connected component (weak component fallback for acyclic graphs); forward/reverse distances on the turn-relaxed directed graph; table payload and preprocessing time reported separately, not peak memory; bidirectional: reverse CSR and sparse history candidates prepared before warmup, array payload only (objects/maps excluded), no shortest-distance tables",
+                        "scope","Search and path reconstruction; snapping, graph/index loading, landmark preprocessing, reverse-index preparation, JSON, HTTP and warmup excluded",
                         "order","Sequential paired runs, first algorithm alternates per query each round; query order shuffled with seed + fork",
                         "statistics","Median: midpoint for even N; p95: nearest rank ceil(0.95*N); population standard deviation; no outlier removal",
                         "aggregation","Per query only, equal measured sample count per fork; first/second positions also reported",
                         "gc","Natural GC included in timings; no forced GC; measured-phase GC deltas recorded per fork",
                         "allocation","Current-thread heap bytes allocated during search and path reconstruction via ThreadMXBean; approximate, not retained or peak memory; null when unavailable; null samples excluded from allocation distributions, whose counts show availability",
-                        "work","inspectedEdges: outgoing candidates visited before restrictions, excluding seeds; maxQueueSize: peak physical priority queue entries including seeds and obsolete labels, not bytes; improvements compare per-query medians with Dijkstra under the same filters, undefined for a zero denominator",
+                        "work","inspectedEdges: outgoing candidates visited before restrictions, excluding seeds; maxQueueSize: peak physical priority queue entries including seeds and obsolete labels, both queues combined for bidirectional, not bytes; bidirectional expandedStates/inspectedEdges sum both directions; improvements compare per-query medians with Dijkstra under the same filters, undefined for a zero denominator",
                         "limits","Local wall-clock measurements; fixed warmup does not prove JIT convergence; OS activity and thermal effects remain"),
                 forks,summarize(samples));
         JSON.writerWithDefaultPrettyPrinter().writeValue(output.resolve("report.json").toFile(),report);
@@ -120,6 +120,7 @@ public final class AlgorithmBenchmark {
         var router=new CoordinateRouter(RoutingGraph.read(graphPath));
         double initMillis=(System.nanoTime()-begin)/1e6;
         var landmarks=challenger==RoutingAlgorithm.ALT?router.prepareLandmarks():null;
+        var bidirectional=challenger==RoutingAlgorithm.BIDIRECTIONAL?router.prepareBidirectional():null;
         var measurement=measure(queries,settings,fork,challenger,(query,first)->router.compare(
                 query.startLon(),query.startLat(),query.endLon(),query.endLat(),first,
                 first==RoutingAlgorithm.DIJKSTRA?challenger:RoutingAlgorithm.DIJKSTRA));
@@ -131,14 +132,14 @@ public final class AlgorithmBenchmark {
         if(!graphHash.equals(sha256(graphPath)) || !queryHash.equals(sha256(queriesPath)))
             throw new IllegalStateException("Input files changed during measurement");
         JSON.writerWithDefaultPrettyPrinter().writeValue(output.toFile(),new ForkResult(fork,started,graphHash,queryHash,
-                environment,initMillis,landmarks,measurement.measuredGc(),summarize(measurement.samples()),measurement.samples()));
+                environment,initMillis,landmarks,bidirectional,measurement.measuredGc(),summarize(measurement.samples()),measurement.samples()));
     }
 
     static Measurement measure(QuerySet queries,Settings settings,int fork,PairRunner runner) {
         return measure(queries,settings,fork,RoutingAlgorithm.ASTAR,runner);
     }
     static Measurement measure(QuerySet queries,Settings settings,int fork,RoutingAlgorithm challenger,PairRunner runner) {
-        if(challenger!=RoutingAlgorithm.ASTAR && challenger!=RoutingAlgorithm.ALT)throw new IllegalArgumentException("A* challenger required");
+        if(challenger!=RoutingAlgorithm.ASTAR && challenger!=RoutingAlgorithm.ALT && challenger!=RoutingAlgorithm.BIDIRECTIONAL)throw new IllegalArgumentException("Non-baseline challenger required");
         validateQueries(queries);
         var samples=new ArrayList<Sample>();
         runRounds(queries,settings.warmupRounds(),fork,settings.seed(),challenger,runner,null);
@@ -203,7 +204,7 @@ public final class AlgorithmBenchmark {
     static List<Summary> summarize(List<Sample> samples) {
         var summaries=new ArrayList<Summary>();
         for(var query:samples.stream().map(Sample::queryId).distinct().sorted().toList()) {
-            for(var algorithm:List.of("dijkstra","astar","alt")) {
+            for(var algorithm:List.of("dijkstra","astar","alt","bidirectional")) {
                 var selected=samples.stream().filter(s->s.queryId().equals(query) && s.algorithm().equals(algorithm)).toList();
                 if(selected.isEmpty())continue;
                 summaries.add(new Summary(query,algorithm,distribution(selected.stream().mapToDouble(Sample::searchMillis).toArray()),
@@ -236,7 +237,8 @@ public final class AlgorithmBenchmark {
         return switch(name) {
             case "astar" -> RoutingAlgorithm.ASTAR;
             case "alt" -> RoutingAlgorithm.ALT;
-            default -> throw new IllegalArgumentException("Benchmark algorithm must be astar or alt");
+            case "bidirectional" -> RoutingAlgorithm.BIDIRECTIONAL;
+            default -> throw new IllegalArgumentException("Benchmark algorithm must be astar, alt or bidirectional");
         };
     }
     private static String sha256(Path path) throws Exception {

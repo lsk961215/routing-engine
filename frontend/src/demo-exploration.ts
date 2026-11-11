@@ -32,7 +32,7 @@ export type Visibility = Record<Algorithm, boolean> & { exploration: boolean };
 
 
 function validate(data: TraceData, example: Example, graphSha256: string) {
-  if (data.version !== 2 || data.exampleId !== example.id || data.graphSha256 !== graphSha256 || data.traces.length !== algorithms.length || data.cellMetres !== 120)
+  if (data.version !== 3 || data.exampleId !== example.id || data.graphSha256 !== graphSha256 || data.traces.length !== algorithms.length || data.cellMetres !== 120)
     throw new Error("예제와 탐색 기록이 일치하지 않습니다.");
   for (const algorithm of algorithms) {
     const trace = data.traces.find(item => item.algorithm === algorithm);
@@ -60,7 +60,7 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
   let disposed = false;
   let status: PlaybackState["status"] = "loading";
   let message = "";
-  let visibility: Visibility = { dijkstra: true, astar: true, alt: true, exploration: true };
+  let visibility: Visibility = { dijkstra: true, astar: true, alt: true, bidirectional: true, exploration: true };
 
   // A shared counter, eased to keep short A* searches visible; never elapsed compute time.
   function step() { return Math.floor(maximum * progress ** 3); }

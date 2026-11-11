@@ -14,8 +14,8 @@ class AlgorithmComparisonTest {
                 comparison.results().stream().map(CoordinateRouter.SearchResult::algorithm).toList());
         for(var algorithm:RoutingAlgorithm.values()) {
             var measured=router.search(a[0],a[1],b[0],b[1],algorithm);
-            var pair=algorithm==RoutingAlgorithm.ALT
-                    ?router.compare(a[0],a[1],b[0],b[1],RoutingAlgorithm.DIJKSTRA,RoutingAlgorithm.ALT):comparison;
+            var pair=algorithm!=RoutingAlgorithm.DIJKSTRA && algorithm!=RoutingAlgorithm.ASTAR
+                    ?router.compare(a[0],a[1],b[0],b[1],RoutingAlgorithm.DIJKSTRA,algorithm):comparison;
             var together=pair.results().stream().filter(r->r.algorithm()==algorithm).findFirst().orElseThrow();
             assertEquals(measured.route(),together.route());
             assertEquals(measured.expandedStates(),together.expandedStates());

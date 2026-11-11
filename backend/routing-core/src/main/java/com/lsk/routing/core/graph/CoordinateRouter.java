@@ -11,7 +11,22 @@ public final class CoordinateRouter {
     private final double heuristicScale;
     private final int landmarkCount;
     private volatile LandmarkIndex landmarks;
+    private volatile ReverseSearchIndex reverse;
     public record LandmarkMetrics(int count,long distanceTableBytes,double preprocessingMillis) {}
+    public record BidirectionalMetrics(long arrayPayloadBytes,double preprocessingMillis) {}
+
+    public BidirectionalMetrics prepareBidirectional() {
+        var index=reverseIndex();
+        return new BidirectionalMetrics(index.arrayPayloadBytes(),index.preprocessingMillis());
+    }
+    private ReverseSearchIndex reverseIndex() {
+        var prepared=reverse;
+        if(prepared==null)synchronized(this) {
+            prepared=reverse;
+            if(prepared==null)reverse=prepared=new ReverseSearchIndex(graph);
+        }
+        return prepared;
+    }
 
     /** Build once, outside query timing/allocation measurements. Safe for concurrent first use. */
     public LandmarkMetrics prepareLandmarks() {
@@ -28,6 +43,7 @@ public final class CoordinateRouter {
     }
     private void prepare(RoutingAlgorithm algorithm) {
         if(algorithm==RoutingAlgorithm.ALT)landmarkIndex();
+        if(algorithm==RoutingAlgorithm.BIDIRECTIONAL)reverseIndex();
     }
     private final int[] sources;
     private final Segment[] edgeSegments;
@@ -247,6 +263,9 @@ public final class CoordinateRouter {
         }
         var partial=new HashMap<Integer,Double>();
         if(endNode<0)for(int edge:segmentEdges.get(end.segment.key))partial.put(edge,graph.distanceMetres(edge)*fractionAlong(end,edge));
+        if(algorithm==RoutingAlgorithm.BIDIRECTIONAL)
+            return BidirectionalSearch.route(graph,reverseIndex(),sources,seeds,endNode,partial,direct,allowed,metrics)
+                    .map(path->result(start,end,path.distance(),path.edges()));
         // Bound distance to a virtual destination through its incoming edge's source.
         // This also remains admissible when partial edge costs use linear interpolation.
         var landmark=algorithm==RoutingAlgorithm.ALT?landmarkIndex():null;

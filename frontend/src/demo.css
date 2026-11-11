@@ -11,6 +11,7 @@
   --blue: #2563eb;
   --orange: #c65d21;
   --green: #15803d;
+  --purple: #7c3aed;
   --muted: #637084;
   --line: #e2e7ed;
 }
@@ -41,6 +42,7 @@ h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spac
 .algorithm-help .info-dot { fill: currentColor; stroke: none; }
 .algorithm-toggle.blue { --color-accent: #2563eb; --color-text-accent: #2563eb; }
 .algorithm-toggle.green { --color-accent: #15803d; --color-text-accent: #15803d; }
+.algorithm-toggle.purple { --color-accent: #7c3aed; --color-text-accent: #7c3aed; }
 .algorithm-toggle.orange { --color-accent: #c65d21; --color-text-accent: #c65d21; }
 .area-toggle { border-left: 1px solid var(--line); padding-left: 24px; }
 .experiment-grid { display: grid; grid-template-columns: minmax(0, 1fr) 274px; border-top: 1px solid var(--line); }
@@ -69,12 +71,14 @@ h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spac
 .results-heading h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .results-heading > span { font-size: 10px; color: var(--muted); }
 .algorithm-card { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: white; --algorithm: var(--blue); }
+.algorithm-card.bidirectional { --algorithm: var(--purple); }
 .algorithm-card.alt { --algorithm: var(--green); }
 .algorithm-card.astar { --algorithm: var(--orange); }
 .algorithm-heading h3 { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; margin: 0; }
 .algorithm-heading > span { display: block; margin-top: 3px; font-size: 11px; color: var(--muted); }
 .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .legend-dot.blue { background: var(--blue); }
+.legend-dot.purple { background: var(--purple); }
 .legend-dot.green { background: var(--green); }
 .legend-dot.orange { background: var(--orange); }
 .time-metric { display: flex; align-items: baseline; gap: 6px; margin-top: 16px; font-variant-numeric: tabular-nums; }
@@ -104,7 +108,7 @@ footer { display: flex; justify-content: space-between; gap: 16px; margin: 18px 
   .visibility-controls { gap: 14px; }
   .area-toggle { padding-left: 14px; }
   .experiment-grid { grid-template-columns: minmax(0, 1fr); }
-  .results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; }
+  .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; }
   .results-heading, .comparison-note { grid-column: 1 / -1; }
   .comparison-note > span { display: inline; margin-left: 10px; }
   .map-panel { height: 440px; }

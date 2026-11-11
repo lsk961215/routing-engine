@@ -1,5 +1,5 @@
 /** Shared algorithm labels, explanations and map styles. */
-export const algorithms = ["dijkstra", "astar", "alt"] as const;
+export const algorithms = ["dijkstra", "astar", "alt", "bidirectional"] as const;
 export type Algorithm = typeof algorithms[number];
 export const algorithmInfo = {
   dijkstra: {
@@ -19,6 +19,12 @@ export const algorithmInfo = {
     priority: "지금까지 이동한 거리 + 랜드마크를 활용한 남은 거리 추정값",
     explanation: "A*의 남은 거리 추정을 강화한 방식입니다. 여러 기준점(랜드마크)과 각 지점 사이의 도로 거리를 미리 계산하고, 거리 차이와 삼각부등식으로 남은 거리의 하한을 구합니다. 이 데모는 직선거리 하한과 비교해 더 큰 값을 사용합니다.",
     tradeoff: "하한은 실제 남은 거리보다 크지 않은 값입니다. 도로 연결 정보를 활용해 탐색을 더 줄일 수 있지만, 거리표를 만드는 시간과 저장할 메모리가 필요합니다. 표시된 탐색 시간에는 이 전처리 시간이 포함되지 않습니다.",
+  },
+  bidirectional: {
+    label: "양방향", name: "양방향 Dijkstra", colorClass: "purple", color: "#7c3aed", pointColor: "#a855f7", description: "출발지와 도착지에서 함께 탐색", width: 3.5,
+    priority: "양쪽 후보 중 누적 거리가 더 작은 쪽",
+    explanation: "출발지에서는 정방향으로, 도착지에서는 도로를 거슬러 탐색합니다. 두 탐색이 같은 진입 도로와 회전 이력에서 연결되면 전체 경로의 후보가 됩니다. 처음 만났다고 바로 끝내지 않고, 더 짧은 경로가 남아 있지 않은지 확인합니다.",
+    tradeoff: "양쪽에서 탐색해 범위를 줄일 수 있지만, 경로에 따라 효과는 다릅니다. 거리표 대신 역방향 도로 연결 인덱스를 준비합니다. 확장·간선 검사 횟수는 양쪽 합계이고, 최대 큐 크기는 두 큐에 동시에 저장된 항목 수의 합계입니다. 보라색 탐색 점은 양쪽의 실제 확장 순서를 함께 보여 줍니다.",
   },
 } satisfies Record<Algorithm, {
   label: string; name: string; colorClass: string; color: string; pointColor: string; description: string; width: number;

@@ -42,7 +42,9 @@ interface OsrmResponse {
   metrics: { algorithm: string; snapMillis: number; searchMillis: number; expandedStates: number; allocatedBytes: number | null; inspectedEdges: number; maxQueueSize: number };
 }
 
-type Algorithm = "dijkstra" | "astar";
+type Algorithm = "dijkstra" | "astar" | "alt" | "bidirectional";
+const algorithmNames: Record<Algorithm, string> = { dijkstra: "Dijkstra", astar: "A*", alt: "랜드마크 A* (ALT)", bidirectional: "양방향 Dijkstra" };
+const algorithmColors: Record<Algorithm, string> = { dijkstra: "#2563eb", astar: "#c2410c", alt: "#15803d", bidirectional: "#7c3aed" };
 interface ComparisonResponse {
   code: string;
   waypoints: OsrmWaypoint[];
@@ -74,8 +76,13 @@ mapElement.innerHTML = `
       <div class="algorithm-buttons">
         <label><input type="radio" name="algorithm" value="dijkstra" checked><span><strong>Dijkstra</strong><small>기준 탐색</small></span></label>
         <label><input type="radio" name="algorithm" value="astar"><span><strong>A*</strong><small>목적지 방향 탐색</small></span></label>
-        <label class="compare-option"><input type="radio" name="algorithm" value="compare"><span><strong>함께 비교</strong><small>Dijkstra · A*</small></span></label>
+        <label><input type="radio" name="algorithm" value="alt"><span><strong>ALT</strong><small>랜드마크 거리 활용</small></span></label>
+        <label><input type="radio" name="algorithm" value="bidirectional"><span><strong>양방향 Dijkstra</strong><small>출발·도착 양쪽 탐색</small></span></label>
+        <label class="compare-option"><input type="radio" name="algorithm" value="compare"><span><strong>함께 비교</strong><small>Dijkstra 기준</small></span></label>
       </div>
+      <label id="compare-choice" class="comparison-choice" hidden>비교 알고리즘
+        <select id="comparison-algorithm"><option value="astar">A*</option><option value="alt">랜드마크 A* (ALT)</option><option value="bidirectional">양방향 Dijkstra</option></select>
+      </label>
     </fieldset>
     <div class="search-actions"><button id="search-route" class="primary" disabled>경로 탐색</button><button id="cancel-route" hidden>취소</button></div>
     <p id="routing-status" class="status" role="status" aria-live="polite">지도를 불러오는 중입니다.</p>
@@ -83,7 +90,7 @@ mapElement.innerHTML = `
     <section id="comparison-info" class="comparison-info hidden" aria-label="알고리즘 비교 결과">
       <table>
         <caption>탐색 결과 비교</caption>
-        <thead><tr><th scope="col">항목</th><th scope="col"><span class="route-key dijkstra-key" aria-hidden="true"></span>Dijkstra</th><th scope="col"><span class="route-key astar-key" aria-hidden="true"></span>A*</th></tr></thead>
+        <thead><tr><th scope="col">항목</th><th scope="col"><span class="route-key dijkstra-key" aria-hidden="true"></span>Dijkstra</th><th scope="col"><span id="challenger-key" class="route-key astar-key" aria-hidden="true"></span><span id="challenger-name">A*</span></th></tr></thead>
         <tbody>
           <tr><th scope="row">결과</th><td id="dijkstra-code">-</td><td id="astar-code">-</td></tr>
           <tr><th scope="row">거리</th><td id="dijkstra-distance">-</td><td id="astar-distance">-</td></tr>
@@ -98,7 +105,7 @@ mapElement.innerHTML = `
         </tbody>
       </table>
       <p id="comparison-snap"></p>
-      <small>이번 요청의 측정값 · Dijkstra → A* 순서<br>배율·감소율은 Dijkstra 기준. 1× 미만 또는 음수는 성능 저하입니다.</small>
+      <small><span id="comparison-order">이번 요청의 측정값 · Dijkstra → A* 순서</span><br>배율·감소율은 Dijkstra 기준. 1× 미만 또는 음수는 성능 저하입니다.</small>
     </section>
     <section class="exclusion-toolbar" aria-labelledby="map-options-title">
       <h2 id="map-options-title">지도 표시</h2>
@@ -123,6 +130,7 @@ let ready = false;
 const button = (id: string) => document.querySelector<HTMLButtonElement>(`#${id}`)!;
 const status = () => document.querySelector<HTMLElement>("#routing-status")!;
 function updatePanel() {
+  document.querySelector<HTMLElement>("#compare-choice")!.hidden = selectedMode() !== "compare";
   for (const [kind, point] of [["start", startPoint], ["end", endPoint]] as const) {
     document.querySelector<HTMLElement>(`#${kind}-road`)!.textContent = point ? `${point[1].toFixed(6)}, ${point[0].toFixed(6)}` : "지도에서 선택";
     button(`select-${kind}`).setAttribute("aria-pressed", String(selection === kind));
@@ -278,7 +286,7 @@ async function findRoute() {
     startLon: String(startPoint[0]), startLat: String(startPoint[1]),
     endLon: String(endPoint[0]), endLat: String(endPoint[1]),
   });
-  if (mode !== "compare") params.set("algorithm", mode);
+  params.set("algorithm", mode === "compare" ? document.querySelector<HTMLSelectElement>("#comparison-algorithm")!.value : mode);
   try {
     const response = await fetch(`/api/${mode === "compare" ? "compare" : "route"}?${params}`, { signal: request.signal });
     if (!response.ok) {
@@ -293,7 +301,7 @@ async function findRoute() {
     if (mode === "compare") {
       showComparison(data as ComparisonResponse);
     } else {
-      drawRoute(data.routes[0].geometry);
+      drawRoute(data.routes[0].geometry, "route", algorithmColors[mode as Algorithm]);
       showRouteInfo(data as OsrmResponse);
       // Keep selected input coordinates stable; the route geometry shows snapped endpoints.
       status.textContent = "선택 지점 근처 도로 사이의 경로입니다. 지점을 바꾸려면 패널에서 출발지 또는 도착지를 눌러주세요.";
@@ -358,9 +366,14 @@ function formatAllocation(bytes: number | null | undefined) {
 
 function showComparison(data: ComparisonResponse) {
   const baseline = data.results.find(item => item.algorithm === "dijkstra")?.metrics;
-  if (!baseline) throw new Error("Dijkstra 기준값이 없습니다.");
+  const challenger = data.results.find(item => item.algorithm !== "dijkstra");
+  if (!baseline || !challenger) throw new Error("비교 결과가 완전하지 않습니다.");
+  const challengerName = algorithmNames[challenger.algorithm];
+  document.querySelector("#challenger-name")!.textContent = challengerName;
+  document.querySelector<HTMLElement>("#challenger-key")!.style.borderColor = algorithmColors[challenger.algorithm];
+  document.querySelector("#comparison-order")!.textContent = `이번 요청의 측정값 · Dijkstra → ${challengerName} 순서`;
   for (const algorithm of ["dijkstra", "astar"] as const) {
-    const result = data.results.find(item => item.algorithm === algorithm);
+    const result = algorithm === "dijkstra" ? data.results.find(item => item.algorithm === "dijkstra") : challenger;
     if (!result) throw new Error("비교 결과가 완전하지 않습니다. 다시 시도해 주세요.");
     const route = result.routes[0];
     const found = result.code === "Ok" && !!route;
@@ -376,12 +389,13 @@ function showComparison(data: ComparisonResponse) {
     text("allocation", formatAllocation(result.metrics.allocatedBytes));
     const toggle = document.querySelector<HTMLInputElement>(`#show-${algorithm}`)!;
     toggle.checked = found; toggle.disabled = !found;
-    if (found) drawRoute(route.geometry, `route-${algorithm}`, algorithm === "dijkstra" ? "#2563eb" : "#c2410c", algorithm === "astar");
+    toggle.setAttribute("aria-label", `${algorithmNames[result.algorithm]} 경로 표시`);
+    if (found) drawRoute(route.geometry, `route-${algorithm}`, algorithmColors[result.algorithm], algorithm === "astar");
   }
   document.querySelector("#comparison-snap")!.textContent = `공통 좌표 연결 ${data.snapMillis.toFixed(2)} ms`;
   document.querySelector("#comparison-info")!.classList.remove("hidden");
   const foundCount = data.results.filter(result => result.code === "Ok").length;
-  status().textContent = foundCount === 2 ? "파란 실선 Dijkstra · 주황 점선 A*. 경로가 겹치면 하나씩 표시해 보세요."
+  status().textContent = foundCount === 2 ? `실선 Dijkstra · 점선 ${challengerName}. 경로가 겹치면 하나씩 표시해 보세요.`
     : foundCount === 0 ? "두 지점을 연결하는 경로가 없습니다." : "알고리즘별 경로 유무가 다릅니다. 비교 결과를 확인해 주세요.";
 }
 
@@ -410,7 +424,7 @@ function showRouteInfo(data: OsrmResponse) {
   routeDistance.textContent = distanceText;
   routeDuration.textContent = durationText;
 
-  document.querySelector("#result-algorithm")!.textContent = data.metrics.algorithm === "astar" ? "A*" : "Dijkstra";
+  document.querySelector("#result-algorithm")!.textContent = algorithmNames[data.metrics.algorithm as Algorithm];
   document.querySelector("#search-time")!.textContent = `${data.metrics.searchMillis.toFixed(2)} ms`;
   document.querySelector("#expanded-states")!.textContent = data.metrics.expandedStates.toLocaleString();
   document.querySelector("#inspected-edges")!.textContent = data.metrics.inspectedEdges?.toLocaleString() ?? "측정 불가";

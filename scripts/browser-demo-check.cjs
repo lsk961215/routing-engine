@@ -42,8 +42,8 @@ fs.mkdirSync(output, { recursive: true });
     };
     await checkAutoplay();
     assert.equal(await page.getByRole('switch', {name: 'ALT', exact: true}).isChecked(), true);
-    assert.equal(data.version, 2);
-    assert.ok(data.examples.every(example => example.routes.map(r => r.algorithm).join(',') === 'dijkstra,astar,alt'));
+    assert.equal(data.version, 3);
+    assert.ok(data.examples.every(example => example.routes.map(r => r.algorithm).join(',') === 'dijkstra,astar,alt,bidirectional'));
     await page.click('#example');
     assert.equal(await page.getByRole('option').count(), 8);
     await page.keyboard.press('Escape');
@@ -71,17 +71,23 @@ fs.mkdirSync(output, { recursive: true });
         const canvas = document.createElement('canvas'); canvas.width = image.width; canvas.height = image.height;
         const ctx = canvas.getContext('2d'); ctx.drawImage(image, 0, 0);
         const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        let blue = 0, orange = 0, green = 0;
+        let blue = 0, orange = 0, green = 0, purple = 0;
         for (let i = 0; i < pixels.length; i += 4) {
           const [r,g,b] = [pixels[i],pixels[i+1],pixels[i+2]];
           if (b > r + 40 && b > g + 15 && b > 120) blue++;
           if (r > 140 && r > g * 1.35 && g > b * 1.3) orange++;
+          if (r > g + 25 && b > r + 20 && b > 140) purple++;
           if (g > r + 25 && g > b + 25 && g > 90) green++;
         }
-        return {blue,orange,green};
+        return {blue,orange,green,purple};
       }, buffer.toString('base64'));
     };
     await page.waitForTimeout(500);
+    const fourColors = await colors();
+    // Broad bidirectional exploration can cover the sparse A*/ALT points. Verify
+    // their pixels independently, and verify the new layer separately below.
+    await page.getByRole('switch', {name: '양방향', exact: true}).uncheck();
+    await page.waitForTimeout(200);
     const fullColors = await colors();
     await page.click('#trace-start');
     assert.equal(await page.getAttribute('#trace-position', 'aria-valuenow'), '0');
@@ -90,6 +96,7 @@ fs.mkdirSync(output, { recursive: true });
     assert.ok(fullColors.blue > emptyColors.blue + 1000, JSON.stringify({fullColors,emptyColors}));
     assert.ok(fullColors.orange > emptyColors.orange + 100, JSON.stringify({fullColors,emptyColors}));
     assert.ok(fullColors.green > emptyColors.green + 40, JSON.stringify({fullColors,emptyColors}));
+    assert.ok(fourColors.purple > emptyColors.purple + 100, JSON.stringify({fourColors,emptyColors}));
     // Before ALT completes, green pixels can only come from its exploration points, not its final route.
     await page.locator('#trace-position').press('Home');
     for (let step = 0; step < 10; step++) await page.locator('#trace-position').press('PageUp');
@@ -101,6 +108,19 @@ fs.mkdirSync(output, { recursive: true });
     const withoutAlt = await colors();
     assert.ok(earlyAlt.green > withoutAlt.green + 10, JSON.stringify({earlyAlt,withoutAlt}));
     await page.getByRole('switch', {name: 'ALT', exact: true}).check();
+    // A few hundred bidirectional expansions can remain underneath the endpoint
+    // markers at this zoom. Inspect a later step while its final route is hidden.
+    await page.locator('#trace-position').press('Home');
+    for (let step = 0; step < 50; step++) await page.locator('#trace-position').press('PageUp');
+    assert.doesNotMatch(await page.textContent('#trace-bidirectional-count'), /완료$/);
+    await page.getByRole('switch', {name: '양방향', exact: true}).check();
+    await page.waitForTimeout(200);
+    const earlyBidirectional = await colors();
+    await page.getByRole('switch', {name: '양방향', exact: true}).uncheck();
+    await page.waitForTimeout(200);
+    const withoutBidirectional = await colors();
+    assert.ok(earlyBidirectional.purple > withoutBidirectional.purple + 10, JSON.stringify({earlyBidirectional,withoutBidirectional}));
+    await page.getByRole('switch', {name: '양방향', exact: true}).check();
     await page.click('#trace-start');
     await page.click('#trace-play');
     await page.waitForFunction(() => Number(document.querySelector('#trace-position').getAttribute('aria-valuenow')) > 30);
@@ -144,7 +164,7 @@ fs.mkdirSync(output, { recursive: true });
         markers: [...map.querySelectorAll('.endpoint')].map(marker => marker.style.transform) };
     });
     const beforeMetrics = await mapView();
-    for (const algorithm of ['dijkstra', 'astar', 'alt']) {
+    for (const algorithm of ['dijkstra', 'astar', 'alt', 'bidirectional']) {
       await page.click(`.${algorithm} .work-metrics summary`);
       assert.ok(await page.locator(`#${algorithm}-edges`).isVisible());
       assert.ok(await page.locator(`#${algorithm}-queue`).isVisible());
@@ -152,7 +172,7 @@ fs.mkdirSync(output, { recursive: true });
       assert.deepEqual(await mapView(), beforeMetrics, `${algorithm}: opening metrics changed the map`);
     }
     await page.screenshot({ path: path.join(output, 'work-metrics.png'), fullPage: true });
-    for (const algorithm of ['dijkstra', 'astar', 'alt']) {
+    for (const algorithm of ['dijkstra', 'astar', 'alt', 'bidirectional']) {
       await page.click(`.${algorithm} .work-metrics summary`);
       await page.waitForTimeout(150);
       assert.deepEqual(await mapView(), beforeMetrics, `${algorithm}: closing metrics changed the map`);
@@ -177,10 +197,10 @@ fs.mkdirSync(output, { recursive: true });
     assert.ok((await colors()).blue > 1000, 'Mobile exploration layer must render');
     await page.locator('.methodology details').evaluate(e => { e.open = false; });
     await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });
-    // A cached two-algorithm trace cannot be mistaken for the new three-algorithm dataset.
+    // A cached three-algorithm trace cannot be mistaken for the four-algorithm dataset.
     const stale = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../frontend/demo/public/traces/' + data.examples[3].id + '.json'), 'utf8'));
-    stale.version = 1;
-    stale.traces = stale.traces.filter(trace => trace.algorithm !== 'alt');
+    stale.version = 2;
+    stale.traces = stale.traces.filter(trace => trace.algorithm !== 'bidirectional');
     await page.route('**/traces/' + data.examples[3].id + '.json', route => route.fulfill({json: stale}));
     await chooseExample(data.examples[3].id);
     await page.waitForFunction(() => !document.querySelector('#trace-retry').hidden);
@@ -245,6 +265,13 @@ fs.mkdirSync(output, { recursive: true });
     await phone.getByRole('switch', {name: 'ALT', exact: true}).uncheck();
     assert.equal(await phone.getByRole('switch', {name: 'ALT', exact: true}).isChecked(), false);
     await phone.getByRole('switch', {name: 'ALT', exact: true}).check();
+    await phone.getByRole('switch', {name: '양방향', exact: true}).uncheck();
+    assert.equal(await phone.getByRole('switch', {name: '양방향', exact: true}).isChecked(), false);
+    await phone.getByRole('switch', {name: '양방향', exact: true}).check();
+    await phone.locator('.algorithm-toggle.purple .algorithm-help').click();
+    const explanation = phone.getByRole('dialog', {name: '양방향 Dijkstra 알고리즘 설명', exact: true});
+    await explanation.waitFor();
+    await explanation.getByRole('button', {name: '닫기', exact: true}).click();
     for (const width of [390, 320, 768]) {
       await phone.setViewportSize({width, height: 844});
       await phone.locator('.work-metrics').evaluateAll(items => items.forEach(item => { item.open = true; }));
@@ -262,6 +289,6 @@ fs.mkdirSync(output, { recursive: true });
     assert.deepEqual(badAssets, []);
     assert.ok(workers.includes(200));
     assert.deepEqual(errors, []);
-    console.log('PASS: 8 examples × 3 algorithms (Dijkstra/A*/ALT), green expansion pixels before completion, stale v1 rejection, automatic replay on selection, natural completion, expansion colors, playback/pause/scrub, visibility, stale responses, retry, real metrics, Astryx selector and keyboard slider, touch sheet, 320/390/768 layouts, links/download, mobile, map failure, no API, Worker 200');
+    console.log('PASS: 8 examples × 4 algorithms (Dijkstra/A*/ALT/bidirectional), green expansion pixels before completion, stale v2 rejection, automatic replay on selection, natural completion, expansion colors, playback/pause/scrub, visibility, stale responses, retry, real metrics, Astryx selector and keyboard slider, touch sheet, 320/390/768 layouts, links/download, mobile, map failure, no API, Worker 200');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

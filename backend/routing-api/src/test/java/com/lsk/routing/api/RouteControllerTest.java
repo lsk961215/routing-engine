@@ -63,6 +63,20 @@ class RouteControllerTest {
         mvc.perform(get("/api/route"+query.replace("startLat=37&", "startLat=37.001&").replace("endLat=37.001&", "endLat=37&")))
                 .andExpect(status().isNotFound());
     }
+    @Test void bidirectionalSupportsSinglePairedAndUnreachableRequests() throws Exception {
+        var mvc=api();var query="?startLon=127&startLat=37&endLon=127&endLat=37.001&algorithm=bidirectional";
+        mvc.perform(get("/api/route"+query)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.metrics.algorithm").value("bidirectional"))
+                .andExpect(jsonPath("$.routes[0].distance").value(111));
+        mvc.perform(get("/api/compare"+query)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].algorithm").value("dijkstra"))
+                .andExpect(jsonPath("$.results[1].algorithm").value("bidirectional"))
+                .andExpect(jsonPath("$.results[1].routes[0].distance").value(111))
+                .andExpect(jsonPath("$.results[1].metrics.inspectedEdges").isNumber())
+                .andExpect(jsonPath("$.results[1].metrics.maxQueueSize").isNumber());
+        mvc.perform(get("/api/compare"+query.replace("startLat=37&","startLat=37.001&").replace("endLat=37.001&","endLat=37&")))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.results[1].code").value("NoRoute"));
+    }
     @Test void singleRouteIncludesAllocationAndVirtualThreadSerializesUnavailableAsNull() throws Exception {
         var path="/api/route?startLon=127&startLat=37&endLon=127&endLat=37.001";
         var mvc=api();
