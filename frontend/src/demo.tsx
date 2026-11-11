@@ -13,9 +13,10 @@ import { Selector } from "@astryxdesign/core/Selector";
 import { Switch } from "@astryxdesign/core/Switch";
 import { Slider } from "@astryxdesign/core/Slider";
 import { Icon } from "@astryxdesign/core/Icon";
+import { Popover } from "@astryxdesign/core/Popover";
 import { createDemoMap, type Example } from "./demo-map";
 import { initialPlayback, type Visibility } from "./demo-exploration";
-import { algorithms, algorithmInfo } from "./demo-algorithms";
+import { algorithms, algorithmInfo, type Algorithm } from "./demo-algorithms";
 import rawData from "./demo-data.json";
 import { speedup, reduction as workReduction, formatSpeedup, formatReduction } from "./comparison-metrics";
 
@@ -38,6 +39,26 @@ function PlaybackIcon({ kind }: { kind: "play" | "pause" | "replay" | "start" | 
     {kind === "start" && <><path d="m17 6-8 6 8 6Z" fill="currentColor" /><path d="M6 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></>}
     {kind === "end" && <><path d="m7 6 8 6-8 6Z" fill="currentColor" /><path d="M18 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></>}
   </svg>;
+}
+
+function AlgorithmHelp({ algorithm }: { algorithm: Algorithm }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const info = algorithmInfo[algorithm];
+  return <Popover label={`${info.name} 알고리즘 설명`} isOpen={isOpen} onOpenChange={setIsOpen}
+    placement="below" alignment="end" width={380} isModal={false} closeButtonLabel="설명 닫기"
+    content={<div className="algorithm-explanation">
+      <div className="explanation-heading"><h3>{info.name}</h3><Button label="닫기" variant="ghost" size="sm" onClick={() => setIsOpen(false)} /></div>
+      <dl>
+        <div><dt>작은 값부터 탐색</dt><dd>{info.priority}</dd></div>
+        <div><dt>동작 방식</dt><dd>{info.explanation}</dd></div>
+        <div><dt>특징과 비용</dt><dd>{info.tradeoff}</dd></div>
+      </dl>
+      <p>이 데모의 비용은 거리입니다. 세 알고리즘 모두 같은 도로·통행 규칙에서 최단 거리를 구하며, 거리가 같아도 경로 모양은 다를 수 있습니다.</p>
+    </div>}>
+    {trigger => <button {...trigger} type="button" className="algorithm-help" aria-label={`${info.name} 알고리즘 설명`}>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" /><path d="M10 9v5" /><circle cx="10" cy="6" r=".8" className="info-dot" /></svg>
+    </button>}
+  </Popover>;
 }
 
 function Demo() {
@@ -101,9 +122,10 @@ function Demo() {
           <div className="toolbar">
             <Selector id="example" htmlName="example" label="예제 경로" value={selected.id} options={options} onChange={chooseExample} width="100%" size="lg" containerClassName="example-control" presentation="adaptive" />
             <div className="visibility-controls" aria-label="지도 표시">
-              {algorithms.map(algorithm => <span key={algorithm} className={`algorithm-toggle ${algorithmInfo[algorithm].colorClass}`}>
+              {algorithms.map(algorithm => <div key={algorithm} className={`algorithm-toggle ${algorithmInfo[algorithm].colorClass}`}>
                 <Switch id={`show-${algorithm}`} label={algorithmInfo[algorithm].label} size="sm" value={visibility[algorithm]} onChange={value => toggleVisibility(algorithm, value)} />
-              </span>)}
+                <AlgorithmHelp algorithm={algorithm} />
+              </div>)}
               <span className="area-toggle"><Switch id="show-exploration" label="탐색 영역" size="sm" value={visibility.exploration} isDisabled={!canPlay} onChange={value => toggleVisibility("exploration", value)} /></span>
             </div>
           </div>
@@ -151,15 +173,6 @@ function Demo() {
                       <div><dt>간선 검사 감소율</dt><dd id={`${route.algorithm}-reduction`}>{route.algorithm === "dijkstra" ? "기준" : formatReduction(workReduction(baseline.inspectedEdges, route.inspectedEdges))}</dd></div>
                     </dl>
                     <p className="metric-label">Dijkstra 기준 · 1× 미만 또는 음수는 성능 저하</p>
-                  </details>
-                  <details className="algorithm-explanation">
-                    <summary aria-label={`${name} 알고리즘 설명`}>알고리즘 설명</summary>
-                    <dl>
-                      <div><dt>작은 값부터 탐색</dt><dd>{info.priority}</dd></div>
-                      <div><dt>동작 방식</dt><dd>{info.explanation}</dd></div>
-                      <div><dt>특징과 비용</dt><dd>{info.tradeoff}</dd></div>
-                    </dl>
-                    <p>이 데모의 비용은 거리입니다. 세 알고리즘 모두 같은 도로·통행 규칙에서 최단 거리를 구하며, 거리가 같아도 경로 모양은 다를 수 있습니다.</p>
                   </details>
                 </section>;
               })}
