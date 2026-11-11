@@ -62,8 +62,9 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
   let message = "";
   let visibility: Visibility = { dijkstra: true, astar: true, alt: true, bidirectional: true, exploration: true };
 
-  // A shared counter, eased to keep short A* searches visible; never elapsed compute time.
-  function step() { return Math.floor(maximum * progress ** 3); }
+  // Map, counters and seek position share the actual expansion fraction.
+  // Easing belongs only to the playback clock, never to the control bar.
+  function step() { return Math.floor(maximum * progress); }
   function publish() {
     if (disposed) return;
     onChange({ status, playing, progress, step: step(), message,
@@ -72,7 +73,7 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
       }]) ?? []),
     });
   }
-  function pause() { cancelAnimationFrame(frame); playing = false; publish(); }
+  function pause() { cancelAnimationFrame(frame); playing = false; render(); }
   function updateVisibility() {
     for (const algorithm of algorithms) {
       const layer = `exploration-${algorithm}`;
@@ -85,7 +86,7 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
     if (data) {
       map.setGlobalStateProperty("exploration-step", step());
       // Highlight a short window of the recorded sequence, not an invented radial wave.
-      map.setGlobalStateProperty("exploration-tail", Math.floor(maximum * Math.max(0, progress - 0.025) ** 3));
+      map.setGlobalStateProperty("exploration-tail", Math.floor(maximum * Math.max(0, Math.cbrt(progress) - 0.025) ** 3));
     }
     updateVisibility();
     publish();
@@ -159,13 +160,14 @@ export function setupExploration(map: MapLibreMap, graphSha256: string, fit: () 
     cancelAnimationFrame(frame);
     if (progress >= 1) progress = 0;
     playing = true;
-    const from = progress;
+    // Retain the slower opening without changing what a slider position means.
+    const from = Math.cbrt(progress);
     const began = performance.now();
     let lastPaint = 0;
     render();
     const tick = (now: number) => {
       if (!playing || disposed) return;
-      progress = Math.min(1, from + (now - began) / 15000);
+      progress = Math.min(1, from + (now - began) / 15000) ** 3;
       if (now - lastPaint >= 33 || progress >= 1) { render(); lastPaint = now; }
       if (progress >= 1) pause();
       else frame = requestAnimationFrame(tick);

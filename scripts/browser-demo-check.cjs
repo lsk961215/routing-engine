@@ -41,6 +41,22 @@ fs.mkdirSync(output, { recursive: true });
       }
     };
     await checkAutoplay();
+    // The middle of the control bar means half of the shared expansion count.
+    await page.locator('#trace-position').press('Home');
+    for (let step = 0; step < 50; step++) await page.locator('#trace-position').press('PageUp');
+    const halfway = Math.floor(Math.max(...data.examples[0].routes.map(r => r.expandedStates)) / 2);
+    assert.equal(await page.getAttribute('#trace-position', 'aria-valuenow'), '500');
+    assert.equal(await page.textContent('#trace-count'), `같은 확장 횟수 ${halfway.toLocaleString('ko-KR')}회`, 'Slider midpoint must show half of the recorded search');
+    assert.equal(await page.getAttribute('#trace-position', 'aria-valuetext'), `누적 확장 ${halfway.toLocaleString('ko-KR')}회`);
+    for (const route of data.examples[0].routes) {
+      const current = Math.min(halfway, route.expandedStates);
+      assert.equal(await page.textContent(`#trace-${route.algorithm}-count`), `${current.toLocaleString('ko-KR')} / ${route.expandedStates.toLocaleString('ko-KR')}${current === route.expandedStates ? ' · 완료' : ''}`);
+    }
+    await page.click('#trace-play');
+    await page.waitForTimeout(200);
+    await page.click('#trace-play');
+    const resumed = Number(await page.getAttribute('#trace-position', 'aria-valuenow'));
+    assert.ok(resumed > 500 && resumed < 650, `Resuming from halfway must not jump: ${resumed}`);
     assert.equal(await page.getByRole('switch', {name: 'ALT', exact: true}).isChecked(), true);
     assert.equal(data.version, 3);
     assert.ok(data.examples.every(example => example.routes.map(r => r.algorithm).join(',') === 'dijkstra,astar,alt,bidirectional'));
@@ -99,7 +115,7 @@ fs.mkdirSync(output, { recursive: true });
     assert.ok(fourColors.purple > emptyColors.purple + 100, JSON.stringify({fourColors,emptyColors}));
     // Before ALT completes, green pixels can only come from its exploration points, not its final route.
     await page.locator('#trace-position').press('Home');
-    for (let step = 0; step < 10; step++) await page.locator('#trace-position').press('PageUp');
+    await page.locator('#trace-position').press('ArrowRight');
     assert.doesNotMatch(await page.textContent('#trace-alt-count'), /완료$/);
     await page.waitForTimeout(300);
     const earlyAlt = await colors();
@@ -111,7 +127,8 @@ fs.mkdirSync(output, { recursive: true });
     // A few hundred bidirectional expansions can remain underneath the endpoint
     // markers at this zoom. Inspect a later step while its final route is hidden.
     await page.locator('#trace-position').press('Home');
-    for (let step = 0; step < 50; step++) await page.locator('#trace-position').press('PageUp');
+    for (let step = 0; step < 12; step++) await page.locator('#trace-position').press('PageUp');
+    for (let step = 0; step < 5; step++) await page.locator('#trace-position').press('ArrowRight');
     assert.doesNotMatch(await page.textContent('#trace-bidirectional-count'), /완료$/);
     await page.getByRole('switch', {name: '양방향', exact: true}).check();
     await page.waitForTimeout(200);
@@ -131,7 +148,7 @@ fs.mkdirSync(output, { recursive: true });
     await page.locator('#trace-position').press('Home');
     for (let step = 0; step < 50; step++) await page.locator('#trace-position').press('PageUp');
     const max = Math.max(...data.examples[0].routes.map(r => r.expandedStates));
-    const ordinal = Math.floor(max / 8);
+    const ordinal = Math.floor(max / 2);
     assert.equal(await page.textContent('#trace-count'), `같은 확장 횟수 ${ordinal.toLocaleString('ko-KR')}회`);
     assert.match(await page.textContent('#trace-astar-count'), /완료$/);
     assert.match(await page.textContent('#trace-alt-count'), /완료$/);
