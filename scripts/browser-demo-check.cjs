@@ -99,6 +99,42 @@ fs.mkdirSync(output, { recursive: true });
       }, buffer.toString('base64'));
     };
     await page.waitForTimeout(500);
+    // Isolate overlapping algorithms without losing the user's comparison choices.
+    const focusColors = { dijkstra: 'blue', astar: 'orange', alt: 'green', bidirectional: 'purple' };
+    const focusLabels = { dijkstra: 'Dijkstra', astar: 'A*', alt: 'ALT', bidirectional: '양방향' };
+    const focusPosition = await page.getAttribute('#trace-position', 'aria-valuenow');
+    const focusMapBox = await page.locator('.map-panel').boundingBox();
+    const soloColors = {};
+    for (const algorithm of Object.keys(focusColors)) {
+      await page.click(`#focus-${algorithm}`);
+      assert.equal(await page.getAttribute(`#focus-${algorithm}`, 'aria-pressed'), 'true');
+      for (const [other, label] of Object.entries(focusLabels)) {
+        assert.equal(await page.getByRole('switch', { name: label, exact: true }).isChecked(), other === algorithm);
+      }
+      await page.waitForTimeout(200);
+      const isolated = await colors();
+      soloColors[algorithm] = isolated;
+      assert.ok(isolated[focusColors[algorithm]] > 100, `Focused algorithm must render: ${JSON.stringify(isolated)}`);
+      assert.equal(await page.getAttribute('#trace-position', 'aria-valuenow'), focusPosition);
+      assert.deepEqual(await page.locator('.map-panel').boundingBox(), focusMapBox);
+    }
+    for (const [algorithm, color] of Object.entries(focusColors)) {
+      const hidden = Object.keys(focusColors).filter(other => other !== algorithm).map(other => soloColors[other][color]);
+      assert.ok(soloColors[algorithm][color] > Math.max(...hidden) + 40, `Other algorithms must disappear in solo mode: ${algorithm}`);
+    }
+    await page.click('#focus-bidirectional');
+    for (const label of Object.values(focusLabels)) assert.equal(await page.getByRole('switch', { name: label, exact: true }).isChecked(), true);
+    await page.getByRole('switch', { name: 'ALT', exact: true }).uncheck();
+    await page.click('#focus-alt');
+    await page.click('#restore-comparison');
+    assert.equal(await page.getByRole('switch', { name: 'ALT', exact: true }).isChecked(), false, 'Restore the previous selection, including hidden algorithms');
+    await page.getByRole('switch', { name: 'ALT', exact: true }).check();
+    await page.click('#focus-alt');
+    await page.getByRole('switch', { name: 'A*', exact: true }).check();
+    assert.equal(await page.getAttribute('#focus-alt', 'aria-pressed'), 'false', 'Editing switches should leave solo mode');
+    for (const [algorithm, label] of Object.entries(focusLabels)) assert.equal(await page.getByRole('switch', { name: label, exact: true }).isChecked(), algorithm === 'astar' || algorithm === 'alt');
+    for (const label of Object.values(focusLabels)) await page.getByRole('switch', { name: label, exact: true }).check();
+    await page.waitForTimeout(200);
     const fourColors = await colors();
     // Broad bidirectional exploration can cover the sparse A*/ALT points. Verify
     // their pixels independently, and verify the new layer separately below.
@@ -276,6 +312,22 @@ fs.mkdirSync(output, { recursive: true });
     assert.equal(await phone.getAttribute('#trace-play', 'aria-pressed'), 'true');
     assert.ok(Number(await phone.getAttribute('#trace-position', 'aria-valuenow')) < 250);
     await phone.click('#trace-end');
+    await phone.tap('#focus-alt');
+    assert.equal(await phone.getAttribute('#focus-alt', 'aria-pressed'), 'true');
+    await phone.getByRole('switch', {name: '탐색 영역', exact: true}).uncheck();
+    assert.equal(await phone.getAttribute('#focus-alt', 'aria-pressed'), 'true');
+    await phone.tap('#example');
+    await phone.getByRole('option', {name: data.examples[1].name, exact: true}).tap();
+    await phone.waitForSelector('#trace-play:not([disabled])');
+    await phone.click('#trace-end');
+    assert.equal(await phone.getByRole('switch', {name: 'Dijkstra', exact: true}).isChecked(), false);
+    assert.equal(await phone.getByRole('switch', {name: 'ALT', exact: true}).isChecked(), true);
+    await phone.getByRole('switch', {name: '탐색 영역', exact: true}).check();
+    await phone.setViewportSize({width: 320, height: 844});
+    assert.ok(await phone.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await phone.screenshot({path: path.join(output, 'mobile-focus.png'), fullPage: true});
+    await phone.tap('#restore-comparison');
+    for (const label of Object.values(focusLabels)) assert.equal(await phone.getByRole('switch', {name: label, exact: true}).isChecked(), true);
     await phone.getByRole('switch', {name: 'A*', exact: true}).uncheck();
     assert.equal(await phone.getByRole('switch', {name: 'A*', exact: true}).isChecked(), false);
     await phone.getByRole('switch', {name: 'A*', exact: true}).check();

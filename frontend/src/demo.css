@@ -32,10 +32,16 @@ button, input { font: inherit; }
 h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spacing: -.7px; }
 .site-header p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
 .workspace { background: white; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 3px 16px #26334805; }
-.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 24px; }
+.toolbar { display: grid; grid-template-columns: minmax(0, 310px) 1fr; align-items: center; gap: 16px; padding: 20px 24px; }
 .example-control { max-width: 310px; min-width: 0; }
-.visibility-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding-top: 22px; }
-.algorithm-toggle { display: inline-flex; align-items: center; gap: 2px; }
+.visibility-controls { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.algorithm-toggle { min-width: 0; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.algorithm-toggle-heading { display: flex; align-items: center; justify-content: space-between; gap: 2px; }
+.algorithm-toggle[data-focused="true"] { border-color: var(--color-accent); background: #f8fafc; }
+.algorithm-focus { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 32px; padding: 2px 0; background: transparent; border: 0; border-radius: 4px; cursor: pointer; font-size: 11px; color: var(--muted); }
+.algorithm-focus:hover, .algorithm-focus[aria-pressed="true"] { color: var(--color-text-accent); }
+.algorithm-focus:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.route-swatch { display: inline-block; width: 36px; height: 12px; flex-shrink: 0; }
 .algorithm-help { display: grid; place-items: center; width: 30px; height: 32px; padding: 5px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer; }
 .algorithm-help:hover, .algorithm-help[aria-expanded="true"] { background: #e9eef5; color: #24364c; }
 .algorithm-help svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; }
@@ -44,13 +50,16 @@ h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spac
 .algorithm-toggle.green { --color-accent: #15803d; --color-text-accent: #15803d; }
 .algorithm-toggle.purple { --color-accent: #7c3aed; --color-text-accent: #7c3aed; }
 .algorithm-toggle.orange { --color-accent: #c65d21; --color-text-accent: #c65d21; }
-.area-toggle { border-left: 1px solid var(--line); padding-left: 24px; }
+.area-toggle { justify-self: end; }
 .experiment-grid { display: grid; grid-template-columns: minmax(0, 1fr) 274px; border-top: 1px solid var(--line); }
 .map-workspace { min-width: 0; align-self: start; display: flex; flex-direction: column; }
 .map-panel { flex: none; position: relative; height: clamp(390px, 53vh, 570px); background: #e9edf0; border-bottom: 1px solid var(--line); }
 #demo-map { position: absolute; inset: 0; }
 .map-fit { position: absolute; left: 14px; top: 14px; }
 .map-fit .astryx-button { background: white; }
+.map-focus { position: absolute; left: 14px; right: 14px; bottom: 36px; width: fit-content; max-width: calc(100% - 28px); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 8px 12px; background: #fffffff2; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 8px #26334812; font-size: 12px; }
+.map-focus > span { display: flex; align-items: center; gap: 6px; }
+.map-focus button { min-height: 32px; background: transparent; padding: 0; border: 0; text-decoration: underline; text-underline-offset: 3px; color: #344256; cursor: pointer; font-size: 11px; }
 #map-status { position: absolute; left: 14px; right: 14px; bottom: 30px; margin: 0; padding: 10px 12px; border-radius: 8px; background: #fffffff2; font-size: 12px; }
 .endpoint { width: 28px; height: 28px; display: grid; place-items: center; background: #24364c; color: white; border: 2px solid #fff; border-radius: 50%; font: 600 12px sans-serif; box-shadow: 0 1px 5px #0004; }
 .endpoint-1 { background: white; color: #24364c; border-color: #24364c; }
@@ -74,13 +83,10 @@ h1 { margin: 0; font-size: 23px; font-weight: 600; line-height: 1.4; letter-spac
 .algorithm-card.bidirectional { --algorithm: var(--purple); }
 .algorithm-card.alt { --algorithm: var(--green); }
 .algorithm-card.astar { --algorithm: var(--orange); }
+.algorithm-card[data-focused="true"] { border-color: var(--algorithm); box-shadow: inset 3px 0 var(--algorithm); }
 .algorithm-heading h3 { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; margin: 0; }
+.algorithm-heading .route-swatch { width: 28px; }
 .algorithm-heading > span { display: block; margin-top: 3px; font-size: 11px; color: var(--muted); }
-.legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.legend-dot.blue { background: var(--blue); }
-.legend-dot.purple { background: var(--purple); }
-.legend-dot.green { background: var(--green); }
-.legend-dot.orange { background: var(--orange); }
 .time-metric { display: flex; align-items: baseline; gap: 6px; margin-top: 16px; font-variant-numeric: tabular-nums; }
 .time-metric strong { font-size: 30px; font-weight: 500; letter-spacing: -1px; line-height: 1.15; }
 .time-metric > span { color: var(--muted); font-size: 12px; }
@@ -105,8 +111,7 @@ footer { display: flex; justify-content: space-between; gap: 16px; margin: 18px 
 @media (max-width: 900px) {
   .demo-shell { padding-inline: 20px; }
   .toolbar { gap: 18px; padding: 16px 20px; }
-  .visibility-controls { gap: 14px; }
-  .area-toggle { padding-left: 14px; }
+  .visibility-controls { gap: 10px; }
   .experiment-grid { grid-template-columns: minmax(0, 1fr); }
   .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; }
   .results-heading, .comparison-note { grid-column: 1 / -1; }
@@ -122,11 +127,14 @@ footer { display: flex; justify-content: space-between; gap: 16px; margin: 18px 
   h1 { font-size: 19px; }
   .site-header p { font-size: 10px; }
   .site-header .astryx-button { font-size: 11px; }
-  .toolbar { display: block; padding: 16px; }
-  .example-control { max-width: none; }
-  .visibility-controls { padding-top: 16px; justify-content: flex-start; gap: 8px; }
+  .toolbar { padding: 16px; gap: 12px; }
+  .example-control { max-width: none; grid-column: 1 / -1; }
+  .visibility-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .algorithm-toggle { padding: 6px; }
+  .algorithm-toggle .algorithm-help { width: 26px; }
   .visibility-controls .astryx-switch-label { font-size: 12px; }
-  .area-toggle { padding-left: 8px; }
+  .area-toggle { grid-column: 1 / -1; }
+  .map-focus { bottom: 80px; font-size: 11px; padding: 6px 8px; }
   .map-panel { height: 360px; height: clamp(320px, 43svh, 400px); }
   .replay-controls { padding: 14px 12px; }
   .replay-timeline { gap: 14px; }

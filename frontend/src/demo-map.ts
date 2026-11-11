@@ -47,8 +47,7 @@ export function createDemoMap(container: HTMLElement, initial: Example, graphSha
       map.addSource(algorithm, { type: "geojson", data: { type: "Feature", properties: {}, geometry: route.geometry } });
       map.addLayer({ id: algorithm, type: "line", source: algorithm, layout: { "line-join": "round", "line-cap": "round", visibility: "none" }, paint: {
         "line-color": algorithmInfo[algorithm].color, "line-width": algorithmInfo[algorithm].width,
-        ...(algorithm === "astar" ? { "line-dasharray": [2, 2] } : {}),
-        ...(algorithm === "bidirectional" ? { "line-dasharray": [1, 2] } : {}),
+        ...(algorithmInfo[algorithm].dash.length ? { "line-dasharray": algorithmInfo[algorithm].dash } : {}),
       } });
     }
     markers.forEach(marker => marker.remove());

@@ -3,7 +3,7 @@ import "@astryxdesign/core/astryx.css";
 import "@astryxdesign/theme-neutral/theme.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./demo.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Theme } from "@astryxdesign/core/theme";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
@@ -63,12 +63,23 @@ function AlgorithmHelp({ algorithm }: { algorithm: Algorithm }) {
   </Popover>;
 }
 
+function RouteSwatch({ algorithm }: { algorithm: Algorithm }) {
+  const info = algorithmInfo[algorithm];
+  return <svg className="route-swatch" viewBox="0 0 36 12" aria-hidden="true">
+    <path d="M2 6H34" stroke={info.color} strokeWidth="2" strokeLinecap="round" strokeDasharray={info.dash.map(length => length * 2).join(" ") || undefined} />
+  </svg>;
+}
+
 function Demo() {
   const [selected, setSelected] = useState(initial);
   const [ready, setReady] = useState(false);
   const [mapStatus, setMapStatus] = useState("지도를 불러오는 중입니다.");
   const [playback, setPlayback] = useState(initialPlayback);
   const [visibility, setVisibility] = useState<Visibility>({ dijkstra: true, astar: true, alt: true, bidirectional: true, exploration: true });
+  const [focused, setFocused] = useState<Algorithm | null>(null);
+  const visible = useMemo<Visibility>(() => focused
+    ? { ...visibility, ...Object.fromEntries(algorithms.map(algorithm => [algorithm, algorithm === focused])) }
+    : visibility, [visibility, focused]);
   const [downloadUrl, setDownloadUrl] = useState("");
   const mapElement = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof createDemoMap> | null>(null);
@@ -100,6 +111,10 @@ function Demo() {
     };
   }, []);
 
+  useEffect(() => {
+    controller.current?.exploration.setVisibility(visible);
+  }, [visible]);
+
   function chooseExample(id: string) {
     const example = examples.find(item => item.id === id)!;
     setSelected(example);
@@ -107,9 +122,10 @@ function Demo() {
     controller.current?.select(example);
   }
   function toggleVisibility(key: keyof Visibility, value: boolean) {
-    const next = { ...visibility, [key]: value };
-    setVisibility(next);
-    controller.current?.exploration.setVisibility(next);
+    // Editing algorithm switches leaves solo mode with the choices currently shown.
+    // The exploration switch is independent and keeps the saved comparison intact.
+    if (key === "exploration") setVisibility({ ...visibility, exploration: value });
+    else { setVisibility({ ...visible, [key]: value }); setFocused(null); }
   }
   const playLabel = playback.playing ? "일시정지" : playback.progress >= 1 ? "처음부터 재생" : "재생";
   return <Theme theme={neutralTheme} mode="light">
@@ -123,12 +139,17 @@ function Demo() {
         <section className="workspace" aria-label="경로 탐색 실험">
           <div className="toolbar">
             <Selector id="example" htmlName="example" label="예제 경로" value={selected.id} options={options} onChange={chooseExample} width="100%" size="lg" containerClassName="example-control" presentation="adaptive" />
+            <span className="area-toggle"><Switch id="show-exploration" label="탐색 영역" size="sm" value={visibility.exploration} isDisabled={!canPlay} onChange={value => toggleVisibility("exploration", value)} /></span>
             <div className="visibility-controls" aria-label="지도 표시">
-              {algorithms.map(algorithm => <div key={algorithm} className={`algorithm-toggle ${algorithmInfo[algorithm].colorClass}`}>
-                <Switch id={`show-${algorithm}`} label={algorithmInfo[algorithm].label} size="sm" value={visibility[algorithm]} onChange={value => toggleVisibility(algorithm, value)} />
-                <AlgorithmHelp algorithm={algorithm} />
+              {algorithms.map(algorithm => <div key={algorithm} className={`algorithm-toggle ${algorithmInfo[algorithm].colorClass}`} data-focused={focused === algorithm}>
+                <div className="algorithm-toggle-heading">
+                  <Switch id={`show-${algorithm}`} label={algorithmInfo[algorithm].label} size="sm" value={visible[algorithm]} onChange={value => toggleVisibility(algorithm, value)} />
+                  <AlgorithmHelp algorithm={algorithm} />
+                </div>
+                <button id={`focus-${algorithm}`} className="algorithm-focus" type="button" aria-label={`${algorithmInfo[algorithm].name} 단독 보기`} aria-pressed={focused === algorithm} onClick={() => setFocused(focused === algorithm ? null : algorithm)}>
+                  <RouteSwatch algorithm={algorithm} /><span>단독 보기</span>
+                </button>
               </div>)}
-              <span className="area-toggle"><Switch id="show-exploration" label="탐색 영역" size="sm" value={visibility.exploration} isDisabled={!canPlay} onChange={value => toggleVisibility("exploration", value)} /></span>
             </div>
           </div>
           <div className="experiment-grid">
@@ -136,6 +157,7 @@ function Demo() {
               <div className="map-panel">
                 <div id="demo-map" ref={mapElement} role="region" aria-label="서울 예제 경로 지도" />
                 <div className="map-fit"><Button id="fit-route" label="전체 보기" aria-label="탐색 영역 전체 보기" isDisabled={!ready} onClick={() => controller.current?.fit()} size="sm" elevation="low" /></div>
+                {focused && <div className="map-focus"><span role="status"><RouteSwatch algorithm={focused} />{algorithmInfo[focused].name} 단독 보기</span><button id="restore-comparison" type="button" onClick={() => setFocused(null)}>비교로 돌아가기</button></div>}
                 <p id="map-status" role="status" hidden={!mapStatus}>{mapStatus}</p>
               </div>
               <section className="replay-controls" aria-label="탐색 확산 재생">
@@ -160,8 +182,8 @@ function Demo() {
                 const info = algorithmInfo[route.algorithm];
                 const name = info.name;
                 const count = playback.counts[route.algorithm];
-                return <section key={route.algorithm} className={`algorithm-card ${route.algorithm}`} aria-label={`${name} 측정 결과`}>
-                  <div className="algorithm-heading"><h3><i className={`legend-dot ${info.colorClass}`} />{name}</h3><span>{info.description}</span></div>
+                return <section key={route.algorithm} className={`algorithm-card ${route.algorithm}`} data-focused={focused === route.algorithm} aria-label={`${name} 측정 결과`}>
+                  <div className="algorithm-heading"><h3><RouteSwatch algorithm={route.algorithm} />{name}</h3><span>{info.description}</span></div>
                   <div className="time-metric"><strong id={`${route.algorithm}-time`}>{number(route.searchMillis.median, 2)}</strong><span>ms</span></div>
                   <p className="metric-label">탐색 시간 · 중앙값{route.algorithm === "alt" || route.algorithm === "bidirectional" ? " · 준비 비용 제외" : ""}</p>
                   <dl className="secondary-metrics"><div><dt>거리</dt><dd><span id={`${route.algorithm}-distance`}>{number(route.distance / 1000, 2)}</span> <small>km</small></dd></div><div><dt>확장 상태</dt><dd id={`${route.algorithm}-states`}>{number(route.expandedStates)}</dd></div></dl>
